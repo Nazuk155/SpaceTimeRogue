@@ -4,8 +4,12 @@ namespace JanSordid::SDL_Example
 {
 	constexpr bool doBenchmark = false;
 
+    // scalingFactor:
+    //  -1.0f (or unspecified) for autoscaling,
+    //   1.0f for "no" scaling,
+    //  integer floating point values for pixel perfect scaling
 	MyGame::MyGame()
-		: Base( "Example SDL Game", -1.0f, Point { 640, 360 }, !doBenchmark )
+		: Base( "Example SDL Game", -1.0f, Point { 1920, 1080 }, !doBenchmark )
 	//	: Base( "Example SDL Game", 1.0f, Point { 1280, 960 }, !doBenchmark )
 	{
 		AddStates<
@@ -13,7 +17,8 @@ namespace JanSordid::SDL_Example
 			PlasmaState,
 			SortState,
 			CameraState,
-			ShooterState>( *this );
+			ShooterState,
+            BeasthoodState>( *this );
 
 		// Set initial State
 		PushState( MyGS::Intro );

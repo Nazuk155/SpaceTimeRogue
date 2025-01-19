@@ -145,6 +145,23 @@ add_executable( sor-example
         src/sor/core.cpp
         src/sor/sdl_core.cpp
         src/sor/sdl_game.cpp
+        src/example/game/beasthoodstate.cpp
+        src/example/game/map.cpp
+        src/example/game/map.h
+        src/example/game/location.cpp
+        src/example/game/location.h
+        src/example/game/character.cpp
+        src/example/game/character.h
+        src/example/game/character_blueprint.h
+        src/example/game/blueprint_manager.cpp
+        src/example/game/blueprint_manager.h
+        src/example/game/ability.cpp
+        src/example/game/ability.h
+        src/example/game/ability_manager.h
+        src/example/game/ReduceStaminaLoss_ability.h
+        src/example/game/DrawExtraItem_ability.h
+        src/example/game/item.h
+        src/example/game/item_manager.h
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC

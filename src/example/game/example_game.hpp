@@ -6,6 +6,10 @@
 #include <sor/sdl_shapeops.hpp>
 //#include <autocast_ptr.h>
 //#include <sor/tiles.h>
+#include "blueprint_manager.h"
+#include "map.h"
+#include "ability_manager.h"
+#include "item_manager.h"
 
 namespace JanSordid::SDL_Example
 {
@@ -257,4 +261,64 @@ namespace JanSordid::SDL_Example
 		void RetireProjectile(  const Vector<FPoint>::iterator & it );
 		void RetireMyProjectile(const Vector<FPoint>::iterator & it );
 	};
+
+    class BeasthoodState final : public MyGameState
+    {
+        using Base = MyGameState;
+
+    protected:
+        Font    * font              = nullptr;
+        Texture * blendedText       = nullptr;
+        Point     blendedTextSize   = { 0, 0 };
+        Surface * plasmaSrf;
+        Texture * plasmaTex;
+
+        int brightness = 160;
+
+        static constexpr const int Scale = 8;
+
+    public:
+        // ctor
+        using Base::Base;
+
+        void Init() override;
+        void Destroy() override;
+
+        bool Input() override;
+        bool HandleEvent( const Event & event ) override;
+        void Update( u64 frame, u64 totalMSec, f32 deltaT ) override;
+        void Render( u64 frame, u64 totalMSec, f32 deltaT ) override;
+
+        //added functions for our game
+        ItemManager itemManager;
+        Map map;
+        AbilityManager abilityManager;
+        BlueprintManager blueprintManager;
+
+        void PopulateBlueprints();
+
+        void renderFromSpritesheet(int targetX,
+                                   int targetY,
+                                   int targetW,
+                                   int targetH,
+                                   SDL_Texture* t,
+                                   const SDL_Rect* clip = nullptr,
+                                   double angle = 0.0,
+                                   SDL_Point* center = nullptr,
+                                   SDL_RendererFlip flip = SDL_FLIP_NONE,
+                                   bool useClipSize = false
+        );
+
+        void renderFromSpritesheet(Rect values,
+                                   SDL_Texture* t,
+                                   SDL_Rect* clip = nullptr,
+                                   double angle = 0.0,
+                                   SDL_Point* center = nullptr,
+                                   SDL_RendererFlip flip = SDL_FLIP_NONE,
+                                   bool useClipSize = false);
+
+        //helper for SDL_CreateTextureFromSurface. Also applys a color key:(r:0, g:0xFF,b:0xFF) if transparent pixels are ever needed
+        Texture* loadFromFile(const std::string& path);
+    };
+
 }
