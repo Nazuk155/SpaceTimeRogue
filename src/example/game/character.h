@@ -5,7 +5,6 @@
 #include <utility>
 #include "../global.hpp"
 #include "item.h"
-#include "quest.h"
 #include "location.h"
 #include "character_blueprint.h"
 #include "ability.h"
@@ -36,7 +35,7 @@ private:
     int non_item_resources;           // Non-item resource counter (e.g., money, energy)
     std::vector<Item*> inventory;      // Inventory of items
     std::pair<Item*, Item*> equipped_items; // Equipped items (left and right hand)
-    std::vector<Quest> quest_log;     // Quest log
+    std::vector<QuestID> quest_log;     // Quest log
     int current_location_id;          // ID of the current location
 
 public:
@@ -61,13 +60,13 @@ public:
     void AdjustStamina(int amount);
     void AdjustSanity(int amount);
     bool AdjustStat(StatNames stat, int amount);
-    void AddToInventory(const Item& item);
-    void RemoveFromInventory(ItemName item_id);
+    void AddToInventory(Item *item);
+    void RemoveFromInventory(ItemName name);
     void EquipItem(Item* item, bool is_left_hand);
 
     // Gameplay Methods
     void UseFocus(StatNames statToIncrease, StatNames statToDecrease);
     void RefillFatePoints();
-    void AddQuest(const Quest& quest);
-    void CompleteQuest(int quest_id);
+    void AddQuest(const QuestID quest);
+    void CompleteQuest(QuestID quest_id);
 };

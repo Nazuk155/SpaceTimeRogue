@@ -47,10 +47,10 @@ bool Character::AdjustStat(StatNames stat, int amount) {
     }
 }
 
-void Character::AddToInventory(const Item& item) { inventory.push_back(item); }
+void Character::AddToInventory(Item *item) { inventory.push_back((Item *const) item); }
 void Character::RemoveFromInventory(ItemName item_id) {
     inventory.erase(std::remove_if(inventory.begin(), inventory.end(),
-                                   [item_id](const Item& i) { return i.GetItemName() == item_id; }), inventory.end());
+                                   [item_id](Item *i) { return i->GetItemName() == item_id; }), inventory.end());
 }
 
 void Character::EquipItem(Item* item, bool is_left_hand) {
@@ -78,8 +78,8 @@ void Character::RefillFatePoints() {
     fate_points = std::max(fate_points, 3); // Example logic
 }
 
-void Character::AddQuest(const Quest& quest) { quest_log.push_back(quest); }
-void Character::CompleteQuest(int quest_id) {
+void Character::AddQuest(const QuestID quest) { quest_log.push_back(quest); }
+void Character::CompleteQuest(QuestID quest_id) {
     quest_log.erase(std::remove_if(quest_log.begin(), quest_log.end(),
-                                   [quest_id](const Quest& q) { return q.GetID() == quest_id; }), quest_log.end());
+                                   [quest_id](const QuestID q) { return q == quest_id; }), quest_log.end());
 }

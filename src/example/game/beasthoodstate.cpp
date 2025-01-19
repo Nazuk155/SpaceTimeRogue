@@ -14,6 +14,7 @@
 #include "DrawExtraItem_ability.h"
 #include "item_manager.h"
 #include "item.h"
+#include "character.h"
 
 
 
@@ -94,7 +95,7 @@ namespace JanSordid::SDL_Example
 
         */
 
-
+        /// testing everything here for now
             // Add 12 Map_Slots
             for (int i = 1; i <= 12; ++i) {
                 map.AddSlot(i,{i * 100, i * 100});
@@ -194,6 +195,10 @@ namespace JanSordid::SDL_Example
                     item->GetAbility()->Activate(); // Activate associated ability
                 }
             }
+
+            PopulateBlueprints();
+            auto landsknechtBlueprint = blueprintManager.GetBlueprintByName("Landsknecht");
+            Character Landsknecht(*landsknechtBlueprint);
 
 
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "../global.hpp"
 #include "item.h" // Assuming Item is another class you have
-#include "character.h"
+
 
 
 class CharacterBlueprint {
@@ -20,4 +20,9 @@ public:
     CharacterBlueprint(const std::string& name, int base_stamina, int base_sanity,
                        Stats base_stats,Stats base_stats_boundary, int focus, Ability* ability,
                        const std::string& fate_condition, const std::vector<Item*> items);
+
+    // character_blueprint.cpp (or equivalent .cpp file)
+
+
+
 };

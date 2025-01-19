@@ -17,6 +17,11 @@ enum class AbilityName {
     DrawExtraItem,
     // Add more abilities as needed
 };
+enum class QuestID {
+    SlayMonsters,
+    VisitChurch
+    //add more as needed
+};
 
 struct Stats {
     std::unordered_map<StatNames, int> stats;
