@@ -196,10 +196,18 @@ namespace JanSordid::SDL_Example
                 }
             }
 
-            PopulateBlueprints();
+        std::cout << "\n";
+        std::cout.flush();
+
+
+        PopulateBlueprints();
             auto landsknechtBlueprint = blueprintManager.GetBlueprintByName("Landsknecht");
             Character Landsknecht(*landsknechtBlueprint);
-
+        std::cout << "Item: " << Landsknecht.GetInventory().back()->GetName();
+        std::cout << "\n";
+        std::cout.flush();
+        std::cout << "Stats: " << Landsknecht.GetCurrentStats().GetStat(FIGHT);
+        std::cout.flush();
 
 
 
