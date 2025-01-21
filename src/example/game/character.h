@@ -6,6 +6,7 @@
 #include "../global.hpp"
 #include "item.h"
 #include "location.h"
+#include "location_manager.h"
 #include "character_blueprint.h"
 #include "ability.h"
 
@@ -26,7 +27,6 @@ private:
     int focus;                        // Number of focus points available
 
     Ability* ability;
-    // Ability active_ability; TODO implement Ability class and acivateAbility() as well as adding it to blueprint
     int fate_points;                  // Fate/Hero points
     std::string fate_refill_condition; // Condition to refill fate points
     // RefillCondition refill // TODO implement Refill_Condition class add it to blueprint
@@ -36,7 +36,8 @@ private:
     std::vector<Item*> inventory;      // Inventory of items
     std::pair<Item*, Item*> equipped_items; // Equipped items (left and right hand)
     std::vector<QuestID> quest_log;     // Quest log
-    int current_location_id;          // ID of the current location
+    LocationID current_location_id;          // ID of the current location
+    SDL_Rect rect{0,0,64,64};
 
 public:
     Character(const std::string& name, int base_stamina, int base_sanity, Stats base_stats, Stats base_stats_boundary,
@@ -52,11 +53,12 @@ public:
     const Stats& GetCurrentStats() const;
     int GetFocus() const;
     int GetFatePoints() const;
-    int GetCurrentLocationID() const;
+    LocationID GetCurrentLocationID() const;
     const std::vector<Item *> & GetInventory() const;
+    SDL_Rect GetRect();
 
     // Setters
-    void SetCurrentLocation(int location_id);
+    void SetCurrentLocation(LocationID location_id);
     void AdjustStamina(int amount);
     void AdjustSanity(int amount);
     bool AdjustStat(StatNames stat, int amount);
@@ -69,4 +71,8 @@ public:
     void RefillFatePoints();
     void AddQuest(const QuestID quest);
     void CompleteQuest(QuestID quest_id);
+
+    void SetRect(SDL_Rect newRect);
+
+    void SetPos(SDL_Rect newRect);
 };

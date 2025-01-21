@@ -284,6 +284,7 @@ namespace JanSordid::SDL_Example
         Owned<Texture> _blendedText = nullptr;
         Texture * blendedText       = nullptr;
         Texture * forestLocationIconTexture = nullptr;
+        Texture * playerMapIconTexture = nullptr;
 
         Texture * forestNameTexture = nullptr;
         Texture *  churchNameTexture = nullptr;
@@ -374,6 +375,7 @@ namespace JanSordid::SDL_Example
 
         void renderText(Rect values, SDL_Texture *t);
 
+        bool IsMouseInsideRect(const SDL_Rect &rect, int mouseX, int mouseY);
     };
 
 }

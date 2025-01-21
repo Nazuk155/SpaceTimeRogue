@@ -37,9 +37,11 @@ namespace JanSordid::SDL_Example
 
         //Paths for Image Assets
         string forestLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/token_1.png";
+        string playerMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/Landsknecht.jpg";
 
         //--------------- load textures from file
         forestLocationIconTexture           = loadFromFile(forestLocationIconPath);
+        playerMapIconTexture                = loadFromFile(playerMapIconPath);
 
 
         //struct
@@ -325,23 +327,63 @@ namespace JanSordid::SDL_Example
 
 
 
-
-
-
-
     }
 
     void BeasthoodState::Destroy()
     {
         SDL_DestroyTexture(forestLocationIconTexture);
+        SDL_DestroyTexture(playerMapIconTexture);
+        for(auto e : locationTextureMap){
+            SDL_DestroyTexture(e.second.iconTexture);
+            SDL_DestroyTexture(e.second.nameTexture);
+        }
 
         forestLocationIconTexture = nullptr;
+        playerMapIconTexture      = nullptr;
 
         Base::Destroy();
     }
 
     bool BeasthoodState::HandleEvent( const Event & event )
     {
+
+            if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
+                int mouseX, mouseY;
+                SDL_GetMouseState(&mouseX, &mouseY);
+
+
+                for (auto e: map.slots) {
+                    if (IsMouseInsideRect(e.rect, mouseX, mouseY)) {
+                        if (event.type == SDL_MOUSEMOTION) {
+                            std::cout << "Mouse moved inside the rectangle.\n";
+                            std::cout.flush();
+
+                        } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+                            //mausklick reagiert nur wenn die location einen pfad zum aktuellen standort des characters hat
+                            for (auto c: e.connections) {
+                                //durchsuchen die aktiven connections der aktuellen node nach einam pfad zum character
+                                if (character1->GetCurrentLocationID() == map.GetSlotByID(c.first)->location_id &&
+                                    c.second == true) {
+                                    std::cout << "Mouse clicked inside the rectangle.\n";
+                                    //setzen location vom charakter und pos auf das aktuelle e da dies die node ist die gecklickt wurde
+                                    character1->SetCurrentLocation(e.location_id);
+                                    character1->SetPos(e.rect);
+                                    std::cout.flush();
+                                }
+
+                            }
+                        }
+                    } else if(!IsMouseInsideRect(e.rect, mouseX, mouseY)) {
+                        if (event.type == SDL_MOUSEMOTION) {
+                            std::cout << "Mouse moved OUTSIDE the rectangle. " << e.id;
+                            std::cout << " \n";
+                            std::cout.flush();
+                        }
+                    }
+                }
+            }
+
+
         /*
         switch( event.type )
         {
@@ -374,10 +416,13 @@ namespace JanSordid::SDL_Example
 
     void BeasthoodState::Update( const u64 frame, const u64 totalMSec, const f32 deltaT )
     {
+        if(character1->GetCurrentLocationID() == LocationID::UNASSIGNED){
+            character1->SetCurrentLocation(LocationID::Forest);
+            character1->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->rect);
+        }
 
-
-        std::cout << "Item: " << character1->GetInventory().back()->GetName();
-        std::cout << "\n";
+       // std::cout << "Item: " << character1->GetInventory().back()->GetName();
+       // std::cout << "\n";
     }
 
     void BeasthoodState::Render( const u64 frame, const u64 totalMSec, const f32 deltaT ) {
@@ -462,7 +507,10 @@ namespace JanSordid::SDL_Example
                                        map.GetSlotByID(c)->position.x, map.GetSlotByID(c)->position.y);
                 }
             }
-
+            //render character icon on map
+            if(character1->GetCurrentLocationID() != LocationID::UNASSIGNED) {
+                renderFromSpritesheet(character1->GetRect(),playerMapIconTexture);
+            }
 
 
             // SDL_RenderPresent( renderer() );
@@ -644,5 +692,11 @@ void BeasthoodState::renderText(Rect values, SDL_Texture* t){
                 temp
         ));
     }
+
+    bool BeasthoodState::IsMouseInsideRect(const SDL_Rect& rect, int mouseX, int mouseY) {
+        return mouseX >= rect.x && mouseX < (rect.x + rect.w) &&
+               mouseY >= rect.y && mouseY < (rect.y + rect.h);
+    }
+
 
 }

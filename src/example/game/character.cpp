@@ -9,14 +9,14 @@ Character::Character(const std::string& name, int base_stamina, int base_sanity,
           stamina(base_stamina), sanity(base_sanity), base_stats(base_stats),base_stats_boundary(std::move(base_stats_boundary)),
           current_stats(base_stats), focus(focus), ability(ability),
           fate_points(0), fate_refill_condition(fate_condition),
-          non_item_resources(0), current_location_id(-1), equipped_items({nullptr, nullptr}) {}
+          non_item_resources(0), current_location_id(LocationID::UNASSIGNED), equipped_items({nullptr, nullptr}) {}
 
 Character::Character(const CharacterBlueprint& blueprint)
         : name(blueprint.name), base_stamina(blueprint.base_stamina), base_sanity(blueprint.base_sanity),
           stamina(blueprint.base_stamina), sanity(blueprint.base_sanity), base_stats(blueprint.base_stats),base_stats_boundary(blueprint.base_stats_boundary),
           current_stats(blueprint.base_stats), focus(blueprint.focus), ability(blueprint.ability),
           fate_points(0), fate_refill_condition(blueprint.fate_refill_condition),
-          inventory(blueprint.starting_items), player_id(-1), current_location_id(-1) {}
+          inventory(blueprint.starting_items), player_id(-1), current_location_id(LocationID::UNASSIGNED) {}
 
 
 // Getters
@@ -27,11 +27,14 @@ const Stats& Character::GetBaseStats() const { return base_stats; }
 const Stats& Character::GetCurrentStats() const { return current_stats; }
 int Character::GetFocus() const { return focus; }
 int Character::GetFatePoints() const { return fate_points; }
-int Character::GetCurrentLocationID() const { return current_location_id; }
+LocationID Character::GetCurrentLocationID() const { return current_location_id; }
 const std::vector<Item *> & Character::GetInventory() const { return inventory; }
+SDL_Rect Character::GetRect(){return rect;}
 
 // Setters
-void Character::SetCurrentLocation(int location_id) { current_location_id = location_id; }
+void Character::SetCurrentLocation(LocationID location_id) { current_location_id = location_id;}
+void Character::SetRect(SDL_Rect newRect){rect = newRect;}
+void Character::SetPos(SDL_Rect newRect){rect.x = newRect.x;rect.y = newRect.y;}
 void Character::AdjustStamina(int amount) { stamina = std::max(0, std::min(base_stamina, stamina + amount)); }
 void Character::AdjustSanity(int amount) { sanity = std::max(0, std::min(base_sanity, sanity + amount)); }
 //checks if adjustment is in bounds, then uses structs own method to set the new value and returns success/fail to caller

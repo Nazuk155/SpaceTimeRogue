@@ -30,4 +30,6 @@ public:
     [[nodiscard]] std::string GetLocationString() const;
 
     Map_Slot* GetMapSlot();
+
+    std::vector<LocationID> GetActiveConnectedLocationIDs();
 };
