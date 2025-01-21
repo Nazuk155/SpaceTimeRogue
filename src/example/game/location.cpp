@@ -2,8 +2,13 @@
 #include "map.h"
 
 // Constructor
-Location::Location(std::string name, int id)
+Location::Location(std::string name, LocationID id)
         : name(name), id(id), map_slot(nullptr), first_visit(true),
+          fog_of_war(true), unique_event_id(-1), reward_icon_1(-1), reward_icon_2(-1),
+          quest_marker(false) {}
+
+Location::Location( LocationID id)
+        : name("Dummy"), id(id), map_slot(nullptr), first_visit(true),
           fog_of_war(true), unique_event_id(-1), reward_icon_1(-1), reward_icon_2(-1),
           quest_marker(false) {}
 
@@ -30,7 +35,18 @@ void Location::ResetConnections(bool state) {
 void Location::SetMapSlot(Map_Slot* slot) {
     map_slot = slot;
 }
+LocationID Location::GetLocationID() const { return id;}
+std::string Location::GetLocationString() const {return name;}
 
 Map_Slot* Location::GetMapSlot() {
-    return map_slot;
+    if(!map_slot) {
+        std::cerr << "Error: Map_Slot " << map_slot << " does not exist.\n";
+        return nullptr;
+    }else{
+        return map_slot;
+    }
+}
+
+void Location::SetName(std::string newname) {
+    name = std::move(newname);
 }

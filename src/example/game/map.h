@@ -5,8 +5,9 @@
 
 struct Map_Slot {
     int id;                                      // Unique identifier
-    SDL_Point position;                          // X, Y position
-    int location_id;                             // ID of the location assigned (-1 if empty)
+    SDL_Point position; // X, Y position
+    SDL_Rect rect = {position.x,position.y,128,128};
+    LocationID location_id;                             // ID of the location assigned UNASSIGNED
     //maybe change vector to unordered_map for better lookup
     std::vector<std::pair<int, bool>> connections; // Connections with status (active/inactive)
 
@@ -17,9 +18,11 @@ struct Map_Slot {
 
 class Map {
 private:
-    std::vector<Map_Slot> slots; // Vector of all slots, indexed by (ID - 1)
+  //  std::vector<Map_Slot> slots;
 
 public:
+    std::vector<Map_Slot> slots; // Vector of all slots
+
     Map();
     void AddSlot(int id, SDL_Point position);
     void ConnectSlots(int slot1, int slot2, bool is_active = true);

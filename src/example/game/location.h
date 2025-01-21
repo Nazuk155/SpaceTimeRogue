@@ -10,7 +10,7 @@ private:
 
 public:
     std::string name;
-    int id;
+    LocationID id;
     bool first_visit;
     bool fog_of_war;
     int unique_event_id;
@@ -19,11 +19,15 @@ public:
     int reward_icon_1, reward_icon_2;
     bool quest_marker;
 
-    Location(std::string name, int id);
+    Location(std::string name, LocationID id);
+    explicit Location(LocationID id);
 
     [[nodiscard]] std::vector<int> GetActiveConnections() const;
     void SetMapSlot(Map_Slot* m);
     void ResetConnections(bool state);
+    void SetName(std::string newname);
+    [[nodiscard]] LocationID GetLocationID () const;
+    [[nodiscard]] std::string GetLocationString() const;
 
     Map_Slot* GetMapSlot();
 };

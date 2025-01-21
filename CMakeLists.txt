@@ -163,6 +163,7 @@ add_executable( sor-example
         src/example/game/item.h
         src/example/game/item_manager.h
         src/example/game/character_blueprint.cpp
+        src/example/game/location_manager.h
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC

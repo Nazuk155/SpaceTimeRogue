@@ -5,6 +5,8 @@
 #include "sor/sdl_shapeops.hpp"
 #include <random>
 //#include "sor/sdl_game.hpp"
+#include <iostream>
+
 
 using namespace JanSordid::Core;
 
@@ -12,6 +14,22 @@ using namespace JanSordid::Core;
 enum StatNames { SPEED, SNEAK, FIGHT, WILLPOWER, KNOWLEDGE, LUCK };
 enum class ItemName {Halbert,Torch,Tome};
 enum class ItemType {Weapon,Magic,Unique};
+enum class LocationID {
+    Forest,
+    Church,
+    River,
+    Smith,
+    Windmill,
+    Crossroads,
+    Cave,
+    Monastery,
+    Farm,
+    Clearing,
+    Townhall,
+    Thicket,
+    UNASSIGNED
+};
+
 enum class AbilityName {
     ReduceStaminaLoss,
     DrawExtraItem,
@@ -22,6 +40,7 @@ enum class QuestID {
     VisitChurch
     //add more as needed
 };
+
 
 struct Stats {
     std::unordered_map<StatNames, int> stats;

@@ -3,12 +3,11 @@
 //
 #include "example_game.hpp"
 #include <hsnr64/offset.hpp>
+#include "../global.hpp"
 #include "map.h"
 
 #include <hsnr64/palette.hpp>
 #include <iostream>
-
-
 #include "ability_manager.h"
 #include "ReduceStaminaLoss_ability.h"
 #include "DrawExtraItem_ability.h"
@@ -23,7 +22,74 @@ namespace JanSordid::SDL_Example
 {
     void BeasthoodState::Init()
     {
+        using std::string ;
+
         Base::Init();
+
+        if( !_font )
+        {
+            _font = TTF_OpenFont( BasePath "asset/font/RobotoSlab-Bold.ttf", (int)(10.0f * _game.scalingFactor()) );
+            TTF_SetFontHinting( _font, TTF_HINTING_LIGHT );
+            if( !_font )
+                print( stderr, "TTF_OpenFont failed: {}\n", TTF_GetError() );
+        }
+
+
+        //Paths for Image Assets
+        string forestLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/token_1.png";
+
+        //--------------- load textures from file
+        forestLocationIconTexture           = loadFromFile(forestLocationIconPath);
+
+
+        //struct
+        struct LocationTextures {
+            SDL_Texture* iconTexture = nullptr;
+            SDL_Texture* nameTexture = nullptr;
+        };
+
+        //fill the location <-> texture map with image and name textures
+        locationTextureMap[LocationID::Forest].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Forest].nameTexture = textToTexture("Forest");
+
+        locationTextureMap[LocationID::Church].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Church].nameTexture = textToTexture("Church");
+
+        locationTextureMap[LocationID::River].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::River].nameTexture = textToTexture("River");
+
+        locationTextureMap[LocationID::Smith].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Smith].nameTexture = textToTexture("Smith");
+
+        locationTextureMap[LocationID::Windmill].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Windmill].nameTexture = textToTexture("Windmill");
+
+        locationTextureMap[LocationID::Crossroads].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Crossroads].nameTexture = textToTexture("Crossroads");
+
+        locationTextureMap[LocationID::Cave].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Cave].nameTexture = textToTexture("Cave");
+
+        locationTextureMap[LocationID::Monastery].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Monastery].nameTexture = textToTexture("Monastery");
+
+        locationTextureMap[LocationID::Farm].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Farm].nameTexture = textToTexture("Farm");
+
+        locationTextureMap[LocationID::Clearing].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Clearing].nameTexture = textToTexture("Clearing");
+
+        locationTextureMap[LocationID::Townhall].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Townhall].nameTexture = textToTexture("Townhall");
+
+        locationTextureMap[LocationID::Thicket].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Thicket].nameTexture = textToTexture("Thicket");
+
+        locationTextureMap[LocationID::UNASSIGNED].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::UNASSIGNED].nameTexture = textToTexture("UNASSIGNED");
+
+
+
 
         font = TTF_OpenFont( BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16 );
         TTF_SetFontHinting( font, TTF_HINTING_NONE );
@@ -32,6 +98,22 @@ namespace JanSordid::SDL_Example
         SDL_GetWindowSize( window(), &windowSize.x, &windowSize.y );
 
         const Point resolution = windowSize / Scale;
+
+        /*
+        forestNameTexture = textToTexture("Forest");
+        churchNameTexture = textToTexture("Church");
+        riverNameTexture = textToTexture("River");
+        smithNameTexture = textToTexture("Smith");
+        windmillNameTexture = textToTexture("Windmill");
+        crossroadsNameTexture = textToTexture("Crossroads");
+        caveNameTexture = textToTexture("Cave");
+        monasteryNameTexture = textToTexture("Monastery");
+        farmNameTexture = textToTexture("Farm");
+        clearingNameTexture = textToTexture("Clearing");
+        townhallNameTexture = textToTexture("Townhall");
+        thicketNameTexture = textToTexture("Thicket");
+        unassignedNameTexture = textToTexture("UNASSIGNED");
+        */
 
         /*
             Map map;
@@ -97,32 +179,62 @@ namespace JanSordid::SDL_Example
 
         /// testing everything here for now
             // Add 12 Map_Slots
-            for (int i = 1; i <= 12; ++i) {
-                map.AddSlot(i,{i * 100, i * 100});
+            map.AddSlot(0,{500, 50 });
+            for (int i = 1; i <= 5; ++i) {
+                map.AddSlot(i,{i * 140, 200 });
             }
+             map.AddSlot(6,{700, 500 });
+             for (int i = 7; i <= 11; ++i) {
+                  map.AddSlot(i,{(i-6) * 140, 700});
+             }
 
             // Add connections
-            map.ConnectSlots(1, 2);
-            map.ConnectSlots(1, 3);
-            map.ConnectSlots(1, 4);
-            map.ConnectSlots(1, 5);
-            map.ConnectSlots(1, 6);
+
+
+            map.ConnectSlots(0, 1);
+            map.ConnectSlots(0, 2);
+            map.ConnectSlots(0, 3);
+            map.ConnectSlots(0, 4);
+            map.ConnectSlots(0, 5);
+
+            map.ConnectSlots(5, 6);
+
             map.ConnectSlots(6, 7);
-            map.ConnectSlots(7, 8);
-            map.ConnectSlots(7, 9);
-            map.ConnectSlots(7, 10);
-            map.ConnectSlots(7, 11);
-            map.ConnectSlots(7, 12);
+            map.ConnectSlots(6, 8);
+            map.ConnectSlots(6, 9);
+            map.ConnectSlots(6, 10);
+            map.ConnectSlots(6, 11);
 
             // Create and assign locations
-            std::vector<Location> locations;
-            for (int i = 1; i <= 12; ++i) {
-                locations.emplace_back( "Location " + std::to_string(i),i);
-                map.SetLocation(i, locations.back());
+
+   /*
+            auto forest =  std::make_unique<Location>("Forest",LocationID::Forest);
+            auto church =  std::make_unique<Location>("Church",LocationID::Church);
+            auto River =  std::make_unique<Location>("River",LocationID::River);
+            auto Smith =  std::make_unique<Location>("Smith",LocationID::Smith);
+        auto Windmill =  std::make_unique<Location>("Windmill",LocationID::Windmill);
+        auto Crossroads =  std::make_unique<Location>("Crossroads",LocationID::Crossroads);
+        auto Cave =  std::make_unique<Location>("Cave",LocationID::Cave);
+        auto Monastery =  std::make_unique<Location>("Monastery",LocationID::Monastery);
+        auto Farm =  std::make_unique<Location>("Farm",LocationID::Farm);
+        auto Clearing =  std::make_unique<Location>("Clearing",LocationID::Clearing);
+        auto Townhall =  std::make_unique<Location>("Townhall",LocationID::Townhall);
+        auto Thicket =  std::make_unique<Location>("Thicket",LocationID::Thicket);
+
+
+        locationManager.AddItem(std::move(forest));
+        locationManager.AddItem(std::move(church));
+        */
+
+               // locations.emplace_back( "Location " + std::to_string(i),i);
+                //map.SetLocation(i, locations.back());
+        for (int i = 0; i <= 11; ++i) {
+            locationManager.AddItem(std::move(std::make_unique<Location>(static_cast<LocationID>(i))));
+                map.SetLocation(i, *locationManager.GetItem(static_cast<LocationID>(i)));
             }
 
             // Verify connections and location setup
-            for (int i = 1; i <= 12; ++i) {
+            for (int i = 0; i <= 11; ++i) {
                 Map_Slot* slot = map.GetSlotByID(i);
                 if (slot) {
                     std::cout << "Map_Slot ID: " << slot->id << ", Connections: ";
@@ -135,16 +247,16 @@ namespace JanSordid::SDL_Example
                     }
                     std::cout << "\n";
 
-                    map.SetConnectionStatus(3,1,false);
+                    map.SetConnectionStatus(2,0,false);
 
-                    Location* loc = &locations[i - 1];
-                    std::cout << "  Location: " << loc->name
+                   // Location* loc = &locations[i - 1];
+                    std::cout << "  Location: " << locationManager.GetItem(static_cast<LocationID>(i))->name
                               << ", Active Connections: ";
                     std::cout.flush();
 
 
-                    if (loc->GetMapSlot()) {
-                        for (int connected_id : loc->GetActiveConnections()) {
+                    if (locationManager.GetItem(static_cast<LocationID>(i))->GetMapSlot()) {
+                        for (int connected_id : locationManager.GetItem(static_cast<LocationID>(i))->GetActiveConnections()) {
                             std::cout << connected_id << " ";
                             std::cout.flush();
 
@@ -209,6 +321,7 @@ namespace JanSordid::SDL_Example
         std::cout << "Stats: " << Landsknecht.GetCurrentStats().GetStat(FIGHT);
         std::cout.flush();
 
+        character1 = new Character(*landsknechtBlueprint);
 
 
 
@@ -220,6 +333,10 @@ namespace JanSordid::SDL_Example
 
     void BeasthoodState::Destroy()
     {
+        SDL_DestroyTexture(forestLocationIconTexture);
+
+        forestLocationIconTexture = nullptr;
+
         Base::Destroy();
     }
 
@@ -258,15 +375,98 @@ namespace JanSordid::SDL_Example
     void BeasthoodState::Update( const u64 frame, const u64 totalMSec, const f32 deltaT )
     {
 
+
+        std::cout << "Item: " << character1->GetInventory().back()->GetName();
+        std::cout << "\n";
     }
 
-    void BeasthoodState::Render( const u64 frame, const u64 totalMSec, const f32 deltaT )
-    {
+    void BeasthoodState::Render( const u64 frame, const u64 totalMSec, const f32 deltaT ) {
 
         Point windowSize;
-        SDL_GetWindowSize( window(), &windowSize.x, &windowSize.y );
+        SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);
 
-        const int offsetFromLeft = (int)(30 * _game.scalingFactor());
+        SDL_SetRenderDrawColor(renderer(), 0x7F, 0x00, 0x7F, 0x00);
+        SDL_RenderClear(renderer());
+
+        //set color for connected path lines
+        SDL_SetRenderDrawColor(renderer(), 0x00, 0x7F, 0x00, 0x00);
+
+        for (const auto &e: locationManager.GetAllItems()) {
+            //render the locations
+           // renderFromSpritesheet(e->GetMapSlot()->rect, forestLocationIconTexture);
+
+
+            if (e->fog_of_war) {
+                //find the relevant location textures using LocationID enum
+                auto it = locationTextureMap.find(e->GetLocationID());
+                if (it != locationTextureMap.end()) {
+                    SDL_Texture *icon = it->second.iconTexture;
+                    SDL_Texture *name = it->second.nameTexture;
+
+                    renderFromSpritesheet(e->GetMapSlot()->rect, icon);
+                    renderText(e->GetMapSlot()->rect,name);
+
+                    /*
+        switch (e->GetLocationID()) {
+            case LocationID::Forest:
+                renderFromSpritesheet(e->GetMapSlot()->rect, forestLocationIconTexture);
+                renderText(e->GetMapSlot()->rect,forestNameTexture);break;
+                    case LocationID::Church:
+                        // Handle Church
+                        break;
+                    case LocationID::River:
+                        // Handle River
+                        break;
+                    case LocationID::Smith:
+                        // Handle Smith
+                        break;
+                    case LocationID::Windmill:
+                        // Handle Windmill
+                        break;
+                    case LocationID::Crossroads:
+                        // Handle Crossroads
+                        break;
+                    case LocationID::Cave:
+                        // Handle Cave
+                        break;
+                    case LocationID::Monastery:
+                        // Handle Monastery
+                        break;
+                    case LocationID::Farm:
+                        // Handle Farm
+                        break;
+                    case LocationID::Clearing:
+                        // Handle Clearing
+                        break;
+                    case LocationID::Townhall:
+                        // Handle Townhall
+                        break;
+                    case LocationID::Thicket:
+                        // Handle Thicket
+                        break;
+                    case LocationID::UNASSIGNED:
+                        // Handle UNASSIGNED
+                        break;
+                    default:
+                        // Handle unknown cases
+                        break;
+                }
+*/
+                }
+                if (e->quest_marker) {}
+
+
+                //render connections
+                for (auto c: e->GetActiveConnections()) {
+                    SDL_RenderDrawLine(renderer(), e->GetMapSlot()->position.x, e->GetMapSlot()->position.y,
+                                       map.GetSlotByID(c)->position.x, map.GetSlotByID(c)->position.y);
+                }
+            }
+
+
+
+            // SDL_RenderPresent( renderer() );
+
 /*
         // Prepare the text as Texture
         if( blendedText == nullptr )
@@ -288,7 +488,7 @@ namespace JanSordid::SDL_Example
             int access;
             SDL_QueryTexture( blendedText, &fmt, &access, &blendedTextSize.x, &blendedTextSize.y );
         }
-        */
+
 
         // Draw the text on top of the plasma effect
         {
@@ -311,8 +511,13 @@ namespace JanSordid::SDL_Example
             SDL_SetTextureColorMod( blendedText, 255, 255, 255 );
             const Rect dst_rect = p + Rect{ 0, 0, blendedTextSize.x, blendedTextSize.y };
             SDL_RenderCopy( renderer(), blendedText, EntireRect, &dst_rect );
+
+
+        }
+        */
         }
     }
+
 
 
 
@@ -370,6 +575,44 @@ Texture* BeasthoodState::loadFromFile(const std::string& path){
 
     return newTexture;
 }
+//outputs a texture of the input text. Should be saved in a texture *
+Texture * BeasthoodState::textToTexture( const char * text) {
+
+    Point windowSize;
+    SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);
+
+    Texture *newTexture = nullptr;
+
+    Surface *surf = TTF_RenderUTF8_Blended_Wrapped(_font, text, white, windowSize.x - 2 * _p.x);
+    newTexture = SDL_CreateTextureFromSurface(renderer(), surf);
+        if( !newTexture  )
+        {
+            printf( "Unable to create texture! SDL Error: %s\n", SDL_GetError() );
+        }
+    SDL_FreeSurface(surf);
+
+    return newTexture;
+}
+
+//renders text and adds a shadow as in intro state
+void BeasthoodState::renderText(Rect values, SDL_Texture* t){
+
+    u32 fmt;
+    int access;
+    SDL_QueryTexture(t, &fmt, &access, &_blendedTextSize.x, &_blendedTextSize.y);
+
+    SDL_SetTextureColorMod(t, outlineColor.r, outlineColor.g, outlineColor.b );
+    for( const Point & offset : HSNR64::ShadowOffset::Rhombus )
+    {
+        const Rect dst_rect = Rect{ values.x, values.y -10, _blendedTextSize.x, _blendedTextSize.y } + offset;
+        SDL_RenderCopy(renderer(), t, EntireRect, &dst_rect );
+    }
+    const Color & color = HSNR64::Palette( _colorIndex );
+    SDL_SetTextureColorMod(t, color.r, color.g, color.b );
+    const Rect dst_rect = { values.x,values.y -10, _blendedTextSize.x, _blendedTextSize.y };
+    SDL_RenderCopy(renderer(), t, EntireRect, &dst_rect );
+
+    }
 
 
 

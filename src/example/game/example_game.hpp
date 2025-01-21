@@ -10,6 +10,8 @@
 #include "map.h"
 #include "ability_manager.h"
 #include "item_manager.h"
+#include "location_manager.h"
+#include "character.h"
 
 namespace JanSordid::SDL_Example
 {
@@ -267,11 +269,62 @@ namespace JanSordid::SDL_Example
         using Base = MyGameState;
 
     protected:
+
+        ItemManager itemManager;
+        Map map;
+        AbilityManager abilityManager;
+        BlueprintManager blueprintManager;
+        LocationManager locationManager;
+        Character* character1;
+
+     //   std::vector<Location> locations;
         Font    * font              = nullptr;
+        Owned<Font>    _font        = nullptr;
+
+        Owned<Texture> _blendedText = nullptr;
         Texture * blendedText       = nullptr;
+        Texture * forestLocationIconTexture = nullptr;
+
+        Texture * forestNameTexture = nullptr;
+        Texture *  churchNameTexture = nullptr;
+        Texture *  riverNameTexture = nullptr;
+        Texture *   smithNameTexture = nullptr;
+        Texture *  windmillNameTexture = nullptr;
+        Texture *   crossroadsNameTexture = nullptr;
+        Texture *  caveNameTexture = nullptr;
+        Texture *  monasteryNameTexture = nullptr;
+        Texture *  farmNameTexture = nullptr;
+        Texture *   clearingNameTexture = nullptr;
+        Texture *  townhallNameTexture = nullptr;
+        Texture *   thicketNameTexture = nullptr;
+        Texture *  unassignedNameTexture = nullptr;
+
+
+        struct LocationTextures {
+            SDL_Texture* iconTexture = nullptr;
+            SDL_Texture* nameTexture = nullptr;
+        };
+
+        std::unordered_map<LocationID, LocationTextures> locationTextureMap;
+
+
         Point     blendedTextSize   = { 0, 0 };
-        Surface * plasmaSrf;
-        Texture * plasmaTex;
+
+
+        Point _blendedTextSize = { 0, 0 };
+        u8    _textmode        = 0;
+
+        // Testvars controlled by ImGui
+        Point _p             = { 20, 30 };
+        int   _colorIndex    = 9;
+        bool  _isDarkOutline = true;
+
+        const Color outlineColor = _isDarkOutline
+                                   ? Color {   0,   0,   0, SDL_ALPHA_OPAQUE }
+                                   : Color { 255, 255, 255, SDL_ALPHA_OPAQUE };
+        static constexpr const Color white { 255, 255, 255, SDL_ALPHA_OPAQUE };
+        static constexpr const Color black {   0,   0,   0, SDL_ALPHA_OPAQUE };
+
 
         int brightness = 160;
 
@@ -290,10 +343,7 @@ namespace JanSordid::SDL_Example
         void Render( u64 frame, u64 totalMSec, f32 deltaT ) override;
 
         //added functions for our game
-        ItemManager itemManager;
-        Map map;
-        AbilityManager abilityManager;
-        BlueprintManager blueprintManager;
+
 
         void PopulateBlueprints();
 
@@ -319,6 +369,11 @@ namespace JanSordid::SDL_Example
 
         //helper for SDL_CreateTextureFromSurface. Also applys a color key:(r:0, g:0xFF,b:0xFF) if transparent pixels are ever needed
         Texture* loadFromFile(const std::string& path);
+
+        Texture *textToTexture(const char *text);
+
+        void renderText(Rect values, SDL_Texture *t);
+
     };
 
 }
