@@ -12,6 +12,8 @@
 #include "item_manager.h"
 #include "location_manager.h"
 #include "character.h"
+#include "encounter.h"
+#include "skillCheckEngine.h"
 
 namespace JanSordid::SDL_Example
 {
@@ -308,10 +310,21 @@ namespace JanSordid::SDL_Example
 
         std::unordered_map<LocationID, LocationTextures> locationTextureMap;
 
+        //skillengine
+        ///TODO refactor ALL OF THIS this into encounterManager
+        DialoguePhase dialoguePhase;
+        SkillChallengeEngine ske;
+        Encounter CurrentEncounter;
+        bool bInDialogue = false;
+        bool bNeedInput = false;
+        int CurrentInput = -1;
+        int CurrentScene = 0;
+        //SceneOption ChosenOption;
+        int ChosenOption;
+        Character *currentCharacter;
+
 
         Point     blendedTextSize   = { 0, 0 };
-
-
         Point _blendedTextSize = { 0, 0 };
         u8    _textmode        = 0;
 
@@ -376,6 +389,16 @@ namespace JanSordid::SDL_Example
         void renderText(Rect values, SDL_Texture *t);
 
         bool IsMouseInsideRect(const SDL_Rect &rect, int mouseX, int mouseY);
+
+
+        /// TODO refactor all of these
+        void iterateOverOutcomes(const std::vector<std::tuple<ExecuteFlags, int8_t>> &outcomes);
+
+        void updateDialogue();
+
+        void renderDicerollAnimation(SkillChallengeEngine &ske);
+
+        void renderFateDieAnimation(const SkillChallengeEngine &ske);
     };
 
 }

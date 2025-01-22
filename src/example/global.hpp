@@ -12,6 +12,18 @@ using namespace JanSordid::Core;
 
 
 enum StatNames { SPEED, SNEAK, FIGHT, WILLPOWER, KNOWLEDGE, LUCK };
+
+/*
+std::unordered_map<StatNames, std::string> StatNamesStringMap //can likely be done more elegantly?
+        {
+                {StatNames::SPEED, "Speed"},
+                {StatNames::SNEAK, "Sneak"},
+                {StatNames::FIGHT, "Fight"},
+                {StatNames:WILLPOWER, "Willpower"},
+                {StatNames::KNOWLEDGE, "Knowledge"},
+                {StatNames::LUCK, "Luck"}
+        };
+        */
 enum class ItemName {Halbert,Torch,Tome};
 enum class ItemType {Weapon,Magic,Unique};
 enum class LocationID {

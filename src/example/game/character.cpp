@@ -86,3 +86,13 @@ void Character::CompleteQuest(QuestID quest_id) {
     quest_log.erase(std::remove_if(quest_log.begin(), quest_log.end(),
                                    [quest_id](const QuestID q) { return q == quest_id; }), quest_log.end());
 }
+
+
+void Character::AdjustHealth(int amount) {
+    health = std::max(0, std::min(base_health, health + amount));
+}
+
+void Character::SpendFate()
+{
+    fate_points--;
+}
