@@ -24,7 +24,7 @@ enum class DialoguePhase {
 
 // Structs for options, scenes, and encounters
 struct SceneOption {
-    std::string text;
+    const char * text;
     bool isSkillCheck;
     StatNames skill;
     int difficulty;
@@ -39,7 +39,7 @@ struct SceneOption {
 };
 
 struct Scene {
-    std::string sceneText;
+    const char *sceneText;
     std::vector<SceneOption> options; // Ensure at least one option exists.
 
     bool validate() const {

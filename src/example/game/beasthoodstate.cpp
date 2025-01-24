@@ -459,6 +459,7 @@ namespace JanSordid::SDL_Example {
     }
 
     bool BeasthoodState::Input() {
+
         /*
         // Is not supressed during ImGui input
         const u8 * key_array = SDL_GetKeyboardState( nullptr );
@@ -710,12 +711,13 @@ namespace JanSordid::SDL_Example {
                     renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
                 }
             }
-
         }
 
         if (Phase == GamePhases::ENCOUNTER) {
 
             if (eTracker.szene != 255) {
+                Texture * sceneText = textToTexture(eTracker.activeEncounter->scenes[eTracker.szene].sceneText);
+                renderText(currentCharacter->GetRect(),sceneText);
 
                 switch (eTracker.diaPhase) {
                     case DialoguePhase::Scene:
@@ -782,8 +784,7 @@ namespace JanSordid::SDL_Example {
     }
 
 //Version using a SDL_Rect to pull values from. Added for utility and because everything should have a Rect
-    void
-    BeasthoodState::renderFromSpritesheet(Rect values, SDL_Texture *t, SDL_Rect *clip, double angle, SDL_Point *center,
+    void BeasthoodState::renderFromSpritesheet(Rect values, SDL_Texture *t, SDL_Rect *clip, double angle, SDL_Point *center,
                                           SDL_RendererFlip flip, bool useClipSize) {
         SDL_Rect renderQuad = {values.x, values.y, values.w, values.h};
 
