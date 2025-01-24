@@ -1,5 +1,4 @@
-#ifndef ITEM_H
-#define ITEM_H
+#pragma once
 
 #include "../global.hpp"
 #include "ability.h" // For the ability pointer
@@ -37,5 +36,3 @@ private:
     Stats stats;
     Ability* ability = nullptr; // Pointer to an associated ability
 };
-
-#endif // ITEM_H

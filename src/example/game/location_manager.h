@@ -1,5 +1,5 @@
 #pragma once
-
+#include "../global.hpp"
 #include "location.h"
 #include <vector>
 #include <memory>
@@ -19,8 +19,16 @@ public:
         return nullptr; // Return nullptr if not found
     }
 
-    const std::vector<std::unique_ptr<Location>>& GetAllItems() const {
+    [[nodiscard]] const std::vector<std::unique_ptr<Location>>& GetAllItems() const {
         return locations;
+    }
+
+    EncounterID GetEncounterID(LocationID lID) {
+
+      if(!GetItem(lID)->related_events.empty())
+      {
+          return GetItem(lID)->related_events.back();
+      }else {std::cerr << "No Event in Vector ERROR";}
     }
 
 private:

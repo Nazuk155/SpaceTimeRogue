@@ -19,7 +19,7 @@ public:
 
     CharacterBlueprint(const std::string& name, int base_stamina, int base_sanity,
                        Stats base_stats,Stats base_stats_boundary, int focus, Ability* ability,
-                       const std::string& fate_condition, const std::vector<Item*> items);
+                       const std::string& fate_condition, std::vector<Item*> items);
 
     // character_blueprint.cpp (or equivalent .cpp file)
 

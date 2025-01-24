@@ -5,14 +5,18 @@
 #pragma once
 #include "../global.hpp"
 #include "character.h"
+#include "diceRoller.h"
 
 
 
 class SkillChallengeEngine
-{   Character* currentCharacter;   //will likely need pointer? or split WP spending and dice adding responsibility
+{
+    Character * currentCharacter;
+
+    //will likely need pointer? or split WP spending and dice adding responsibility
     //todo add character into init + CONSTRUCTOR
 
-
+    DiceRoller diceRoller;
     StatNames currentSkill = StatNames::SNEAK;//todo
 
 
@@ -107,22 +111,21 @@ public:
     {
         currentRolls.clear();
         currentSuccesses = 0;
-        std::random_device rd;  // a seed source for the random number engine
-        std::mt19937 seed(rd()); // mersenne_twister_engine seeded with rd()  todo move out of function
-        std::uniform_int_distribution<> dice(1, 6);
+
         //do rolls, count successes
         fmt::println("Testing: {}",currentSkillName());
         fmt::println("Current value {}", currentSkillValue());
-        for(int i = 0; i < currentSkillValue()+currentModifier;i++)
-        {
-            uint8_t result = dice(seed);
+
             //fmt::print("{} ", result); //todo to render -> figure out communication / step flags
-            currentRolls.push_back(result);
+            currentRolls = diceRoller.rollMultiple(currentSkillValue()+currentModifier);
             //std::cout << result << " ";
-            if(result > 4)
-                currentSuccesses++;
-            fmt::println("loop");
-        }
+            for(auto e : currentRolls){
+                if(e > 4) {
+                    currentSuccesses++;
+                }
+            }
+
+            fmt::println("Rolled dice");
 
         if (currentSuccesses >= currentDifficulty)
             return true;
@@ -130,13 +133,9 @@ public:
     }
     bool addFateDice()
     {
-        //todo add safety?
-        std::random_device rd;  // a seed source for the random number engine
-        std::mt19937 seed(rd()); // mersenne_twister_engine seeded with rd()  todo move out of function
-        std::uniform_int_distribution<> dice(1, 6);
-        //do rolls, count successes
 
-        uint8_t result = dice(seed);
+
+        uint8_t result = diceRoller.rollDice();
         fmt::println("{} ", result);
         currentRolls.push_back(result);
 

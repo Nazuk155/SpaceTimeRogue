@@ -12,12 +12,15 @@ namespace JanSordid::SDL_Example
 		: Base( "Example SDL Game", -1.0f, Point { 1920, 1080 }, !doBenchmark )
 	//	: Base( "Example SDL Game", 1.0f, Point { 1280, 960 }, !doBenchmark )
 	{
+
 		AddStates<
-			IntroState,
-			PlasmaState,
-			SortState,
-			CameraState,
-			ShooterState,
+                /*
+                 * IntroState,
+                    PlasmaState,
+                    SortState,
+                    CameraState,
+                    ShooterState,
+                 */
             BeasthoodState>( *this );
 
 		// Set initial State
@@ -33,7 +36,7 @@ namespace JanSordid::SDL_Example
 		if( Base::HandleEvent( event ) )
 			return true;
 
-		switch( event.type )
+		/*switch( event.type )
 		{
 			case SDL_KEYDOWN:
 			{
@@ -81,6 +84,7 @@ namespace JanSordid::SDL_Example
 			default:
 				break;
 		}
+		 */
 
 		return false;
 	}

@@ -44,7 +44,7 @@ public:
     Character(const std::string& name, int base_stamina, int base_sanity, Stats base_stats, Stats base_stats_boundary,
               Ability* ability, int focus, const std::string& fate_condition);
 
-    Character(const CharacterBlueprint& blueprint);
+    explicit Character(const CharacterBlueprint& blueprint);
 
     // Getters
     const std::string& GetName() const;

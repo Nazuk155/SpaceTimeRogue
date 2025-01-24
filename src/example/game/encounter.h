@@ -1,14 +1,14 @@
-//
-// Created by Prince of Brass on 20/01/2025.
-//
+/// Created by Prince of Brass on 20/01/2025
 #pragma once
 #include "../global.hpp"
 
+/// TODO rip out the testing code and put encounters into an EncounterManager,
+/// split SkillCheckEngine into fight and skill checks as well as a separate dice roller.
 
-///TODO rip out the testing code and put encounters into a encounter manager, split skillcheckengine into fight and skillchecks as well as a seperate dice roller
-struct SceneOption;
-enum class ExecuteFlags
-{
+
+
+// Enumerations for various flags and phases
+enum class ExecuteFlags {
     Wound,
     SanityLoss,
     Heal,
@@ -16,41 +16,49 @@ enum class ExecuteFlags
     GainItem
 };
 
-enum class DialoguePhase{
+enum class DialoguePhase {
     Scene,
     DieRoll,
     FateReroll
-
 };
-struct SceneOption
-{
-    std::string Text;
 
-    bool bIsSkillCheck;
+// Structs for options, scenes, and encounters
+struct SceneOption {
+    std::string text;
+    bool isSkillCheck;
     StatNames skill;
     int difficulty;
-    std::vector<std::tuple<ExecuteFlags,int8_t >> SuccessOutcomes;
-    std::vector<std::tuple<ExecuteFlags,int8_t >> FailureOutcomes;
+    std::vector<std::tuple<ExecuteFlags, int8_t>> successOutcomes;
+    std::vector<std::tuple<ExecuteFlags, int8_t>> failureOutcomes;
+    int jumpTargetSuccess;
+    int jumpTargetFail;
+    Vector<ItemName> rewardItemIDs;
+    Vector<ItemName> failureItemIDs;
 
-    int JumpTargetSuccess;
-    int JumpTargetFail;
 
 };
-struct Scene{
 
-//Background
-//compostion, characters, objects... todo
-    std::string SceneText;
-    std::vector<SceneOption> Options; //todo make check for at least 1!!
+struct Scene {
+    std::string sceneText;
+    std::vector<SceneOption> options; // Ensure at least one option exists.
 
+    bool validate() const {
+        return !options.empty();
+    }
 };
-struct Encounter
-{
 
-    //id todo
-    //EncounterType...
+struct Encounter {
+    EncounterID id; // enum with all encounter names in global
+    EncounterTypeID type; // enum for encounter types in global
+    std::vector<Scene> scenes;
+    DialoguePhase currentDialoguePhase;
 
-
-    std::vector<Scene> Scenes;
-
+    bool validate() const {
+        for (const auto& scene : scenes) {
+            if (!scene.validate()) {
+                return false;
+            }
+        }
+        return true;
+    }
 };

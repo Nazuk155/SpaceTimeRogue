@@ -10,6 +10,14 @@
 
 using namespace JanSordid::Core;
 
+enum class GamePhases
+        {
+    UPKEEP,
+    MOVEMENT,
+    ENCOUNTER,
+    DISASTER
+        };
+
 
 enum StatNames { SPEED, SNEAK, FIGHT, WILLPOWER, KNOWLEDGE, LUCK };
 
@@ -24,6 +32,20 @@ std::unordered_map<StatNames, std::string> StatNamesStringMap //can likely be do
                 {StatNames::LUCK, "Luck"}
         };
         */
+enum class EncounterID{
+    Forest_Thievery,
+    Generic_FindSurvivor,
+    Church_HolyWaterConversation
+    //use recognizable names
+};
+enum class EncounterTypeID{
+    Tutorial,
+    Fight,
+    Trade,
+    Trap,
+    Unique,
+    //etc add as needed
+};
 enum class ItemName {Halbert,Torch,Tome};
 enum class ItemType {Weapon,Magic,Unique};
 enum class LocationID {

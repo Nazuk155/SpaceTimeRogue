@@ -19,41 +19,10 @@
 
 
 // TODO item class as well as character ability and fate refill then do events and event manager
-void iterateOverOutcomes(const std::vector<std::tuple<ExecuteFlags, int8_t>> &outcomes);
 
 namespace JanSordid::SDL_Example {
 
-    Encounter FirstEncounter{
-            {{"Scene 0 \n This is a test scene. You may pay in blood to pass, or try convincing whatever is in front of you.",
-              {
-                      {"MoveTo 1 - Pay in blood", false, StatNames::FIGHT, 0, {{ExecuteFlags::Wound, 3}}, {}, 1, -1},
-                      {"MoveTo 2 Skillcheck", true, StatNames::FIGHT, 2, {{ExecuteFlags::RegainSan, 1}},
-                       {{ExecuteFlags::Wound, 3}}, 2, 3}
-              }
-             },
-             {"Scene 1",
-              {
-                      {"Leave", false, StatNames::FIGHT, 0, {}, {}, 255, 255},
-                      {"Retry", false, StatNames::FIGHT, 0, {}, {}, 0, 255}
-              }
-             },
-             {"Scene 2 - You succeded",
-              {
-                      {"Leave", false, StatNames::FIGHT, 0, {}, {}, 255, 255}, //todo make leave premade
-                      {"Retry", false, StatNames::FIGHT, 0, {}, {}, 0, 255}
-              }
 
-             },
-             {"Scene 3 - you failed and injured yourself",
-              {
-                      {"Retry", false, StatNames::FIGHT, 0, {{ExecuteFlags::Wound, 1}}, {}, 0,
-                       255} //todo make leave premade
-              }
-
-             }
-
-            }
-    };
 
     void BeasthoodState::Init() {
         using std::string;
@@ -358,12 +327,15 @@ namespace JanSordid::SDL_Example {
         character1 = new Character(*landsknechtBlueprint);
 
 
+        PopulateEventManager();
+        PopulateLocationEvents();
+
 
         // CurrentEncounter = e;
 
 
-        dialoguePhase = DialoguePhase::Scene;
-        CurrentEncounter = FirstEncounter;
+       // dialoguePhase = DialoguePhase::Scene;
+       // CurrentEncounter = FirstEncounter;
         character1->RefillFatePoints();
         currentCharacter = character1;
 
@@ -372,8 +344,6 @@ namespace JanSordid::SDL_Example {
         fmt::println("Fate available: {}",
                      character1->GetFatePoints()); //todo 0 fate dialogue makes no sense, prints options that should not be printed
         std::cout.flush();
-
-        bInDialogue = true;
 
 
 
@@ -395,12 +365,18 @@ namespace JanSordid::SDL_Example {
 
     bool BeasthoodState::HandleEvent(const Event &event) {
 
-        if (!bInDialogue) {
-        if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
-            int mouseX, mouseY;
-            SDL_GetMouseState(&mouseX, &mouseY);
 
-
+        if (Phase == GamePhases::MOVEMENT) {
+            if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_SPACE:
+                        endMovementConfirmation = true;
+                        break;
+                }
+            }
+            if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
+                int mouseX, mouseY;
+                SDL_GetMouseState(&mouseX, &mouseY);
                 for (auto e: map.slots) {
                     if (IsMouseInsideRect(e.rect, mouseX, mouseY)) {
                         if (event.type == SDL_MOUSEMOTION) {
@@ -408,18 +384,20 @@ namespace JanSordid::SDL_Example {
                             std::cout.flush();
 
                         } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-                            //mausklick reagiert nur wenn die location einen pfad zum aktuellen standort des characters hat
-                            for (auto c: e.connections) {
-                                //durchsuchen die aktiven connections der aktuellen node nach einam pfad zum character
-                                if (character1->GetCurrentLocationID() == map.GetSlotByID(c.first)->location_id &&
-                                    c.second == true) {
-                                    std::cout << "Mouse clicked inside the rectangle.\n";
-                                    //setzen location vom charakter und pos auf das aktuelle e da dies die node ist die gecklickt wurde
-                                    character1->SetCurrentLocation(e.location_id);
-                                    character1->SetPos(e.rect);
+                            if (movementPoints > 0) {
+                                //mausklick reagiert nur wenn die location einen pfad zum aktuellen standort des characters hat
+                                for (auto c: e.connections) {
+                                    //durchsuchen die aktiven connections der aktuellen node nach einam pfad zum character
+                                    if (character1->GetCurrentLocationID() == map.GetSlotByID(c.first)->location_id &&
+                                        c.second == true) {
+                                        std::cout << "Mouse clicked inside the rectangle.\n";
+                                        //setzen location vom charakter und pos auf das aktuelle e da dies die node ist die gecklickt wurde
+                                        moveTarget = e.location_id;
+                                        playerMoved = true;
 
 
-                                    std::cout.flush();
+                                        std::cout.flush();
+                                    }
                                 }
 
                             }
@@ -435,16 +413,47 @@ namespace JanSordid::SDL_Example {
             }
         }
 
+        if (Phase == GamePhases::ENCOUNTER) {
+
+            if (!eTracker.chooseFateReroll && awaitingInput) {
+                if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                    switch (event.key.keysym.sym) {
+                        case SDLK_SPACE:
+                            break;
+                        case SDLK_1:
+                            eTracker.selectedOption = 0;
+                            awaitingInput = false;
+                            break;
+                        case SDLK_2:
+                            eTracker.selectedOption = 1;
+                            awaitingInput = false;
+                            break;
+                        case SDLK_3:
+                            eTracker.selectedOption = 2;
+                            awaitingInput = false;
+                            break;
 
 
-        /*
-        switch( event.type )
-        {
-            case SDL_MOUSEWHEEL:
-                brightness += event.wheel.y * 3;
-                return true;
+                    }
+                }
+            } else {
+                if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                    switch (event.key.keysym.sym) {
+                        case SDLK_SPACE:
+                            break;
+                        case SDLK_1:
+                            eTracker.fateRerollChoice = 0;
+                            eTracker.diaPhase = DialoguePhase::FateReroll;
+                            break;
+                        case SDLK_2:
+                            eTracker.fateRerollChoice = 1;
+                            break;
+
+
+                    }
+                }
+            }
         }
-*/
         return false;
 
     }
@@ -463,29 +472,154 @@ namespace JanSordid::SDL_Example {
         }
 
 */
-        if (bNeedInput) {
-            int n;
-            std::cin >> n;
-            CurrentInput = n;
-        }
         return false;
 
     }
 
     void BeasthoodState::Update(const u64 frame, const u64 totalMSec, const f32 deltaT) {
-        if (character1->GetCurrentLocationID() == LocationID::UNASSIGNED) {
-            character1->SetCurrentLocation(LocationID::Forest);
-            character1->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->rect);
+
+        if (Phase == GamePhases::UPKEEP) {
+
+            //place character somewhere if not placed
+            if (character1->GetCurrentLocationID() == LocationID::UNASSIGNED) {
+                character1->SetCurrentLocation(LocationID::Forest);
+                character1->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->rect);
+            }
+
+            movementPoints = currentCharacter->GetCurrentStats().GetStat(SPEED);
+            Phase = GamePhases::MOVEMENT;
         }
 
-        if(bInDialogue)
-        {
-            updateDialogue();
+
+        if (Phase == GamePhases::MOVEMENT) {
+
+            if (movementPoints > 0) {
+                if (playerMoved) {
+                    character1->SetCurrentLocation(moveTarget);
+                    character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->rect);
+                    movementPoints--;
+                }
+            }
+            if(movementPoints == 0 || endMovementConfirmation) {
+                Phase = GamePhases::ENCOUNTER;
+                endMovementConfirmation = false;
+                awaitingInput = true;
+                playerMoved = false;
+
+                eTracker.encounterID = locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID());
+                eTracker.activeEncounter = encounterManager.getEncounter(eTracker.encounterID);
+                eTracker.diaPhase = DialoguePhase::Scene;
+            }
         }
+        //movement on map, then trigger event on player location
+        if (Phase == GamePhases::ENCOUNTER) {
+            //show event text and options on screen, then wait for viable input from Beasthoodstate::input
+
+
+            //this variable is set when the player has to choose to reroll with his fate points
+            if (!eTracker.chooseFateReroll) {
+                //255 denotes a finished event
+                if (eTracker.szene != 255) {
+                    //wait for player input after options of the scene are displayed
+                    if (!awaitingInput) {
+                        //check if the input is viable within the options provided
+                        if (eTracker.selectedOption <=
+                            eTracker.activeEncounter->scenes[eTracker.szene].options.size()-1 && eTracker.selectedOption != -1) {
+                            //resolve skillcheck if the option triggers one
+                            if (eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].isSkillCheck) {
+                                ske.setDifficulty(
+                                        eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].difficulty);
+                                ske.setModifier(0); //todo figure out what gives a modifier? Map Aura? Temporary Buffs?
+                                ske.setSkill(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].skill);
+                                //if the skillcheck is not successful we ask if the player wants to spend fate
+                                if (!ske.checkSkill()) {
+                                    eTracker.diaPhase = DialoguePhase::DieRoll;
+                                        awaitingInput = true;
+                                        eTracker.chooseFateReroll = true;
+                                        eTracker.alreadyDisplayedText = false;
+                                }else{
+                                    //if successfull we resolve the outcome and set the next scene as well as showing the rolls
+                                    eTracker.diaPhase = DialoguePhase::DieRoll;
+                                    encounterManager.iterateOverOutcomes(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
+                                                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
+                                                                         *currentCharacter);
+                                    eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
+                                    eTracker.selectedOption = -1;
+                                    eTracker.alreadyDisplayedText = false;
+                                    awaitingInput = true;
+
+                                }
+                            }else{
+                                ///TODO add alternative to skillchecks in encounter. Check for item or quest progresss for example
+                                encounterManager.iterateOverOutcomes(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
+                                                                     eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
+                                                                     *currentCharacter);
+                                eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
+                                eTracker.selectedOption = -1;
+                                eTracker.alreadyDisplayedText = false;
+                                awaitingInput = true;
+                            }
+                        }else{if(eTracker.selectedOption != -1){std::cerr << "Selected Input not viable! Choose from displayed options!" << "\n";eTracker.selectedOption = -1;awaitingInput = true;}}
+                    }
+
+                } else {
+                    //if we hit a 255 jump we reset the encounterTracker and activate the next Game Phase
+                    eTracker.szene = 0;
+                    awaitingInput = false;
+                    eTracker.diaPhase = DialoguePhase::Scene;
+
+                    Phase = GamePhases::DISASTER;
+                    //continue with next phase
+                }
+            }else{
+                if(eTracker.fateRerollChoice == 0 && currentCharacter->GetFatePoints() > 0){
+                    currentCharacter->SpendFate();
+                    if(ske.addFateDice()){
+                        encounterManager.iterateOverOutcomes(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
+                                                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
+                                                             *currentCharacter);
+                        eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
+                        eTracker.alreadyDisplayedText = false;
+                        eTracker.chooseFateReroll = false;
+                        eTracker.fateRerollChoice = -1;
+                        eTracker.diaPhase = DialoguePhase::Scene;
+                        awaitingInput = true;
+                    }else{
+                        if (currentCharacter->GetFatePoints() > 0) {
+                            eTracker.diaPhase = DialoguePhase::DieRoll;
+                            eTracker.alreadyDisplayedText = false;
+                            eTracker.fateRerollChoice = -1;
+                        }
+
+                    }
+                }
+                if(eTracker.fateRerollChoice == 1 || currentCharacter->GetFatePoints() <= 0) {
+                    encounterManager.iterateOverOutcomes(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureItemIDs,
+                                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureOutcomes,
+                                                         *currentCharacter);
+                    eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetFail;
+                    eTracker.alreadyDisplayedText = false;
+                    eTracker.chooseFateReroll = false;
+                    eTracker.fateRerollChoice = -1;
+                    eTracker.diaPhase = DialoguePhase::Scene;
+                    awaitingInput = true;
+                    eTracker.selectedOption = -1;
+                }
+            }
+
+
+        }
+        if(Phase == GamePhases::DISASTER){
+            std::cout << "DISASTER PHASE REACHED \n";
+            std::cout.flush();
+
+        }
+
 
         // std::cout << "Item: " << character1->GetInventory().back()->GetName();
         // std::cout << "\n";
     }
+
 
     void BeasthoodState::Render(const u64 frame, const u64 totalMSec, const f32 deltaT) {
 
@@ -495,112 +629,130 @@ namespace JanSordid::SDL_Example {
         SDL_SetRenderDrawColor(renderer(), 0x7F, 0x00, 0x7F, 0x00);
         SDL_RenderClear(renderer());
 
-        //set color for connected path lines
-        SDL_SetRenderDrawColor(renderer(), 0x00, 0x7F, 0x00, 0x00);
+        if (Phase == GamePhases::UPKEEP || Phase == GamePhases::MOVEMENT) {
 
-        for (const auto &e: locationManager.GetAllItems()) {
-            //render the locations
-            // renderFromSpritesheet(e->GetMapSlot()->rect, forestLocationIconTexture);
+            //set color for connected path lines
+            SDL_SetRenderDrawColor(renderer(), 0x00, 0x7F, 0x00, 0x00);
+
+            for (const auto &e: locationManager.GetAllItems()) {
+                //render the locations
+                // renderFromSpritesheet(e->GetMapSlot()->rect, forestLocationIconTexture);
 
 
-            if (e->fog_of_war) {
-                //find the relevant location textures using LocationID enum
-                auto it = locationTextureMap.find(e->GetLocationID());
-                if (it != locationTextureMap.end()) {
-                    SDL_Texture *icon = it->second.iconTexture;
-                    SDL_Texture *name = it->second.nameTexture;
+                if (e->fog_of_war) {
+                    //find the relevant location textures using LocationID enum
+                    auto it = locationTextureMap.find(e->GetLocationID());
+                    if (it != locationTextureMap.end()) {
+                        SDL_Texture *icon = it->second.iconTexture;
+                        SDL_Texture *name = it->second.nameTexture;
 
-                    renderFromSpritesheet(e->GetMapSlot()->rect, icon);
-                    renderText(e->GetMapSlot()->rect, name);
+                        renderFromSpritesheet(e->GetMapSlot()->rect, icon);
+                        renderText(e->GetMapSlot()->rect, name);
 
-                    /*
-        switch (e->GetLocationID()) {
-            case LocationID::Forest:
-                renderFromSpritesheet(e->GetMapSlot()->rect, forestLocationIconTexture);
-                renderText(e->GetMapSlot()->rect,forestNameTexture);break;
-                    case LocationID::Church:
-                        // Handle Church
-                        break;
-                    case LocationID::River:
-                        // Handle River
-                        break;
-                    case LocationID::Smith:
-                        // Handle Smith
-                        break;
-                    case LocationID::Windmill:
-                        // Handle Windmill
-                        break;
-                    case LocationID::Crossroads:
-                        // Handle Crossroads
-                        break;
-                    case LocationID::Cave:
-                        // Handle Cave
-                        break;
-                    case LocationID::Monastery:
-                        // Handle Monastery
-                        break;
-                    case LocationID::Farm:
-                        // Handle Farm
-                        break;
-                    case LocationID::Clearing:
-                        // Handle Clearing
-                        break;
-                    case LocationID::Townhall:
-                        // Handle Townhall
-                        break;
-                    case LocationID::Thicket:
-                        // Handle Thicket
-                        break;
-                    case LocationID::UNASSIGNED:
-                        // Handle UNASSIGNED
-                        break;
-                    default:
-                        // Handle unknown cases
-                        break;
+                        /*
+            switch (e->GetLocationID()) {
+                case LocationID::Forest:
+                    renderFromSpritesheet(e->GetMapSlot()->rect, forestLocationIconTexture);
+                    renderText(e->GetMapSlot()->rect,forestNameTexture);break;
+                        case LocationID::Church:
+                            // Handle Church
+                            break;
+                        case LocationID::River:
+                            // Handle River
+                            break;
+                        case LocationID::Smith:
+                            // Handle Smith
+                            break;
+                        case LocationID::Windmill:
+                            // Handle Windmill
+                            break;
+                        case LocationID::Crossroads:
+                            // Handle Crossroads
+                            break;
+                        case LocationID::Cave:
+                            // Handle Cave
+                            break;
+                        case LocationID::Monastery:
+                            // Handle Monastery
+                            break;
+                        case LocationID::Farm:
+                            // Handle Farm
+                            break;
+                        case LocationID::Clearing:
+                            // Handle Clearing
+                            break;
+                        case LocationID::Townhall:
+                            // Handle Townhall
+                            break;
+                        case LocationID::Thicket:
+                            // Handle Thicket
+                            break;
+                        case LocationID::UNASSIGNED:
+                            // Handle UNASSIGNED
+                            break;
+                        default:
+                            // Handle unknown cases
+                            break;
+                    }
+    */
+                    }
+                    if (e->quest_marker) {}
+
+
+                    //render connections
+                    for (auto c: e->GetActiveConnections()) {
+                        SDL_RenderDrawLine(renderer(), e->GetMapSlot()->position.x, e->GetMapSlot()->position.y,
+                                           map.GetSlotByID(c)->position.x, map.GetSlotByID(c)->position.y);
+                    }
                 }
-*/
-                }
-                if (e->quest_marker) {}
-
-
-                //render connections
-                for (auto c: e->GetActiveConnections()) {
-                    SDL_RenderDrawLine(renderer(), e->GetMapSlot()->position.x, e->GetMapSlot()->position.y,
-                                       map.GetSlotByID(c)->position.x, map.GetSlotByID(c)->position.y);
+                //render character icon on map
+                if (character1->GetCurrentLocationID() != LocationID::UNASSIGNED) {
+                    renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
                 }
             }
-            //render character icon on map
-            if (character1->GetCurrentLocationID() != LocationID::UNASSIGNED) {
-                renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
-            }
+
         }
 
-            if(bInDialogue)
-            {
-                switch (dialoguePhase) {
+        if (Phase == GamePhases::ENCOUNTER) {
+
+            if (eTracker.szene != 255) {
+
+                switch (eTracker.diaPhase) {
                     case DialoguePhase::Scene:
-                        std::cout << CurrentEncounter.Scenes[CurrentScene].SceneText << std::endl;
-                        std::cout.flush();
+                        if(!eTracker.alreadyDisplayedText) {
+                            std::cout << eTracker.activeEncounter->scenes[eTracker.szene].sceneText << std::endl;
+                            std::cout.flush();
 
-                        for(const SceneOption& o :  CurrentEncounter.Scenes[CurrentScene].Options) {
-                            if (o.bIsSkillCheck) {
-                                fmt::println("[{}] {}", "Fight", o.Text);
-                                std::cout.flush();
+                            for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
+                                if (o.isSkillCheck) {
+                                    fmt::println("[{}] {}", StatToString(o.skill), o.text);
+                                    std::cout.flush();
 
-                            } else {
-                                fmt::println("{}", o.Text);
-                                std::cout.flush();
+                                } else {
+                                    fmt::println("{}", o.text);
+                                    std::cout.flush();
 
 
+                                }
                             }
+                            eTracker.alreadyDisplayedText = true;
                         }
                         break;
                     case DialoguePhase::DieRoll:
-                        renderDicerollAnimation(ske);
+                        if(!eTracker.alreadyDisplayedText) {
+                            renderDicerollAnimation(ske);
+                            if(ske.getSuccesses() >= ske.getDifficulty()) {
+                                eTracker.diaPhase = DialoguePhase::Scene;
+                            }else{eTracker.alreadyDisplayedText = true;}
+                        }
                         //todo if fail render question
                         break;
                     case DialoguePhase::FateReroll:
-                        renderFateDieAnimation(ske);
+                        if(!eTracker.alreadyDisplayedText) {
+                            renderFateDieAnimation(ske);
+                            eTracker.diaPhase = DialoguePhase::Scene;
+
+                        }
                         break;
 
                 }
@@ -609,55 +761,10 @@ namespace JanSordid::SDL_Example {
 
             // SDL_RenderPresent( renderer() );
 
-/*
-        // Prepare the text as Texture
-        if( blendedText == nullptr )
-        {
-            constexpr const char * text =
-                    "Use mouse-wheel or [DOWN] and [UP] arrow keys\n"
-                    "   to change the brightness and colorization\n"
-                    "                  of the plasma effect!";
-
-            if( blendedText != nullptr )
-                SDL_DestroyTexture( blendedText );
-
-            constexpr const Color white = HSNR64::Palette( HSNR64::NamedColorIndex::White );
-            Surface * surf = TTF_RenderUTF8_Blended_Wrapped( font, text, white, windowSize.x - 2 * offsetFromLeft );
-            blendedText = SDL_CreateTextureFromSurface( renderer(), surf );
-            SDL_FreeSurface( surf );
-
-            u32 fmt;
-            int access;
-            SDL_QueryTexture( blendedText, &fmt, &access, &blendedTextSize.x, &blendedTextSize.y );
-        }
-
-
-        // Draw the text on top of the plasma effect
-        {
-            const Point p {
-                    offsetFromLeft,
-                    windowSize.y - (int)(100 * _game.scalingFactor())
-            };
-
-            const int shadowOffsetFactor = (int)(1.0f*_game.scalingFactor());
-            //const int shadowOffsetFactor = (int)(2.0f*_game.scalingFactor()); // chonky shadow
-
-            // Draw the shadow
-            SDL_SetTextureColorMod( blendedText, 0, 0, 0 );
-            for( const Point & offset : HSNR64::ShadowOffset::Rhombus )
-            {
-                const Rect dst_rect = Rect{ p.x, p.y, blendedTextSize.x, blendedTextSize.y } + (offset * shadowOffsetFactor);
-                SDL_RenderCopy( renderer(), blendedText, EntireRect, &dst_rect );
-            }
-
-            SDL_SetTextureColorMod( blendedText, 255, 255, 255 );
-            const Rect dst_rect = p + Rect{ 0, 0, blendedTextSize.x, blendedTextSize.y };
-            SDL_RenderCopy( renderer(), blendedText, EntireRect, &dst_rect );
-
 
         }
-        */
-        }
+    }
+
 
 
 
@@ -748,6 +855,126 @@ namespace JanSordid::SDL_Example {
 
     }
 
+    void BeasthoodState::PopulateEventManager(){
+        Encounter FirstEncounter{
+                EncounterID::Forest_Thievery, // Replace with the actual EncounterID from your global enums
+                EncounterTypeID::Tutorial,  // Replace with the appropriate type from your global enums
+                {
+                        {
+                                "Scene 0 \n This is a test scene. You may pay in blood to pass, or try convincing whatever is in front of you.",
+                                {
+                                        {
+                                                "MoveTo 1 - Pay in blood",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 3}},
+                                                {},
+                                                1,
+                                                -1,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        },
+                                        {
+                                                "MoveTo 2 - Skillcheck",
+                                                true,
+                                                StatNames::FIGHT,
+                                                2,
+                                                {{ExecuteFlags::RegainSan, 1}},
+                                                {{ExecuteFlags::Wound, 3}},
+                                                2,
+                                                3,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                }
+                        },
+                        {
+                                "Scene 1",
+                                {
+                                        {
+                                                "Leave",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                255,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        },
+                                        {
+                                                "Retry",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                0,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                }
+                        },
+                        {
+                                "Scene 2 - You succeeded",
+                                {
+                                        {
+                                                "Leave",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                255,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        },
+                                        {
+                                                "Retry",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                0,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                }
+                        },
+                        {
+                                "Scene 3 - You failed and injured yourself",
+                                {
+                                        {
+                                                "Retry",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                0,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                }
+                        }
+                },
+                DialoguePhase::Scene // Starting dialogue phase
+        };
+    encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
+    }
+
+    void BeasthoodState::PopulateLocationEvents(){
+
+        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
+    }
+
 
     //input character sheets here, maybe add intro choices to modify these TODO
     //examples on how to fill a character sheet here
@@ -781,142 +1008,6 @@ namespace JanSordid::SDL_Example {
     bool BeasthoodState::IsMouseInsideRect(const SDL_Rect &rect, int mouseX, int mouseY) {
         return mouseX >= rect.x && mouseX < (rect.x + rect.w) &&
                mouseY >= rect.y && mouseY < (rect.y + rect.h);
-    }
-
-
-    void BeasthoodState::iterateOverOutcomes(const std::vector<std::tuple<ExecuteFlags, int8_t>> &outcomes) {
-        for (std::tuple<ExecuteFlags, int8_t> outcome: outcomes) {
-
-            switch (get<0>(outcome)) {
-                case ExecuteFlags::Wound:
-
-                    fmt::print("Debug- Injury");
-                    currentCharacter->AdjustHealth(-get<1>(outcome));
-                    break;
-                case ExecuteFlags::GainItem:
-                    //TODO ITEM SYSTEM
-                    break;
-                case ExecuteFlags::Heal:
-                    currentCharacter->AdjustHealth(get<1>(outcome));
-                    break;
-                case ExecuteFlags::SanityLoss:
-                    currentCharacter->AdjustSanity(-get<1>(outcome)); //todo fix this mess/warning
-                    break;
-                case ExecuteFlags::RegainSan:
-                    currentCharacter->AdjustSanity(get<1>(outcome));
-                    break;
-
-            }
-        }
-    }
-
-    void BeasthoodState::updateDialogue() {
-        switch (dialoguePhase) {
-            case DialoguePhase::Scene:
-                bNeedInput = true;
-                if (bNeedInput && CurrentInput != -1) {
-                    if (CurrentInput <= CurrentEncounter.Scenes[CurrentScene].Options.size()) {
-
-                        ChosenOption = CurrentInput - 1;
-                        if (!CurrentEncounter.Scenes[CurrentScene].Options[CurrentInput - 1].bIsSkillCheck) {
-                            //if Jump Target is escape value TODO define further behavior, construct Combat encounter encoding and Jump
-                            if (CurrentEncounter.Scenes[CurrentScene].Options[CurrentInput - 1].JumpTargetSuccess ==
-                                255)
-                               bool bRunning = false; //TODO this no longer does anything
-                            else
-                                CurrentScene = CurrentEncounter.Scenes[CurrentScene].Options[CurrentInput -
-                                                                                             1].JumpTargetSuccess;
-                        } else {
-
-
-                            //ske.bIsActive=true; todo put flag in other place
-                            ske.setDifficulty(
-                                    CurrentEncounter.Scenes[CurrentScene].Options[CurrentInput - 1].difficulty);
-                            ske.setModifier(0);
-                            ske.setSkill(CurrentEncounter.Scenes[CurrentScene].Options[CurrentInput - 1].skill);
-
-
-                            if (ske.checkSkill()) {//Skillcheck Passed
-                                iterateOverOutcomes(
-                                        CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].SuccessOutcomes);
-                                CurrentScene = CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].JumpTargetSuccess;
-                                bNeedInput = false;
-
-                            } else {
-                                //Not Passed TODO
-                                if (currentCharacter->GetFatePoints() > 0) { // can spend will
-                                    bNeedInput = true;
-                                } else {
-                                    bNeedInput = false;
-                                    iterateOverOutcomes(
-                                            CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].FailureOutcomes);
-                                    CurrentScene = CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].JumpTargetFail;
-                                }
-
-
-                            }
-                            dialoguePhase = DialoguePhase::DieRoll;
-                        }
-
-
-                    }
-
-                    CurrentInput = -1;
-                }
-                break;
-            case DialoguePhase::DieRoll: // misnomer
-                //???
-                if (bNeedInput) {
-                    //if any WP avalkable
-                    switch (CurrentInput) {
-                        case 1: // todo move to reroll phase?
-                            character1->SpendFate();
-                            dialoguePhase = DialoguePhase::FateReroll;
-                            bNeedInput = false;
-                            if (ske.addFateDice()) //todo seems broken
-                            {
-                                //Passed after Fateroll
-                                iterateOverOutcomes(
-                                        CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].SuccessOutcomes);
-                                CurrentScene = CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].JumpTargetSuccess;
-                            } else {
-                                fmt::println("Debug fate fail!");
-                                iterateOverOutcomes(
-                                        CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].FailureOutcomes);
-                                CurrentScene = CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].JumpTargetFail;
-                            }
-
-                            break;
-                        case 2:
-                            //Choose to fail/not roll
-                            iterateOverOutcomes(
-                                    CurrentEncounter.Scenes[CurrentScene].Options[CurrentInput - 1].FailureOutcomes);
-                            CurrentScene = CurrentEncounter.Scenes[CurrentScene].Options[ChosenOption].JumpTargetFail;
-
-                            dialoguePhase = DialoguePhase::Scene;
-                            break;
-                        default:;
-
-
-                    }
-                    CurrentInput = -1;
-
-                } else {
-                    dialoguePhase = DialoguePhase::Scene;
-                    bNeedInput = true;
-                }
-
-
-                break;
-            case DialoguePhase::FateReroll:
-
-
-                dialoguePhase = DialoguePhase::Scene;
-                CurrentInput = -1;
-                bNeedInput = true;
-                break;
-
-        }
     }
 
     //todo placeholder functions
@@ -956,6 +1047,29 @@ namespace JanSordid::SDL_Example {
         else
         {
             fmt::println("No matter your struggle: You failed.");
+        }
+    }
+
+    std::string BeasthoodState::StatToString(StatNames stat)
+    {
+        switch (stat) {
+
+            case StatNames::FIGHT:
+                return "Fight";
+                // return currentCharacter.Combat;
+            case StatNames::SNEAK:
+                return "Sneak";
+                // return currentCharacter.Stealth;
+            case StatNames::SPEED:
+                return "Speed";
+                //return currentCharacter.Speech;
+            case StatNames::WILLPOWER:
+                return "Willpower";
+            case StatNames::KNOWLEDGE:
+                return "Knowledge";
+            case StatNames::LUCK:
+                return "Luck";
+
         }
     }
 }
