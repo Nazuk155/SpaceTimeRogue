@@ -168,6 +168,7 @@ add_executable( sor-example
         src/example/game/skillCheckEngine.h
         src/example/game/encounter_manager.h
         src/example/game/diceRoller.h
+        src/example/game/layout.h
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC

@@ -8,6 +8,7 @@
 
 #include <hsnr64/palette.hpp>
 #include <iostream>
+#include <map>
 #include "ability_manager.h"
 #include "ReduceStaminaLoss_ability.h"
 #include "DrawExtraItem_ability.h"
@@ -16,6 +17,7 @@
 #include "character.h"
 #include "encounter.h"
 #include "skillCheckEngine.h"
+#include "layout.h"
 
 
 // TODO item class as well as character ability and fate refill then do events and event manager
@@ -41,9 +43,23 @@ namespace JanSordid::SDL_Example {
         string forestLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/token_1.png";
         string playerMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/Landsknecht.jpg";
 
+        string playerMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/lk_sprite.png";
+
+        string enemyWereWolfMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/garou_sprite.png";
+        string errorIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/ERROR.png";
+
+        string denseForestBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/dense_forest_test.png";
+        string denseForestFGPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/dense_forest_test_fg.png";
+
         //--------------- load textures from file
         forestLocationIconTexture = loadFromFile(forestLocationIconPath);
         playerMapIconTexture = loadFromFile(playerMapIconPath);
+        playerMainSpite = loadFromFile(playerMainSpritePath);
+        denseForestBG = loadFromFile(denseForestBGPath);
+        denseForestFG = loadFromFile(denseForestFGPath);
+
+        enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
+        errorIMG = loadFromFile(errorIMGPath);
 
 
         //struct
@@ -96,7 +112,7 @@ namespace JanSordid::SDL_Example {
         font = TTF_OpenFont(BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16);
         TTF_SetFontHinting(font, TTF_HINTING_NONE);
 
-        Point windowSize;
+        //todo moved windowsize, check for consequences
         SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);
 
         const Point resolution = windowSize / Scale;
@@ -352,6 +368,13 @@ namespace JanSordid::SDL_Example {
     void BeasthoodState::Destroy() {
         SDL_DestroyTexture(forestLocationIconTexture);
         SDL_DestroyTexture(playerMapIconTexture);
+        SDL_DestroyTexture(playerMainSpite);
+        SDL_DestroyTexture(denseForestBG);
+        SDL_DestroyTexture(denseForestFG);
+        SDL_DestroyTexture(errorIMG);
+
+        SDL_DestroyTexture(enemyWereWolfMainSprite);
+
         for (auto e: locationTextureMap) {
             SDL_DestroyTexture(e.second.iconTexture);
             SDL_DestroyTexture(e.second.nameTexture);
@@ -359,6 +382,11 @@ namespace JanSordid::SDL_Example {
 
         forestLocationIconTexture = nullptr;
         playerMapIconTexture = nullptr;
+        playerMainSpite = nullptr;
+        denseForestBG = nullptr;
+        denseForestFG= nullptr;
+        enemyWereWolfMainSprite = nullptr;
+        errorIMG = nullptr;
 
         Base::Destroy();
     }
@@ -376,7 +404,8 @@ namespace JanSordid::SDL_Example {
             }
             if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
                 int mouseX, mouseY;
-                SDL_GetMouseState(&mouseX, &mouseY);
+                SDL_GetMouseState(&mouseX, &mouseY); //TODO Redundancy
+
                 for (auto e: map.slots) {
                     if (IsMouseInsideRect(e.rect, mouseX, mouseY)) {
                         if (event.type == SDL_MOUSEMOTION) {
@@ -415,7 +444,53 @@ namespace JanSordid::SDL_Example {
 
         if (Phase == GamePhases::ENCOUNTER) {
 
+            //Build Option Rects
+            std::vector<SDL_Rect> OptionVector= {};
+            for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options)
+            {
+                OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
+                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01+OptionVector.size()*EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y),
+                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
+                                        static_cast<int>((EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y)});
+            }
+
+
+            if ( awaitingInput)
+            {
+                if(event.type == SDL_MOUSEMOTION)
+                {
+                    SDL_GetMouseState(&mouseOverX, &mouseOverY); //TODO REDUNDANCY
+                }
+
+            }
+
             if (!eTracker.chooseFateReroll && awaitingInput) {
+
+                if (event.type == SDL_MOUSEBUTTONDOWN)
+                {
+
+                    int mouseX, mouseY;
+                    SDL_Rect button;
+                    SDL_GetMouseState(&mouseX, &mouseY);
+                    fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseX, mouseY);
+                    for(int i = 0;i<OptionVector.size();i++)
+                    {
+                        button = OptionVector[i];
+                        fmt::println("Checking button {}",i);
+                        fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}",button.x,button.y, button.w,button.h);
+                        //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
+                        //SDL_RenderFillRect(renderer(),&button);
+                        //SDL_Delay(150);
+
+                        if(IsMouseInsideRect(button,mouseX,mouseY))
+                        {
+                            fmt::println("Clicked option {}",i);
+                            eTracker.selectedOption = i;
+                            awaitingInput = false;
+                        }
+                    }
+                }
+
                 if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
                     switch (event.key.keysym.sym) {
                         case SDLK_SPACE:
@@ -452,6 +527,34 @@ namespace JanSordid::SDL_Example {
 
                     }
                 }
+                if (event.type == SDL_MOUSEBUTTONDOWN)
+                {
+
+                    int mouseX, mouseY;
+                    SDL_Rect button;
+                    SDL_GetMouseState(&mouseX, &mouseY);
+                    fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseX, mouseY);
+                    for(int i = 0;i<OptionVector.size();i++)
+                    {
+                        button = OptionVector[i];
+                        fmt::println("Checking button {}",i);
+                        fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}",button.x,button.y, button.w,button.h);
+                        //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
+                        //SDL_RenderFillRect(renderer(),&button);
+                        //SDL_Delay(150);
+
+                        if(IsMouseInsideRect(button,mouseX,mouseY))
+                        {
+                            fmt::println("Clicked option {}",i);
+                            if(i == 0)
+                                eTracker.diaPhase = DialoguePhase::FateReroll;
+                            eTracker.fateRerollChoice = i;
+                            awaitingInput = false;
+                        }
+                    }
+                }
+
+
             }
         }
         return false;
@@ -621,11 +724,61 @@ namespace JanSordid::SDL_Example {
         // std::cout << "\n";
     }
 
+    std::map<SceneCompositionSlots,SDL_Point> sceneCompositionTarget //  TODO EXPAND AS NEEDED
+            {
+                    {SceneCompositionSlots::CharacterMain, EncounterLayout.characterMainPoint},
+                    {SceneCompositionSlots::CharacterFront,{EncounterLayout.characterMainPoint.x+10,EncounterLayout.characterMainPoint.y}},
+                    {SceneCompositionSlots::EnemyMain,EncounterLayout.enemyMainPoint},
+                    {SceneCompositionSlots::Enemy_2,{EncounterLayout.enemyMainPoint.x+6,EncounterLayout.enemyMainPoint.y+10}},
+                    {SceneCompositionSlots::Enemy_3,{EncounterLayout.enemyMainPoint.x+2,EncounterLayout.enemyMainPoint.y-5}},
+                    {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint}
+            };
+    void BeasthoodState::RenderSceneComposition(std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>> compositionVector)
+    {
+        SDL_Rect targetRect;
+
+        for(std::tuple<SceneCompositionEntities,SceneCompositionSlots> compElement: compositionVector)
+        {
+            switch(get<0>(compElement))
+            {
+                case SceneCompositionEntities::Character:
+                    targetRect.x = windowSize.x * (sceneCompositionTarget[get<1>(compElement)].x*0.01);
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[SceneCompositionSlots::CharacterMain].y )*0.01-(SpriteData.ScalingvalueLKY*windowSize.y));
+                    targetRect.w = static_cast<int>(SpriteData.ScalingvalueLKX*windowSize.x); // fix res dependence TODO differenciate between different player sprites
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueLKY*windowSize.y);
+                    renderFromSpritesheet(targetRect,playerMainSpite);
+
+                    break;
+                case SceneCompositionEntities::Werewolf:
+
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y));
+                    targetRect.w = SpriteData.ScalingValueGarouX*windowSize.x;
+                    //fmt::println("Garou X: {}", SpriteData.ScalingValueGarouX*windowSize.x);
+                    targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y);
+                    //fmt::println("Garou Y: {} = {} * {} * {}", SpriteData.ScalingValueGarouY*windowSize.y,SpriteData.Garou_IMG.y,SpriteData.ScalingValueGarouY,windowSize.y);
+                    renderFromSpritesheet(targetRect,enemyWereWolfMainSprite);
+
+
+                    break;
+                default:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y));
+                    targetRect.w = SpriteData.ScalingValueGarouX*windowSize.x;
+                    //fmt::println("Garou X: {}", SpriteData.ScalingValueGarouX*windowSize.x);
+                    targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y);
+                    //fmt::println("Garou Y: {} = {} * {} * {}", SpriteData.ScalingValueGarouY*windowSize.y,SpriteData.Garou_IMG.y,SpriteData.ScalingValueGarouY,windowSize.y);
+                    renderFromSpritesheet(targetRect,errorIMG);
+                    fmt::println("Scene Element not yet implemented");
+            }
+
+        }
+    }
 
     void BeasthoodState::Render(const u64 frame, const u64 totalMSec, const f32 deltaT) {
 
-        Point windowSize;
-        SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);
+
+        SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);//TODO WINDOWSIZE HERE - fix redundancy
 
         SDL_SetRenderDrawColor(renderer(), 0x7F, 0x00, 0x7F, 0x00);
         SDL_RenderClear(renderer());
@@ -716,8 +869,55 @@ namespace JanSordid::SDL_Example {
         if (Phase == GamePhases::ENCOUNTER) {
 
             if (eTracker.szene != 255) {
+
+                SDL_SetRenderDrawColor(renderer(),0,0,0,0);
+                SDL_Rect sceneWindow = {0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)};
+                //SDL_RenderFillRect(renderer(),&sceneWindow);
+
+                switch(eTracker.activeEncounter->scenes[eTracker.szene].background)//todo make separate once switch bigger
+                {
+                    case EnvironmentType::DenseForest:
+                    {
+                        renderFromSpritesheet(sceneWindow, denseForestBG);
+                        break;
+                    }
+                    default:SDL_RenderFillRect(renderer(),&sceneWindow);
+                }
+
+                RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector);
+
+                //Render Foreground //todo decouple from bg, if needed?
+                switch(eTracker.activeEncounter->scenes[eTracker.szene].background)
+                {
+                    case EnvironmentType::DenseForest:
+                    {
+                        renderFromSpritesheet(sceneWindow, denseForestFG);
+                        break;
+                    }
+                    default:SDL_RenderFillRect(renderer(),&sceneWindow);
+                }
+
+
+                //Render Text Field Background todo Find a Texture
+                SDL_SetRenderDrawColor(renderer(),13,13,10,0);
+                SDL_Rect txtField = {0,static_cast<int>(windowSize.y*EncounterLayout.DialogueBoxStart.y*0.01),
+                                     static_cast<int>(windowSize.x*EncounterLayout.DialogueBoxEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.DialogueBoxEnd.y*0.01)};
+                SDL_RenderFillRect(renderer(),&txtField);
+                fmt::println("Screensize: x {}, y {}", windowSize.x, windowSize.y);
+
                 Texture * sceneText = textToTexture(eTracker.activeEncounter->scenes[eTracker.szene].sceneText);
-                renderText(currentCharacter->GetRect(),sceneText);
+
+                SDL_Rect DialogueMainField = {static_cast<int>(windowSize.x*EncounterLayout.DialogueMainTextStart.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.DialogueMainTextStart.y*0.01),
+                                              static_cast<int>(windowSize.x*EncounterLayout.DialogueMainTextEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.DialogueMainTextEnd.y*0.01)};
+
+                renderText(DialogueMainField,sceneText);
+                SDL_DestroyTexture(sceneText); //prevent leak
+                sceneText= nullptr;
+
+
+
+                std::vector<SDL_Rect> OptionVector= {};
+
 
                 switch (eTracker.diaPhase) {
                     case DialoguePhase::Scene:
@@ -725,7 +925,13 @@ namespace JanSordid::SDL_Example {
                             std::cout << eTracker.activeEncounter->scenes[eTracker.szene].sceneText << std::endl;
                             std::cout.flush();
 
+
+
                             for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
+
+
+
+
                                 if (o.isSkillCheck) {
                                     fmt::println("[{}] {}", StatToString(o.skill), o.text);
                                     std::cout.flush();
@@ -739,13 +945,119 @@ namespace JanSordid::SDL_Example {
                             }
                             eTracker.alreadyDisplayedText = true;
                         }
+                        for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
+
+                            OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
+                                                    static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01+OptionVector.size()*EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y),
+                                                    static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
+                                                    static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
+                            Texture * optionText;
+                            //renderText(DialogueMainField,optionText);
+
+
+
+                            if (o.isSkillCheck) {
+                                String fullOptionText = "["+StatToString(o.skill)+ "] " + o.text;
+                                optionText = textToTexture(fullOptionText.c_str());
+                                //fmt::println("[{}] {}", StatToString(o.skill), o.text);
+                                //std::cout.flush();
+
+                            } else {
+                                optionText = textToTexture(o.text);
+                                //fmt::println("{}", o.text);
+                                //std::cout.flush();
+
+                            }
+
+                            if(IsMouseInsideRect(OptionVector.back(),mouseOverX,mouseOverY))
+                            {
+                                //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
+                                //SDL_RenderFillRect(renderer(),&OptionVector.back());
+                                renderText(OptionVector.back(),optionText, 10);
+                            }
+                            else
+                            {
+                                //SDL_SetRenderDrawColor(renderer(),0,0,200,0);
+                                //SDL_RenderFillRect(renderer(),&OptionVector.back());
+                                renderText(OptionVector.back(),optionText,7);
+                            }
+
+
+
+                            //fmt::println("OptionVector size {}", OptionVector.size());
+                            SDL_DestroyTexture(optionText); //prevent leak
+                            optionText= nullptr;
+
+                        }
                         break;
                     case DialoguePhase::DieRoll:
                         if(!eTracker.alreadyDisplayedText) {
-                            renderDicerollAnimation(ske);
+                            //renderDicerollAnimation(ske);
                             if(ske.getSuccesses() >= ske.getDifficulty()) {
-                                eTracker.diaPhase = DialoguePhase::Scene;
-                            }else{eTracker.alreadyDisplayedText = true;}
+                                eTracker.diaPhase = DialoguePhase::Scene; //TODO MOVE TO UPDATE?
+                            }else
+                            {
+
+                                //eTracker.alreadyDisplayedText = true;
+
+
+
+                                OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
+                                static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01)*windowSize.y),
+                                static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
+                                static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
+                                OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
+                                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01+EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y),
+                                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
+                                                        static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
+                                Texture * optionTextYes;
+                                Texture * optionTextNo;
+                                    //renderText(DialogueMainField,optionText);
+
+                                optionTextYes = textToTexture("Yes. (-1 WP)");
+                                optionTextNo = textToTexture("No.");
+
+
+
+
+                                if(IsMouseInsideRect(OptionVector[0],mouseOverX,mouseOverY))
+                                {
+                                    SDL_SetRenderDrawColor(renderer(),255,0,0,0);
+                                    SDL_RenderFillRect(renderer(),&OptionVector[0]);
+                                    renderText(OptionVector[0],optionTextYes, 10);
+                                }
+                                else
+                                {
+                                    SDL_SetRenderDrawColor(renderer(),0,0,200,0);
+                                    SDL_RenderFillRect(renderer(),&OptionVector[0]);
+                                    renderText(OptionVector[0],optionTextYes,7);
+                                }
+                                if(IsMouseInsideRect(OptionVector[1],mouseOverX,mouseOverY))
+                                {
+                                    SDL_SetRenderDrawColor(renderer(),255,0,0,0);
+                                    SDL_RenderFillRect(renderer(),&OptionVector[1]);
+                                    renderText(OptionVector[1],optionTextNo, 10);
+                                }
+                                else
+                                {
+                                    SDL_SetRenderDrawColor(renderer(),0,0,200,0);
+                                    SDL_RenderFillRect(renderer(),&OptionVector[1]);
+                                    renderText(OptionVector[1],optionTextNo,7);
+                                }
+
+
+
+                                    //fmt::println("OptionVector size {}", OptionVector.size());
+                                    SDL_DestroyTexture(optionTextYes); //prevent leak
+                                    optionTextYes= nullptr;
+                                    SDL_DestroyTexture(optionTextNo); //prevent leak
+                                    optionTextNo= nullptr;
+
+
+
+
+
+                            }
                         }
                         //todo if fail render question
                         break;
@@ -755,6 +1067,7 @@ namespace JanSordid::SDL_Example {
                             eTracker.diaPhase = DialoguePhase::Scene;
 
                         }
+
                         break;
 
                 }
@@ -846,12 +1159,29 @@ namespace JanSordid::SDL_Example {
 
         SDL_SetTextureColorMod(t, outlineColor.r, outlineColor.g, outlineColor.b);
         for (const Point &offset: HSNR64::ShadowOffset::Rhombus) {
-            const Rect dst_rect = Rect{values.x, values.y - 10, _blendedTextSize.x, _blendedTextSize.y} + offset;
+            const Rect dst_rect = Rect{values.x, values.y + _blendedTextSize.y, _blendedTextSize.x, _blendedTextSize.y} + offset;
             SDL_RenderCopy(renderer(), t, EntireRect, &dst_rect);
         }
         const Color &color = HSNR64::Palette(_colorIndex);
         SDL_SetTextureColorMod(t, color.r, color.g, color.b);
-        const Rect dst_rect = {values.x, values.y - 10, _blendedTextSize.x, _blendedTextSize.y};
+        const Rect dst_rect = {values.x, values.y +_blendedTextSize.y, _blendedTextSize.x, _blendedTextSize.y};
+        SDL_RenderCopy(renderer(), t, EntireRect, &dst_rect);
+
+    }
+    //renders text and adds a shadow as in intro state, with selectable color index
+    void BeasthoodState::renderText(Rect values, SDL_Texture *t, int colorIndex){
+        u32 fmt;
+        int access;
+        SDL_QueryTexture(t, &fmt, &access, &_blendedTextSize.x, &_blendedTextSize.y);
+
+        SDL_SetTextureColorMod(t, outlineColor.r, outlineColor.g, outlineColor.b);
+        for (const Point &offset: HSNR64::ShadowOffset::Rhombus) {
+            const Rect dst_rect = Rect{values.x, values.y + _blendedTextSize.y, _blendedTextSize.x, _blendedTextSize.y} + offset;
+            SDL_RenderCopy(renderer(), t, EntireRect, &dst_rect);
+        }
+        const Color &color = HSNR64::Palette(colorIndex);
+        SDL_SetTextureColorMod(t, color.r, color.g, color.b);
+        const Rect dst_rect = {values.x, values.y +_blendedTextSize.y, _blendedTextSize.x, _blendedTextSize.y};
         SDL_RenderCopy(renderer(), t, EntireRect, &dst_rect);
 
     }
@@ -863,6 +1193,7 @@ namespace JanSordid::SDL_Example {
                 {
                         {
                                 "Scene 0 \n This is a test scene. You may pay in blood to pass, or try convincing whatever is in front of you.",
+                                EnvironmentType::DenseForest,
                                 {
                                         {
                                                 "MoveTo 1 - Pay in blood",
@@ -888,11 +1219,18 @@ namespace JanSordid::SDL_Example {
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
                                         }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::EnemyMain}
+
                                 }
                         },
                         {
                                 "Scene 1",
+                                EnvironmentType::DenseForest,
                                 {
+
                                         {
                                                 "Leave",
                                                 false,
@@ -917,11 +1255,16 @@ namespace JanSordid::SDL_Example {
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
                                         }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}
                                 }
                         },
                         {
                                 "Scene 2 - You succeeded",
+                                EnvironmentType::DenseForest,
                                 {
+
                                         {
                                                 "Leave",
                                                 false,
@@ -946,11 +1289,16 @@ namespace JanSordid::SDL_Example {
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
                                         }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}
                                 }
                         },
                         {
                                 "Scene 3 - You failed and injured yourself",
+                                EnvironmentType::DenseForest,
                                 {
+
                                         {
                                                 "Retry",
                                                 false,
@@ -963,6 +1311,12 @@ namespace JanSordid::SDL_Example {
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
                                         }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
                                 }
                         }
                 },

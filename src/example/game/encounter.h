@@ -5,7 +5,14 @@
 /// TODO rip out the testing code and put encounters into an EncounterManager,
 /// split SkillCheckEngine into fight and skill checks as well as a separate dice roller.
 
-
+enum class EnvironmentType
+{
+    VillageOutskirts,
+    ForestOutskirts,
+    MonasteryPath,
+    DenseForest,
+    CurseForest
+};
 
 // Enumerations for various flags and phases
 enum class ExecuteFlags {
@@ -15,6 +22,8 @@ enum class ExecuteFlags {
     RegainSan,
     GainItem
 };
+
+
 
 enum class DialoguePhase {
     Scene,
@@ -32,15 +41,41 @@ struct SceneOption {
     std::vector<std::tuple<ExecuteFlags, int8_t>> failureOutcomes;
     int jumpTargetSuccess;
     int jumpTargetFail;
-    Vector<ItemName> rewardItemIDs;
+    Vector<ItemName> rewardItemIDs; //TODO seens to be a redundancy
     Vector<ItemName> failureItemIDs;
 
 
 };
+enum class SceneCompositionEntities
+{
+    Character,
+    Wolf,
+    Villager,
+    Werewolf,
+    MonasteryGate,
+    Monk,
+    Boar,
+    Hermit
+};
+enum class SceneCompositionSlots
+{
+    CharacterMain,
+    CharacterFront,
+    EnemyMain,
+    Enemy_2,
+    Enemy_3,
+    InteractionMain
+
+};
+
 
 struct Scene {
     const char *sceneText;
+    EnvironmentType background;
+    //std::Vector composition
     std::vector<SceneOption> options; // Ensure at least one option exists.
+
+    std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>> compositionVector ={};
 
     bool validate() const {
         return !options.empty();
