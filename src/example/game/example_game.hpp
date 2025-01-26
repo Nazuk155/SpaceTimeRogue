@@ -300,6 +300,10 @@ namespace JanSordid::SDL_Example {
     protected:
         GamePhases Phase = GamePhases::UPKEEP;
 
+        Point windowSize;
+
+
+
         ItemManager itemManager;
         Map map;
         EncounterManager encounterManager;
@@ -311,11 +315,21 @@ namespace JanSordid::SDL_Example {
         //   std::vector<Location> locations;
         Font *font = nullptr;
         Owned<Font> _font = nullptr;
-
+        int mouseOverX = 0;  //TODO move elsewhere, Fix Redundancy
+        int mouseOverY = 0;
         Owned<Texture> _blendedText = nullptr;
         Texture *blendedText = nullptr;
         Texture *forestLocationIconTexture = nullptr;
         Texture *playerMapIconTexture = nullptr;
+        Texture *playerMainSpite = nullptr;
+
+        Texture *enemyWereWolfMainSprite = nullptr;
+
+        Texture *errorIMG = nullptr;
+
+        //environments
+        Texture *denseForestBG = nullptr;
+        Texture *denseForestFG = nullptr;
 
         Texture *forestNameTexture = nullptr;
         Texture *churchNameTexture = nullptr;
@@ -452,6 +466,10 @@ namespace JanSordid::SDL_Example {
         void PopulateEventManager();
 
         void PopulateLocationEvents();
+
+        void renderText(Rect values, SDL_Texture *tn, int colorIndex);
+
+        void RenderSceneComposition(std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>> compositionVector);
     };
 
 }
