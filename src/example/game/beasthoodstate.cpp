@@ -10,8 +10,8 @@
 #include <iostream>
 #include <map>
 #include "ability_manager.h"
-#include "ReduceStaminaLoss_ability.h"
-#include "DrawExtraItem_ability.h"
+#include "ability_ReduceStaminaLoss.h"
+#include "ability_DrawExtraItem.h"
 #include "item_manager.h"
 #include "item.h"
 #include "character.h"
@@ -602,6 +602,7 @@ namespace JanSordid::SDL_Example {
                     character1->SetCurrentLocation(moveTarget);
                     character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->rect);
                     movementPoints--;
+                    playerMoved = false;
                 }
             }
             if(movementPoints == 0 || endMovementConfirmation) {
@@ -610,9 +611,11 @@ namespace JanSordid::SDL_Example {
                 awaitingInput = true;
                 playerMoved = false;
 
-                eTracker.encounterID = locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID());
-                eTracker.activeEncounter = encounterManager.getEncounter(eTracker.encounterID);
-                eTracker.diaPhase = DialoguePhase::Scene;
+                if(locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID()) != EncounterID::NO_ENCOUNTER_ASSIGNED) {
+                    eTracker.encounterID = locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID());
+                    eTracker.activeEncounter = encounterManager.getEncounter(eTracker.encounterID);
+                    eTracker.diaPhase = DialoguePhase::Scene;
+                }else{ Phase = GamePhases::DISASTER;awaitingInput = false;}
             }
         }
         //movement on map, then trigger event on player location
@@ -672,8 +675,10 @@ namespace JanSordid::SDL_Example {
                     awaitingInput = false;
                     eTracker.diaPhase = DialoguePhase::Scene;
 
-                    Phase = GamePhases::DISASTER;
-                    //continue with next phase
+                    if(!currentEncounterIsOnlyCombat){
+                        Phase = GamePhases::DISASTER;
+                    }else{ Phase = GamePhases::MOVEMENT;}
+
                 }
             }else{
                 if(eTracker.fateRerollChoice == 0 && currentCharacter->GetFatePoints() > 0){
@@ -716,6 +721,7 @@ namespace JanSordid::SDL_Example {
         if(Phase == GamePhases::DISASTER){
             std::cout << "DISASTER PHASE REACHED \n";
             std::cout.flush();
+            Phase = GamePhases::UPKEEP;
 
         }
 
@@ -803,52 +809,6 @@ namespace JanSordid::SDL_Example {
                         renderFromSpritesheet(e->GetMapSlot()->rect, icon);
                         renderText(e->GetMapSlot()->rect, name);
 
-                        /*
-            switch (e->GetLocationID()) {
-                case LocationID::Forest:
-                    renderFromSpritesheet(e->GetMapSlot()->rect, forestLocationIconTexture);
-                    renderText(e->GetMapSlot()->rect,forestNameTexture);break;
-                        case LocationID::Church:
-                            // Handle Church
-                            break;
-                        case LocationID::River:
-                            // Handle River
-                            break;
-                        case LocationID::Smith:
-                            // Handle Smith
-                            break;
-                        case LocationID::Windmill:
-                            // Handle Windmill
-                            break;
-                        case LocationID::Crossroads:
-                            // Handle Crossroads
-                            break;
-                        case LocationID::Cave:
-                            // Handle Cave
-                            break;
-                        case LocationID::Monastery:
-                            // Handle Monastery
-                            break;
-                        case LocationID::Farm:
-                            // Handle Farm
-                            break;
-                        case LocationID::Clearing:
-                            // Handle Clearing
-                            break;
-                        case LocationID::Townhall:
-                            // Handle Townhall
-                            break;
-                        case LocationID::Thicket:
-                            // Handle Thicket
-                            break;
-                        case LocationID::UNASSIGNED:
-                            // Handle UNASSIGNED
-                            break;
-                        default:
-                            // Handle unknown cases
-                            break;
-                    }
-    */
                     }
                     if (e->quest_marker) {}
 
@@ -928,8 +888,6 @@ namespace JanSordid::SDL_Example {
 
 
                             for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
-
-
 
 
                                 if (o.isSkillCheck) {
@@ -1022,7 +980,7 @@ namespace JanSordid::SDL_Example {
 
                                 if(IsMouseInsideRect(OptionVector[0],mouseOverX,mouseOverY))
                                 {
-                                    SDL_SetRenderDrawColor(renderer(),255,0,0,0);
+                                    SDL_SetRenderDrawColor(renderer(),0,255,0,0);
                                     SDL_RenderFillRect(renderer(),&OptionVector[0]);
                                     renderText(OptionVector[0],optionTextYes, 10);
                                 }
@@ -1325,8 +1283,24 @@ namespace JanSordid::SDL_Example {
     encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
     }
 
+    void BeasthoodState::PopulateMonsterManager(){
+        Monster mon1("Werwolf",
+                     MonsterID::Werewolf,
+                     MonsterType::Beast,
+                     MovementType::Fast,
+                     10,
+                     -3,
+                     1,
+                     -2,
+                     3,
+                     abilityManager.GetAbility(AbilityName::WerwolfCorruptionEffects),
+                     1);
+        monsterManager.addMonster(mon1);
+    }
+
     void BeasthoodState::PopulateLocationEvents(){
 
+        /// TODO add more events
         locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
     }
 
@@ -1420,9 +1394,9 @@ namespace JanSordid::SDL_Example {
                 //return currentCharacter.Speech;
             case StatNames::WILLPOWER:
                 return "Willpower";
-            case StatNames::KNOWLEDGE:
+            case StatNames::OCCULT:
                 return "Knowledge";
-            case StatNames::LUCK:
+            case StatNames::FAITH:
                 return "Luck";
 
         }

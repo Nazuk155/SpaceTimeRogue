@@ -28,7 +28,7 @@ public:
       if(!GetItem(lID)->related_events.empty())
       {
           return GetItem(lID)->related_events.back();
-      }else {std::cerr << "No Event in Vector ERROR";}
+      }else {std::cerr << "No Event in Vector ERROR"; return EncounterID::NO_ENCOUNTER_ASSIGNED;}
     }
 
 private:

@@ -17,7 +17,7 @@ class SkillChallengeEngine
     //todo add character into init + CONSTRUCTOR
 
     DiceRoller diceRoller;
-    StatNames currentSkill = StatNames::SNEAK;//todo
+    StatNames currentSkill = StatNames::NONE;//todo
 
 
 
@@ -71,10 +71,10 @@ public:
                 //return currentCharacter.Speech;
             case StatNames::WILLPOWER:
                 return currentCharacter->GetCurrentStats().GetStat(WILLPOWER);
-            case StatNames::KNOWLEDGE:
-                return currentCharacter->GetCurrentStats().GetStat(KNOWLEDGE);
-            case StatNames::LUCK:
-                return currentCharacter->GetCurrentStats().GetStat(LUCK);
+            case StatNames::OCCULT:
+                return currentCharacter->GetCurrentStats().GetStat(OCCULT);
+            case StatNames::FAITH:
+                return currentCharacter->GetCurrentStats().GetStat(FAITH);
                 /*
             case Skills::Occult:
                 //return currentCharacter.Occult;
@@ -99,16 +99,20 @@ public:
                 //return currentCharacter.Speech;
             case StatNames::WILLPOWER:
                 return "Willpower";
-            case StatNames::KNOWLEDGE:
+            case StatNames::OCCULT:
                 return "Knowledge";
-            case StatNames::LUCK:
+            case StatNames::FAITH:
                 return "Luck";
 
+            case NONE:
+                return "NONE";
+                break;
         }
     }
 
     bool checkSkill()
     {
+        if(currentSkill == NONE){std::cerr << "ERROR: NO SKILL SET! RESULT WILL ALWAYS BE FALSE"; return false;}
         currentRolls.clear();
         currentSuccesses = 0;
 

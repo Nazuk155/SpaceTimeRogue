@@ -1,6 +1,4 @@
-#ifndef REDUCE_STAMINA_LOSS_ABILITY_H
-#define REDUCE_STAMINA_LOSS_ABILITY_H
-
+#pragma once
 #include "ability.h"
 #include <iostream>
 
@@ -14,5 +12,3 @@ public:
         // Implement effect logic
     }
 };
-
-#endif // REDUCE_STAMINA_LOSS_ABILITY_H

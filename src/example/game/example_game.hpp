@@ -15,6 +15,7 @@
 #include "encounter.h"
 #include "skillCheckEngine.h"
 #include "encounter_manager.h"
+#include "monster_manager.h"
 
 namespace JanSordid::SDL_Example {
     using namespace JanSordid;
@@ -298,18 +299,21 @@ namespace JanSordid::SDL_Example {
         using Base = MyGameState;
 
     protected:
+        //tracks the current game phase between input,update and render
         GamePhases Phase = GamePhases::UPKEEP;
 
         Point windowSize;
 
 
-
+        //generate one manager object per relevant class
         ItemManager itemManager;
         Map map;
         EncounterManager encounterManager;
         AbilityManager abilityManager;
         BlueprintManager blueprintManager;
         LocationManager locationManager;
+        MonsterManager monsterManager;
+
         Character *character1;
 
         //   std::vector<Location> locations;
@@ -331,6 +335,7 @@ namespace JanSordid::SDL_Example {
         Texture *denseForestBG = nullptr;
         Texture *denseForestFG = nullptr;
 
+        /* refactored already but keep in case of need for testing
         Texture *forestNameTexture = nullptr;
         Texture *churchNameTexture = nullptr;
         Texture *riverNameTexture = nullptr;
@@ -344,6 +349,7 @@ namespace JanSordid::SDL_Example {
         Texture *townhallNameTexture = nullptr;
         Texture *thicketNameTexture = nullptr;
         Texture *unassignedNameTexture = nullptr;
+*/
 
 
         struct LocationTextures {
@@ -351,13 +357,10 @@ namespace JanSordid::SDL_Example {
             SDL_Texture *nameTexture = nullptr;
         };
 
+        //easy lookup for location rendering on map
         std::unordered_map<LocationID, LocationTextures> locationTextureMap;
 
         //skillengine
-
-
-        ///TODO refactor ALL OF THIS this into encounterManager
-
         SkillChallengeEngine ske;
         Character *currentCharacter;
 
@@ -366,6 +369,9 @@ namespace JanSordid::SDL_Example {
         bool playerMoved = false;
         bool endMovementConfirmation = false;
         u8 movementPoints = 0;
+
+        //flag that is set when a encounter is specifically combat
+        bool currentEncounterIsOnlyCombat = false;
 
         //encounter Phase related variables
 
@@ -470,6 +476,8 @@ namespace JanSordid::SDL_Example {
         void renderText(Rect values, SDL_Texture *tn, int colorIndex);
 
         void RenderSceneComposition(std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>> compositionVector);
+
+        void PopulateMonsterManager();
     };
 
 }

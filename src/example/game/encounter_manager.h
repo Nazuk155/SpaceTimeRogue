@@ -40,16 +40,7 @@ public:
         return encounters.find(id) != encounters.end();
     }
 
-    bool isSelectedOptionSkillcheck(EncounterID eID,int szene,int input){
 
-        if(getEncounter(eID)->scenes[szene].options[input - 1].isSkillCheck)
-        {
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
 
 /*
     bool ResolveEncounter(Encounter &encounter,int szene,int input,SkillChallengeEngine ske, Character & currentCharacter) {

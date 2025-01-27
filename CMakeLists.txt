@@ -136,11 +136,7 @@ target_link_libraries(      sor-mini PUBLIC
 add_executable( sor-example
         src/example/game/example_game.cpp
 
-        src/example/game/introstate.cpp
-        src/example/game/plasmastate.cpp
-        src/example/game/sortstate.cpp
-        src/example/game/camerastate.cpp
-        src/example/game/shooterstate.cpp
+
 
         src/sor/core.cpp
         src/sor/sdl_core.cpp
@@ -158,8 +154,8 @@ add_executable( sor-example
         src/example/game/ability.cpp
         src/example/game/ability.h
         src/example/game/ability_manager.h
-        src/example/game/ReduceStaminaLoss_ability.h
-        src/example/game/DrawExtraItem_ability.h
+        src/example/game/ability_ReduceStaminaLoss.h
+        src/example/game/ability_DrawExtraItem.h
         src/example/game/item.h
         src/example/game/item_manager.h
         src/example/game/character_blueprint.cpp
@@ -169,6 +165,9 @@ add_executable( sor-example
         src/example/game/encounter_manager.h
         src/example/game/diceRoller.h
         src/example/game/layout.h
+        src/example/game/monster.h
+        src/example/game/monster_manager.h
+        src/example/game/ability_WerwolfCorruptionEffects.h
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC

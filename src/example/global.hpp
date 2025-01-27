@@ -19,7 +19,7 @@ enum class GamePhases
         };
 
 
-enum StatNames { SPEED, SNEAK, FIGHT, WILLPOWER, KNOWLEDGE, LUCK };
+enum StatNames { SPEED, SNEAK, FIGHT, WILLPOWER, OCCULT, FAITH ,NONE};
 
 /*
 std::unordered_map<StatNames, std::string> StatNamesStringMap //can likely be done more elegantly?
@@ -28,11 +28,12 @@ std::unordered_map<StatNames, std::string> StatNamesStringMap //can likely be do
                 {StatNames::SNEAK, "Sneak"},
                 {StatNames::FIGHT, "Fight"},
                 {StatNames:WILLPOWER, "Willpower"},
-                {StatNames::KNOWLEDGE, "Knowledge"},
-                {StatNames::LUCK, "Luck"}
+                {StatNames::OCCULT, "Knowledge"},
+                {StatNames::FAITH, "Luck"}
         };
         */
 enum class EncounterID{
+    NO_ENCOUNTER_ASSIGNED, // never assign this to a event. Only output when a location has no events in vector
     Forest_Thievery,
     Generic_FindSurvivor,
     Church_HolyWaterConversation
@@ -65,6 +66,7 @@ enum class LocationID {
 };
 
 enum class AbilityName {
+    WerwolfCorruptionEffects,
     ReduceStaminaLoss,
     DrawExtraItem,
     // Add more abilities as needed
@@ -75,17 +77,41 @@ enum class QuestID {
     //add more as needed
 };
 
+enum class MonsterID {
+    UNASSIGNED,
+    Ghoul,
+    Werewolf,
+    Vampire,
+    // Add other monsters here
+};
+
+enum class MonsterType {
+    None,
+    Undead,
+    Beast,
+    Spirit,
+    // Add other types here
+};
+
+enum class MovementType {
+    Stalking,
+    Fast,
+    Flying,
+    // Add other movement types here
+};
+
+
 
 struct Stats {
     std::unordered_map<StatNames, int> stats;
 
-    Stats(int speed, int sneak, int fight, int willpower, int knowledge, int luck) {
+    Stats(int speed, int sneak, int fight, int willpower, int occult, int faith) {
         stats[SPEED] = speed;
         stats[SNEAK] = sneak;
         stats[FIGHT] = fight;
         stats[WILLPOWER] = willpower;
-        stats[KNOWLEDGE] = knowledge;
-        stats[LUCK] = luck;
+        stats[OCCULT] = occult;
+        stats[FAITH] = faith;
     }
 
     // Get a stat value
