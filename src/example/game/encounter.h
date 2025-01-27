@@ -41,8 +41,8 @@ struct SceneOption {
     std::vector<std::tuple<ExecuteFlags, int8_t>> failureOutcomes;
     int jumpTargetSuccess;
     int jumpTargetFail;
-    Vector<ItemName> rewardItemIDs; //TODO seens to be a redundancy
-    Vector<ItemName> failureItemIDs;
+    Vector<ItemID> rewardItemIDs; //TODO seens to be a redundancy
+    Vector<ItemID> failureItemIDs;
 
 
 };

@@ -11,7 +11,7 @@ public:
         abilities.push_back(std::move(ability));
     }
 
-    Ability* GetAbility(AbilityName name) {
+    Ability* GetAbility(AbilityID name) {
         for (const auto& ability : abilities) {
             if (ability->GetName() == name) {
                 return ability.get();

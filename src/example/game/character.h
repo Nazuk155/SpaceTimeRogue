@@ -36,6 +36,7 @@ private:
     int non_item_resources;           // Non-item resource counter (e.g., money, energy)
     std::vector<Item*> inventory;      // Inventory of items
     std::pair<Item*, Item*> equipped_items; // Equipped items (left and right hand)
+    ItemID LHand,RHand, displayedItemLeft,displayedItemRight;
     std::vector<QuestID> quest_log;     // Quest log
     LocationID current_location_id;          // ID of the current location
     SDL_Rect rect{0,0,64,64};
@@ -64,8 +65,8 @@ public:
     void AdjustSanity(int amount);
     bool AdjustStat(StatNames stat, int amount);
     void AddToInventory(Item *item);
-    void RemoveFromInventory(ItemName name);
-    void EquipItem(Item* item, bool is_left_hand);
+    void RemoveFromInventory(ItemID name);
+    void EquipItem(Item* item);
 
     // Gameplay Methods
     void UseFocus(StatNames statToIncrease, StatNames statToDecrease);
@@ -80,4 +81,10 @@ public:
     void AdjustHealth(int amount);
 
     void SpendFate();
+
+    void UpdateCurrentStats();
+
+    void ResetToBaseStats();
+
+    void UnequipItem(ItemID id);
 };

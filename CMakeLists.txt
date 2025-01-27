@@ -168,6 +168,7 @@ add_executable( sor-example
         src/example/game/monster.h
         src/example/game/monster_manager.h
         src/example/game/ability_WerwolfCorruptionEffects.h
+        src/example/game/ability_WolfPackAttack.h
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC

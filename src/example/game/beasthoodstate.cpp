@@ -294,12 +294,12 @@ namespace JanSordid::SDL_Example {
         abilityManager.AddAbility(std::make_unique<DrawExtraItemAbility>());
 
         // Use abilities
-        Ability *reduceStaminaLoss = abilityManager.GetAbility(AbilityName::ReduceStaminaLoss);
+        Ability *reduceStaminaLoss = abilityManager.GetAbility(AbilityID::ReduceStaminaLoss);
         if (reduceStaminaLoss) {
             reduceStaminaLoss->Activate();
         }
 
-        Ability *drawExtraItem = abilityManager.GetAbility(AbilityName::DrawExtraItem);
+        Ability *drawExtraItem = abilityManager.GetAbility(AbilityID::DrawExtraItem);
         if (drawExtraItem) {
             drawExtraItem->Activate();
         }
@@ -313,13 +313,13 @@ namespace JanSordid::SDL_Example {
         abilityManager.AddAbility(std::move(staminaAbility));
 
         // Create and add items
-        auto sword = std::make_unique<Item>(ItemName::Halbert, ItemType::Weapon, "Halbert of Valor", 1);
+        auto sword = std::make_unique<Item>(ItemID::Halbert, ItemType::Melee, "Halbert of Valor", 2);
         sword->SetStats({0, 0, 5, 0, 0, 0}); // Attack 10
         sword->SetAbility(staminaAbilityPtr); // Associate ability with item
         itemManager.AddItem(std::move(sword));
 
         // Access and use an item
-        Item *item = itemManager.GetItem(ItemName::Halbert);
+        Item *item = itemManager.GetItem(ItemID::Halbert);
         if (item) {
             std::cout << "Item: " << item->GetName() << ", Attack: " << item->GetStats().GetStat(FIGHT) << "\n";
             if (item->GetAbility()) {
@@ -337,6 +337,8 @@ namespace JanSordid::SDL_Example {
         std::cout << "Item: " << Landsknecht.GetInventory().back()->GetName();
         std::cout << "\n";
         std::cout.flush();
+        Landsknecht.EquipItem(Landsknecht.GetInventory().back());
+        Landsknecht.UpdateCurrentStats();
         std::cout << "Stats: " << Landsknecht.GetCurrentStats().GetStat(FIGHT);
         std::cout.flush();
 
@@ -345,8 +347,12 @@ namespace JanSordid::SDL_Example {
 
         PopulateEventManager();
         PopulateLocationEvents();
+        PopulateMonsterManager();
 
 
+        locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
+        locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
+        locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
         // CurrentEncounter = e;
 
 
@@ -407,7 +413,7 @@ namespace JanSordid::SDL_Example {
                 SDL_GetMouseState(&mouseX, &mouseY); //TODO Redundancy
 
                 for (auto e: map.slots) {
-                    if (IsMouseInsideRect(e.rect, mouseX, mouseY)) {
+                    if (IsMouseInsideRect(e.locationRect, mouseX, mouseY)) {
                         if (event.type == SDL_MOUSEMOTION) {
                             std::cout << "Mouse moved inside the rectangle.\n";
                             std::cout.flush();
@@ -431,7 +437,7 @@ namespace JanSordid::SDL_Example {
 
                             }
                         }
-                    } else if (!IsMouseInsideRect(e.rect, mouseX, mouseY)) {
+                    } else if (!IsMouseInsideRect(e.locationRect, mouseX, mouseY)) {
                         if (event.type == SDL_MOUSEMOTION) {
                             std::cout << "Mouse moved OUTSIDE the rectangle. " << e.id;
                             std::cout << " \n";
@@ -587,7 +593,7 @@ namespace JanSordid::SDL_Example {
             //place character somewhere if not placed
             if (character1->GetCurrentLocationID() == LocationID::UNASSIGNED) {
                 character1->SetCurrentLocation(LocationID::Forest);
-                character1->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->rect);
+                character1->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->locationRect);
             }
 
             movementPoints = currentCharacter->GetCurrentStats().GetStat(SPEED);
@@ -600,7 +606,7 @@ namespace JanSordid::SDL_Example {
             if (movementPoints > 0) {
                 if (playerMoved) {
                     character1->SetCurrentLocation(moveTarget);
-                    character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->rect);
+                    character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
                     movementPoints--;
                     playerMoved = false;
                 }
@@ -796,7 +802,7 @@ namespace JanSordid::SDL_Example {
 
             for (const auto &e: locationManager.GetAllItems()) {
                 //render the locations
-                // renderFromSpritesheet(e->GetMapSlot()->rect, forestLocationIconTexture);
+                // renderFromSpritesheet(e->GetMapSlot()->locationRect, forestLocationIconTexture);
 
 
                 if (e->fog_of_war) {
@@ -806,8 +812,17 @@ namespace JanSordid::SDL_Example {
                         SDL_Texture *icon = it->second.iconTexture;
                         SDL_Texture *name = it->second.nameTexture;
 
-                        renderFromSpritesheet(e->GetMapSlot()->rect, icon);
-                        renderText(e->GetMapSlot()->rect, name);
+                        renderFromSpritesheet(e->GetMapSlot()->locationRect, icon);
+                        renderText(e->GetMapSlot()->locationRect, name);
+                        if(currentCharacter->GetCurrentLocationID() == e->GetLocationID()){
+                            renderFromSpritesheet(e->GetMapSlot()->playerRects[2],playerMapIconTexture);
+                        }
+
+                        if(!e->monsters_or_npcs.empty()){
+                            for(int i = 0;i< e->monsters_or_npcs.size();i++){
+                                renderFromSpritesheet(e->GetMapSlot()->enemyRects[i],enemyWereWolfMainSprite);
+                            }
+                        }
 
                     }
                     if (e->quest_marker) {}
@@ -821,7 +836,7 @@ namespace JanSordid::SDL_Example {
                 }
                 //render character icon on map
                 if (character1->GetCurrentLocationID() != LocationID::UNASSIGNED) {
-                    renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
+                  //  renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
                 }
             }
         }
@@ -1285,6 +1300,7 @@ namespace JanSordid::SDL_Example {
 
     void BeasthoodState::PopulateMonsterManager(){
         Monster mon1("Werwolf",
+                     LocationID::UNASSIGNED,
                      MonsterID::Werewolf,
                      MonsterType::Beast,
                      MovementType::Fast,
@@ -1293,10 +1309,24 @@ namespace JanSordid::SDL_Example {
                      1,
                      -2,
                      3,
-                     abilityManager.GetAbility(AbilityName::WerwolfCorruptionEffects),
+                     AbilityID::WerwolfCorruptionEffects,
                      1);
         monsterManager.addMonster(mon1);
+        mon1 = {"Wolf",
+                LocationID::UNASSIGNED,
+                MonsterID::Wolf,
+                MonsterType::Beast,
+                MovementType::Stalking,
+                4,
+                0,
+                0,
+                -1,
+                2,
+                AbilityID::WolfPackAttack,
+                6};
+        monsterManager.addMonster(mon1);
     }
+
 
     void BeasthoodState::PopulateLocationEvents(){
 
@@ -1310,14 +1340,14 @@ namespace JanSordid::SDL_Example {
     void BeasthoodState::PopulateBlueprints() {
 
         std::vector<Item *> temp;
-        temp.push_back(itemManager.GetItem(ItemName::Halbert));
+        temp.push_back(itemManager.GetItem(ItemID::Halbert));
         blueprintManager.AddBlueprint(std::make_shared<CharacterBlueprint>(
                 "Landsknecht",
                 8, 6,
                 Stats(5, 1, 6, 1, 3, 0),
                 Stats(5, 4, 6, 4, 3, 3),
                 2,
-                abilityManager.GetAbility(AbilityName::ReduceStaminaLoss),
+                abilityManager.GetAbility(AbilityID::ReduceStaminaLoss),
                 "Gain a fate point after defeating a boss",
                 temp
         ));
@@ -1328,7 +1358,7 @@ namespace JanSordid::SDL_Example {
                 Stats(4, 2, 1, 6, 6, 1),
                 Stats(4, 5, 4, 6, 6, 4),
                 3,
-                abilityManager.GetAbility(AbilityName::DrawExtraItem),
+                abilityManager.GetAbility(AbilityID::DrawExtraItem),
                 "Gain a fate point after casting 3 spells in a turn",
                 temp
         ));

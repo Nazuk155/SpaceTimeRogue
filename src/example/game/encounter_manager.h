@@ -157,7 +157,7 @@ public:
 */
 
 
-void iterateOverOutcomes(const Vector<ItemName>& rewards, const std::vector<std::tuple<ExecuteFlags, int8_t>> &outcomes, Character &currentCharacter) const {
+void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::tuple<ExecuteFlags, int8_t>> &outcomes, Character &currentCharacter) const {
     for (std::tuple<ExecuteFlags, int8_t> outcome: outcomes) {
 
         switch (get<0>(outcome)) {

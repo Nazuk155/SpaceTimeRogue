@@ -17,13 +17,13 @@ public:
         monsterMap[monster.id] = monster;
     }
 
-    // Retrieve a monster by ID
-    const Monster* getMonsterByID(MonsterID id) const {
+    // Get a mutable reference to a monster by ID
+    Monster* getMonsterByID(MonsterID id) {
         auto it = monsterMap.find(id);
         if (it != monsterMap.end()) {
-            return &it->second;
+            return &(it->second); // Return a pointer to the monster
         }
-        return nullptr;
+        return nullptr; // Return nullptr if the monster doesn't exist
     }
 
     // Check if a monster exists

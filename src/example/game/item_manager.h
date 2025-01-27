@@ -11,9 +11,9 @@ public:
         items.push_back(std::move(item));
     }
 
-    Item* GetItem(ItemName itemName) {
+    Item* GetItem(ItemID itemName) {
         for (const auto& item : items) {
-            if (item->GetItemName() == itemName) {
+            if (item->GetItemID() == itemName) {
                 return item.get();
             }
         }

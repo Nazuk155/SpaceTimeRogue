@@ -15,7 +15,7 @@ public:
     bool fog_of_war;
     int unique_event_id;
     std::vector<EncounterID> related_events;
-    std::vector<int> monsters_or_npcs;
+    std::vector<MonsterID> monsters_or_npcs;
     int reward_icon_1, reward_icon_2;
     bool quest_marker;
 

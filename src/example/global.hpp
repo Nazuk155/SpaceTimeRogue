@@ -47,8 +47,12 @@ enum class EncounterTypeID{
     Unique,
     //etc add as needed
 };
-enum class ItemName {Halbert,Torch,Tome};
-enum class ItemType {Weapon,Magic,Unique};
+enum class ItemID {
+    NONE,
+    Halbert,
+    Torch,
+    Tome};
+enum class ItemType {Melee,Ranged,Magic,Unique};
 enum class LocationID {
     Forest,
     Church,
@@ -65,8 +69,10 @@ enum class LocationID {
     UNASSIGNED
 };
 
-enum class AbilityName {
+enum class AbilityID {
+    NONE,   //signifier for empty ability
     WerwolfCorruptionEffects,
+    WolfPackAttack,
     ReduceStaminaLoss,
     DrawExtraItem,
     // Add more abilities as needed
@@ -79,6 +85,7 @@ enum class QuestID {
 
 enum class MonsterID {
     UNASSIGNED,
+    Wolf,
     Ghoul,
     Werewolf,
     Vampire,
@@ -113,6 +120,21 @@ struct Stats {
         stats[OCCULT] = occult;
         stats[FAITH] = faith;
     }
+
+    // Overload += operator
+    Stats& operator+=(const Stats& rhs) {
+        for (const auto& [stat_name, value] : rhs.stats) {
+            this->stats[stat_name] += value;
+        }
+        return *this;
+    }
+    Stats& operator=(const Stats& rhs) {
+        for (const auto& [stat_name, value] : rhs.stats) {
+            this->stats[stat_name] = value;
+        }
+        return *this;
+    }
+
 
     // Get a stat value
     int GetStat(StatNames stat_name) const {

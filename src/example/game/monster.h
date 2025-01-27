@@ -8,6 +8,7 @@
 class Monster {
 public:
     const char* name = "";
+    LocationID location = LocationID::UNASSIGNED;
     MonsterID id = MonsterID::UNASSIGNED; // Add an UNASSIGNED enum value
     MonsterType type = MonsterType::None;
     MovementType moveType = MovementType::Stalking;
@@ -16,7 +17,7 @@ public:
     int horrorDamage = 0;
     int combatRating = 0;
     int combatDamage = 0;
-    Ability* ability = nullptr;  // Default to null
+    AbilityID ability = AbilityID::NONE;  // Default to null
     int spawnLimit = 0;
 
     // Default Constructor
@@ -24,6 +25,7 @@ public:
 
     // Parameterized Constructor
     Monster(const char* name,
+            LocationID location,
             MonsterID id,
             MonsterType type,
             MovementType moveType,
@@ -32,9 +34,10 @@ public:
             int horrorDamage,
             int combatRating,
             int combatDamage,
-            Ability* ability,
+            AbilityID ability,
             int spawnLimit)
             : name(name),
+            location(location),
               id(id),
               type(type),
               moveType(moveType),
