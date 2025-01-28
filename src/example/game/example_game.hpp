@@ -323,6 +323,12 @@ namespace JanSordid::SDL_Example {
         Texture *playerMapIconTexture = nullptr;
         Texture *playerMainSpite = nullptr;
 
+        //Interface
+        Texture *endTurnButtonOn = nullptr;
+        Texture *endTurnButtonOff = nullptr;
+        Texture *endTurnButtonMouseover = nullptr;
+
+
         Texture *enemyWereWolfMainSprite = nullptr;
 
         Texture *errorIMG = nullptr;
@@ -470,6 +476,10 @@ namespace JanSordid::SDL_Example {
         void renderText(Rect values, SDL_Texture *tn, int colorIndex);
 
         void RenderSceneComposition(std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>> compositionVector);
+
+        void RenderSidebar();
+
+        void RenderTurnButton(bool bIsActive);
     };
 
 }

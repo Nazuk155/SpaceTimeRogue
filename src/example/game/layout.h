@@ -6,6 +6,46 @@
 #include "../global.hpp"
 //#include "encounter.h"
 
+struct
+{
+    //Size and scale mean the same thing - % of total screen x/y
+
+    SDL_Point SidebarStart {80,0};
+    SDL_Point SidebarEnd {100,100};
+    SDL_Point SidebarSize {20,100};
+
+    SDL_Point SidebarContentStart {82,4};
+    SDL_Point SidebarContentEnd {98,100};
+
+    SDL_Point ClassTextBox {16,4};
+
+    //leave 1-2 free then skillsheet
+    //Stamina, Sanity Skills
+    SDL_Point SkillTextStart {82,10};
+
+    SDL_Point SkillTextScale {16,3};
+
+    SDL_Point EquippedItemsStart {82,7*SkillTextScale.y};
+    SDL_Point InventoryRowScale{16,7};
+    SDL_Point InventoryItemScale{8,7}; //Todo nonsense percentages do not work for square icons x!=y! -> make it so ignore x
+    SDL_Point InventoryScale {16,6*InventoryRowScale.y};
+    SDL_Point InventoryStart {82,EquippedItemsStart.y+InventoryRowScale.y*2};
+
+    int EndTurnbuttonHeight = 15;
+
+    SDL_Point EndTurnButtonStart{90,80};
+    //SDL_Point EndTurnButtonSize{};
+
+    /* 6 Skills
+    speed;
+    sneak;
+    fight;
+    willpower;
+    knowledge;
+    luck;
+     */
+}SidebarLayout;
+
  struct EncounterLayout
 {
 
@@ -41,6 +81,8 @@ struct  //TODO PLACEHOLDER for better system, encounter data etc
     const float ScalingValueGarouX = Garou_IMG.x*1.2/1920;
     const float ScalingValueGarouY = Garou_IMG.y*1.2/1080;
 
+
+    const SDL_Point Turn_Button = {409, 1040};
 }SpriteData;
 
 //std::map<SceneCompositionEntities,std::tuple<SDL_Texture,SDL_Point>>

@@ -51,6 +51,10 @@ namespace JanSordid::SDL_Example {
         string denseForestBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/dense_forest_test.png";
         string denseForestFGPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/dense_forest_test_fg.png";
 
+        string endTurnButtonOnPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_button_PLACEHOLDER.png";
+        string endTurnButtonOffPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_disabled_PLACEHOLDER.png";
+        string endTurnButtonMouseoverPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_mouseover_PLACEHOLDER.png";
+
         //--------------- load textures from file
         forestLocationIconTexture = loadFromFile(forestLocationIconPath);
         playerMapIconTexture = loadFromFile(playerMapIconPath);
@@ -60,6 +64,10 @@ namespace JanSordid::SDL_Example {
 
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
         errorIMG = loadFromFile(errorIMGPath);
+
+        endTurnButtonOn = loadFromFile(endTurnButtonOnPath);
+        endTurnButtonOff = loadFromFile(endTurnButtonOffPath);
+        endTurnButtonMouseover = loadFromFile(endTurnButtonMouseoverPath);
 
 
         //struct
@@ -373,6 +381,10 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(denseForestFG);
         SDL_DestroyTexture(errorIMG);
 
+        SDL_DestroyTexture(endTurnButtonOff);
+        SDL_DestroyTexture(endTurnButtonOn);
+        SDL_DestroyTexture(endTurnButtonMouseover);
+
         SDL_DestroyTexture(enemyWereWolfMainSprite);
 
         for (auto e: locationTextureMap) {
@@ -388,6 +400,10 @@ namespace JanSordid::SDL_Example {
         enemyWereWolfMainSprite = nullptr;
         errorIMG = nullptr;
 
+        endTurnButtonOff = nullptr;
+        endTurnButtonMouseover = nullptr;
+        endTurnButtonOn = nullptr;
+
         Base::Destroy();
     }
 
@@ -398,16 +414,25 @@ namespace JanSordid::SDL_Example {
             if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
                 switch (event.key.keysym.sym) {
                     case SDLK_SPACE:
-                        endMovementConfirmation = true;
+                        //endMovementConfirmation = true;
                         break;
                 }
             }
             if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
-                int mouseX, mouseY;
-                SDL_GetMouseState(&mouseX, &mouseY); //TODO Redundancy
+                //int mouseX, mouseY;
+                SDL_GetMouseState(&mouseOverX, &mouseOverY);
+                if(event.type == SDL_MOUSEBUTTONDOWN) {
+                    if (IsMouseInsideRect({static_cast<int>(SidebarLayout.EndTurnButtonStart.x*windowSize.x*0.01 - 0.5*(SidebarLayout.EndTurnbuttonHeight*SpriteData.Turn_Button.x/SpriteData.Turn_Button.y*windowSize.y*0.01)),
+                                           static_cast<int>(SidebarLayout.EndTurnButtonStart.y*windowSize.y*0.01),
+                                           static_cast<int>(SidebarLayout.EndTurnbuttonHeight*SpriteData.Turn_Button.x/SpriteData.Turn_Button.y*windowSize.y*0.01),
+                                           static_cast<int>(SidebarLayout.EndTurnbuttonHeight*windowSize.y*0.01)
+                                          },mouseOverX,mouseOverY))
+
+                    {endMovementConfirmation = true;}
+                }
 
                 for (auto e: map.slots) {
-                    if (IsMouseInsideRect(e.rect, mouseX, mouseY)) {
+                    if (IsMouseInsideRect(e.rect, mouseOverX, mouseOverY)) {
                         if (event.type == SDL_MOUSEMOTION) {
                             std::cout << "Mouse moved inside the rectangle.\n";
                             std::cout.flush();
@@ -430,8 +455,10 @@ namespace JanSordid::SDL_Example {
                                 }
 
                             }
+
+
                         }
-                    } else if (!IsMouseInsideRect(e.rect, mouseX, mouseY)) {
+                    } else if (!IsMouseInsideRect(e.rect, mouseOverX, mouseOverY)) {
                         if (event.type == SDL_MOUSEMOTION) {
                             std::cout << "Mouse moved OUTSIDE the rectangle. " << e.id;
                             std::cout << " \n";
@@ -469,10 +496,10 @@ namespace JanSordid::SDL_Example {
                 if (event.type == SDL_MOUSEBUTTONDOWN)
                 {
 
-                    int mouseX, mouseY;
+                    //int mouseX, mouseY;
                     SDL_Rect button;
-                    SDL_GetMouseState(&mouseX, &mouseY);
-                    fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseX, mouseY);
+                    SDL_GetMouseState(&mouseOverX, &mouseOverY);
+                    fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
                     for(int i = 0;i<OptionVector.size();i++)
                     {
                         button = OptionVector[i];
@@ -482,7 +509,7 @@ namespace JanSordid::SDL_Example {
                         //SDL_RenderFillRect(renderer(),&button);
                         //SDL_Delay(150);
 
-                        if(IsMouseInsideRect(button,mouseX,mouseY))
+                        if(IsMouseInsideRect(button,mouseOverX,mouseOverY))
                         {
                             fmt::println("Clicked option {}",i);
                             eTracker.selectedOption = i;
@@ -530,10 +557,10 @@ namespace JanSordid::SDL_Example {
                 if (event.type == SDL_MOUSEBUTTONDOWN)
                 {
 
-                    int mouseX, mouseY;
+                    //int mouseX, mouseY;
                     SDL_Rect button;
-                    SDL_GetMouseState(&mouseX, &mouseY);
-                    fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseX, mouseY);
+                    SDL_GetMouseState(&mouseOverX, &mouseOverY);
+                    fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
                     for(int i = 0;i<OptionVector.size();i++)
                     {
                         button = OptionVector[i];
@@ -543,7 +570,7 @@ namespace JanSordid::SDL_Example {
                         //SDL_RenderFillRect(renderer(),&button);
                         //SDL_Delay(150);
 
-                        if(IsMouseInsideRect(button,mouseX,mouseY))
+                        if(IsMouseInsideRect(button,mouseOverX,mouseOverY))
                         {
                             fmt::println("Clicked option {}",i);
                             if(i == 0)
@@ -775,6 +802,123 @@ namespace JanSordid::SDL_Example {
         }
     }
 
+    void BeasthoodState::RenderSidebar()
+    {
+        SDL_Rect SidebarMain {static_cast<int>(SidebarLayout.SidebarStart.x*windowSize.x*0.01),
+                              static_cast<int>(SidebarLayout.SidebarStart.y*windowSize.y*0.01),
+                              static_cast<int>(SidebarLayout.SidebarSize.x*0.01*windowSize.x),
+                               static_cast<int>(SidebarLayout.SidebarSize.y*0.01*windowSize.y)}; //todo move outside scope
+        SDL_SetRenderDrawColor(renderer(),0,0,0,0);
+        SDL_RenderFillRect(renderer(),&SidebarMain);
+        Texture *SidebarText = textToTexture(currentCharacter->GetName().c_str());
+        SDL_Rect SidebarTextTarget = {
+                static_cast<int>(SidebarLayout.SidebarContentStart.x*windowSize.x*0.01),
+                static_cast<int>(SidebarLayout.SidebarContentStart.y*windowSize.y*0.01),
+                static_cast<int>(SidebarLayout.ClassTextBox.x*windowSize.x*0.01),
+                static_cast<int>(SidebarLayout.ClassTextBox.y*windowSize.y*0.01)
+
+        };
+
+        renderText(SidebarTextTarget,SidebarText); //TODO complete Placeholder, ideally replace with premade image/portrait etc.
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y; //todo make font size variable
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Health   "+ std::to_string(currentCharacter->GetStamina())).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Sanity   "+ std::to_string(currentCharacter->GetSanity())).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Will Points   "+ std::to_string(currentCharacter->GetFatePoints())).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+
+
+
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y; //todo make font size variable
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Fight   "+ std::to_string(currentCharacter->GetCurrentStats().GetStat(StatNames::FIGHT))).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Speed   "+ std::to_string(currentCharacter->GetCurrentStats().GetStat(StatNames::SPEED))).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Knowledge   "+ std::to_string(currentCharacter->GetCurrentStats().GetStat(StatNames::KNOWLEDGE))).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Luck   "+ std::to_string(currentCharacter->GetCurrentStats().GetStat(StatNames::LUCK))).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Willpower   "+ std::to_string(currentCharacter->GetCurrentStats().GetStat(StatNames::WILLPOWER))).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("Sneak   "+ std::to_string(currentCharacter->GetCurrentStats().GetStat(StatNames::SNEAK))).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+
+        //Sketch out Inventory
+
+        //Equipped Items //todo single them out further
+
+        //Inventory proper
+
+        SDL_Rect InventoryMain =
+                {static_cast<int>(SidebarLayout.InventoryStart.x*windowSize.x*0.01),
+                 static_cast<int>(SidebarLayout.InventoryStart.y*windowSize.y*0.01),
+                 static_cast<int>(SidebarLayout.InventoryScale.x*windowSize.x*0.01),
+                 static_cast<int>(SidebarLayout.InventoryScale.y*windowSize.y*0.01)
+
+
+                };
+        SDL_SetRenderDrawColor(renderer(),5,5,5,0);
+        SDL_RenderFillRect(renderer(),&InventoryMain);
+
+
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = nullptr;
+    }
+    void BeasthoodState::RenderTurnButton(bool bIsActive)
+    {
+        SDL_Rect buttonPlacement =
+                {static_cast<int>(SidebarLayout.EndTurnButtonStart.x*windowSize.x*0.01 - 0.5*(SidebarLayout.EndTurnbuttonHeight*SpriteData.Turn_Button.x/SpriteData.Turn_Button.y*windowSize.y*0.01)),
+                 static_cast<int>(SidebarLayout.EndTurnButtonStart.y*windowSize.y*0.01),
+                 static_cast<int>(SidebarLayout.EndTurnbuttonHeight*SpriteData.Turn_Button.x/SpriteData.Turn_Button.y*windowSize.y*0.01),
+                 static_cast<int>(SidebarLayout.EndTurnbuttonHeight*windowSize.y*0.01)
+                };
+        SDL_Rect srcRect = {0,0,SpriteData.Turn_Button.x,SpriteData.Turn_Button.y};
+        if(bIsActive)
+        {
+            if(IsMouseInsideRect(buttonPlacement, mouseOverX,mouseOverY))
+            {
+                SDL_RenderCopy(renderer(),endTurnButtonMouseover,&srcRect,&buttonPlacement);
+            }
+            else
+            {
+                SDL_RenderCopy(renderer(),endTurnButtonOn,&srcRect,&buttonPlacement);
+            }
+        }
+        else
+        {
+
+            SDL_RenderCopy(renderer(),endTurnButtonOff,&srcRect,&buttonPlacement);
+        }
+    }
+
     void BeasthoodState::Render(const u64 frame, const u64 totalMSec, const f32 deltaT) {
 
 
@@ -864,6 +1008,8 @@ namespace JanSordid::SDL_Example {
                     renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
                 }
             }
+            RenderSidebar();
+            RenderTurnButton(true);
         }
 
         if (Phase == GamePhases::ENCOUNTER) {
@@ -885,6 +1031,8 @@ namespace JanSordid::SDL_Example {
                 }
 
                 RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector);
+                RenderSidebar();
+                RenderTurnButton(false);
 
                 //Render Foreground //todo decouple from bg, if needed?
                 switch(eTracker.activeEncounter->scenes[eTracker.szene].background)
@@ -903,7 +1051,7 @@ namespace JanSordid::SDL_Example {
                 SDL_Rect txtField = {0,static_cast<int>(windowSize.y*EncounterLayout.DialogueBoxStart.y*0.01),
                                      static_cast<int>(windowSize.x*EncounterLayout.DialogueBoxEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.DialogueBoxEnd.y*0.01)};
                 SDL_RenderFillRect(renderer(),&txtField);
-                fmt::println("Screensize: x {}, y {}", windowSize.x, windowSize.y);
+                // fmt::println("Screensize: x {}, y {}", windowSize.x, windowSize.y);
 
                 Texture * sceneText = textToTexture(eTracker.activeEncounter->scenes[eTracker.szene].sceneText);
 
