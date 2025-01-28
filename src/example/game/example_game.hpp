@@ -401,6 +401,7 @@ namespace JanSordid::SDL_Example {
             int combatDamage = 0;
             int horrorRating = 0;
             int combatRating = 0;
+            bool monsterDefeated = false;
         };
         CombatTracker cTracker;
 
@@ -492,6 +493,8 @@ namespace JanSordid::SDL_Example {
         void RenderSceneComposition(std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>> compositionVector);
 
         void PopulateMonsterManager();
+
+        void UpdateCombatEncounter();
     };
 
 }

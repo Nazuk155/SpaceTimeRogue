@@ -366,6 +366,8 @@ namespace JanSordid::SDL_Example {
         std::cout.flush();
 
         currentCharacter->SetCurrentLocation(LocationID::Forest);
+        currentCharacter->EquipItem(currentCharacter->GetInventory().back());
+        currentCharacter->UpdateCurrentStats();
 
         PopulateMonsterManager();
         PopulateEventManager();
@@ -421,6 +423,9 @@ namespace JanSordid::SDL_Example {
                             cTracker.horrorDamage = monsterManager.getMonsterByID(cTracker.monID)->horrorDamage;
                             cTracker.combatRating = monsterManager.getMonsterByID(cTracker.monID)->combatRating;
                             cTracker.horrorRating = monsterManager.getMonsterByID(cTracker.monID)->horrorRating;
+                            UpdateCombatEncounter();
+                            eTracker.activeEncounter = encounterManager.getEncounter(EncounterID::Combat_Encounter);
+                            eTracker.encounterID = EncounterID::Combat_Encounter;
                         }
                         break;
                 }
@@ -457,6 +462,9 @@ namespace JanSordid::SDL_Example {
                                             cTracker.horrorDamage = monsterManager.getMonsterByID(cTracker.monID)->horrorDamage;
                                             cTracker.combatRating = monsterManager.getMonsterByID(cTracker.monID)->combatRating;
                                             cTracker.horrorRating = monsterManager.getMonsterByID(cTracker.monID)->horrorRating;
+                                            UpdateCombatEncounter();
+                                            eTracker.activeEncounter = encounterManager.getEncounter(EncounterID::Combat_Encounter);
+                                            eTracker.encounterID = EncounterID::Combat_Encounter;
                                         }
 
 
@@ -634,27 +642,40 @@ namespace JanSordid::SDL_Example {
 
             if (movementPoints > 0) {
                 if (playerMoved) {
-                    if(currentEncounterIsOnlyCombat){
-                        Phase = GamePhases::ENCOUNTER;
+                    if(!currentEncounterIsOnlyCombat) {
 
+
+
+                        character1->SetCurrentLocation(moveTarget);
+                        character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
+                        movementPoints--;
+                        playerMoved = false;
+                    }else{
+                        Phase = GamePhases::ENCOUNTER;
+                        awaitingInput = true;
                     }
-                    character1->SetCurrentLocation(moveTarget);
-                    character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
-                    movementPoints--;
-                    playerMoved = false;
                 }
             }
             if(movementPoints == 0 || endMovementConfirmation) {
-                Phase = GamePhases::ENCOUNTER;
-                endMovementConfirmation = false;
-                awaitingInput = true;
-                playerMoved = false;
+                if(!currentEncounterIsOnlyCombat) {
+                    Phase = GamePhases::ENCOUNTER;
+                    endMovementConfirmation = false;
+                    awaitingInput = true;
+                    playerMoved = false;
 
-                if(locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID()) != EncounterID::NO_ENCOUNTER_ASSIGNED) {
-                    eTracker.encounterID = locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID());
-                    eTracker.activeEncounter = encounterManager.getEncounter(eTracker.encounterID);
-                    eTracker.diaPhase = DialoguePhase::Scene;
-                }else{ Phase = GamePhases::DISASTER;awaitingInput = false;}
+                    if (locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID()) !=
+                        EncounterID::NO_ENCOUNTER_ASSIGNED) {
+                        eTracker.encounterID = locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID());
+                        eTracker.activeEncounter = encounterManager.getEncounter(eTracker.encounterID);
+                        eTracker.diaPhase = DialoguePhase::Scene;
+                    } else {
+                        Phase = GamePhases::DISASTER;
+                        awaitingInput = false;
+                    }
+                }else{
+                    Phase = GamePhases::ENCOUNTER;
+                    awaitingInput = true;
+                }
             }
         }
         //movement on map, then trigger event on player location
@@ -668,71 +689,92 @@ namespace JanSordid::SDL_Example {
                 if (eTracker.szene != 255) {
                     //wait for player input after options of the scene are displayed
                     if (!awaitingInput) {
+                        //dumb hack to kill monster when it is defeated via combat
+                        if (currentEncounterIsOnlyCombat) {
+                            if (eTracker.szene == 4) { //szene 4 passiert nur wenn encounter durch kampf gewonnen
+                                locationManager.GetItem(cTracker.location)->monsters_or_npcs.pop_back();
+                            }
+                        }
                         //check if the input is viable within the options provided
                         if (eTracker.selectedOption <=
-                            eTracker.activeEncounter->scenes[eTracker.szene].options.size()-1 && eTracker.selectedOption != -1) {
+                            eTracker.activeEncounter->scenes[eTracker.szene].options.size() - 1 &&
+                            eTracker.selectedOption != -1) {
                             //resolve skillcheck if the option triggers one
                             if (eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].isSkillCheck) {
                                 ske.setDifficulty(
                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].difficulty);
                                 ske.setModifier(0); //todo figure out what gives a modifier? Map Aura? Temporary Buffs?
-                                ske.setSkill(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].skill);
+                                ske.setSkill(
+                                        eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].skill);
                                 //if the skillcheck is not successful we ask if the player wants to spend fate
                                 if (!ske.checkSkill()) {
                                     eTracker.diaPhase = DialoguePhase::DieRoll;
-                                        awaitingInput = true;
-                                        eTracker.chooseFateReroll = true;
-                                        eTracker.alreadyDisplayedText = false;
-                                }else{
+                                    awaitingInput = true;
+                                    eTracker.chooseFateReroll = true;
+                                    eTracker.alreadyDisplayedText = false;
+                                } else {
                                     //if successfull we resolve the outcome and set the next scene as well as showing the rolls
                                     eTracker.diaPhase = DialoguePhase::DieRoll;
-                                    encounterManager.iterateOverOutcomes(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
-                                                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
-                                                                         *currentCharacter);
+                                    encounterManager.iterateOverOutcomes(
+                                            eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
+                                            eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
+                                            *currentCharacter);
                                     eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                                     eTracker.selectedOption = -1;
                                     eTracker.alreadyDisplayedText = false;
                                     awaitingInput = true;
 
                                 }
-                            }else{
+                            } else {
                                 ///TODO add alternative to skillchecks in encounter. Check for item or quest progresss for example
-                                encounterManager.iterateOverOutcomes(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
-                                                                     eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
-                                                                     *currentCharacter);
+                                encounterManager.iterateOverOutcomes(
+                                        eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
+                                        eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
+                                        *currentCharacter);
                                 eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                                 eTracker.selectedOption = -1;
                                 eTracker.alreadyDisplayedText = false;
                                 awaitingInput = true;
                             }
-                        }else{if(eTracker.selectedOption != -1){std::cerr << "Selected Input not viable! Choose from displayed options!" << "\n";eTracker.selectedOption = -1;awaitingInput = true;}}
+                        } else {
+                            if (eTracker.selectedOption != -1) {
+                                std::cerr << "Selected Input not viable! Choose from displayed options!" << "\n";
+                                eTracker.selectedOption = -1;
+                                awaitingInput = true;
+                            }
+                        }
                     }
 
                 } else {
                     //if we hit a 255 jump we reset the encounterTracker and activate the next Game Phase
+                    if (!currentEncounterIsOnlyCombat) {
+                        Phase = GamePhases::DISASTER;
+                    } else {
+                        Phase = GamePhases::MOVEMENT;
+                        currentEncounterIsOnlyCombat = false;
+                    }
+
                     eTracker.szene = 0;
                     awaitingInput = false;
                     eTracker.diaPhase = DialoguePhase::Scene;
-
-                    if(!currentEncounterIsOnlyCombat){
-                        Phase = GamePhases::DISASTER;
-                    }else{ Phase = GamePhases::MOVEMENT;}
-
                 }
-            }else{
-                if(eTracker.fateRerollChoice == 0 && currentCharacter->GetFatePoints() > 0){
+
+
+            } else {
+                if (eTracker.fateRerollChoice == 0 && currentCharacter->GetFatePoints() > 0) {
                     currentCharacter->SpendFate();
-                    if(ske.addFateDice()){
-                        encounterManager.iterateOverOutcomes(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
-                                                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
-                                                             *currentCharacter);
+                    if (ske.addFateDice()) {
+                        encounterManager.iterateOverOutcomes(
+                                eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
+                                eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
+                                *currentCharacter);
                         eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                         eTracker.alreadyDisplayedText = false;
                         eTracker.chooseFateReroll = false;
                         eTracker.fateRerollChoice = -1;
                         eTracker.diaPhase = DialoguePhase::Scene;
                         awaitingInput = true;
-                    }else{
+                    } else {
                         if (currentCharacter->GetFatePoints() > 0) {
                             eTracker.diaPhase = DialoguePhase::DieRoll;
                             eTracker.alreadyDisplayedText = false;
@@ -741,10 +783,11 @@ namespace JanSordid::SDL_Example {
 
                     }
                 }
-                if(eTracker.fateRerollChoice == 1 || currentCharacter->GetFatePoints() <= 0) {
-                    encounterManager.iterateOverOutcomes(eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureItemIDs,
-                                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureOutcomes,
-                                                         *currentCharacter);
+                if (eTracker.fateRerollChoice == 1 || currentCharacter->GetFatePoints() <= 0) {
+                    encounterManager.iterateOverOutcomes(
+                            eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureItemIDs,
+                            eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureOutcomes,
+                            *currentCharacter);
                     eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetFail;
                     eTracker.alreadyDisplayedText = false;
                     eTracker.chooseFateReroll = false;
@@ -754,9 +797,8 @@ namespace JanSordid::SDL_Example {
                     eTracker.selectedOption = -1;
                 }
             }
-
-
         }
+
         if(Phase == GamePhases::DISASTER){
             std::cout << "DISASTER PHASE REACHED \n";
             std::cout.flush();
@@ -1329,6 +1371,149 @@ namespace JanSordid::SDL_Example {
                 DialoguePhase::Scene // Starting dialogue phase
         };
     encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
+
+      //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
+    }
+
+    void BeasthoodState::PopulateMonsterManager(){
+        Monster mon1("Werwolf",
+                     LocationID::UNASSIGNED,
+                     MonsterID::Werewolf,
+                     MonsterType::Beast,
+                     MovementType::Fast,
+                     10,
+                     4,
+                     -3,
+                     1,
+                     -2,
+                     3,
+                     AbilityID::WerwolfCorruptionEffects,
+                     1);
+        monsterManager.addMonster(mon1);
+        mon1 = {"Wolf",
+                LocationID::UNASSIGNED,
+                MonsterID::Wolf,
+                MonsterType::Beast,
+                MovementType::Stalking,
+                4,
+                2,
+                0,
+                0,
+                -1,
+                2,
+                AbilityID::WolfPackAttack,
+                6};
+        monsterManager.addMonster(mon1);
+    }
+
+
+    void BeasthoodState::PopulateLocationEvents(){
+
+        /// TODO add more events
+       // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
+        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
+
+    }
+
+
+    //input character sheets here, maybe add intro choices to modify these TODO
+    //examples on how to fill a character sheet here
+    void BeasthoodState::PopulateBlueprints() {
+
+        std::vector<Item *> temp;
+        temp.push_back(itemManager.GetItem(ItemID::Halbert));
+        blueprintManager.AddBlueprint(std::make_shared<CharacterBlueprint>(
+                "Landsknecht",
+                8, 6,
+                Stats(3, 2, 4, 3, 0, 1),
+                Stats(5, 4, 6, 4, 3, 3),
+                2,
+                abilityManager.GetAbility(AbilityID::ReduceStaminaLoss),
+                "Gain a fate point after defeating a boss",
+                temp
+        ));
+
+        blueprintManager.AddBlueprint(std::make_shared<CharacterBlueprint>(
+                "Monk",
+                5, 8,
+                Stats(4, 2, 1, 6, 6, 1),
+                Stats(4, 5, 4, 6, 6, 4),
+                3,
+                abilityManager.GetAbility(AbilityID::DrawExtraItem),
+                "Gain a fate point after casting 3 spells in a turn",
+                temp
+        ));
+    }
+
+    bool BeasthoodState::IsMouseInsideRect(const SDL_Rect &rect, int mouseX, int mouseY) {
+        return mouseX >= rect.x && mouseX < (rect.x + rect.w) &&
+               mouseY >= rect.y && mouseY < (rect.y + rect.h);
+    }
+
+    //todo placeholder functions
+    void BeasthoodState::renderDicerollAnimation(SkillChallengeEngine& ske)
+    {
+        fmt::println("Testing: {}",ske.currentSkillName());
+        for(uint8_t roll : ske.currentRolls)
+        {
+            fmt::print("{} ", roll);
+        }
+        fmt::println(" - {} Successes for Difficulty {}.", ske.getSuccesses(), ske.getDifficulty());
+        if (ske.getSuccesses() >= ske.getDifficulty()) //todo you can get true from the skillcheck being called-> can save result in WS!
+        {
+            fmt::println("Passed!");
+        }
+        else
+        {
+            //Todo check if FP available
+            fmt::println("Failed! Spend a Will point to roll one more die?");
+            fmt::println("1. Yes");
+            fmt::println("2. No");
+        }
+
+    }
+    void BeasthoodState::renderFateDieAnimation(const SkillChallengeEngine& ske)
+    {
+        fmt::println("Will fate bend to mortal will?");
+        for(uint8_t roll : ske.currentRolls)
+        {
+            fmt::print("{} ", roll);
+        }
+        fmt::println("{} Successes for Difficulty {}.", ske.getSuccesses(), ske.getDifficulty());
+        if (ske.getSuccesses() >= ske.getDifficulty()) //todo you can get true from the skillcheck being called-> can save result in WS!
+        {
+            fmt::println("Passed!");
+        }
+        else
+        {
+            fmt::println("No matter your struggle: You failed.");
+        }
+    }
+
+    std::string BeasthoodState::StatToString(StatNames stat)
+    {
+        switch (stat) {
+
+            case StatNames::FIGHT:
+                return "Fight";
+                // return currentCharacter.Combat;
+            case StatNames::SNEAK:
+                return "Sneak";
+                // return currentCharacter.Stealth;
+            case StatNames::SPEED:
+                return "Speed";
+                //return currentCharacter.Speech;
+            case StatNames::WILLPOWER:
+                return "Willpower";
+            case StatNames::OCCULT:
+                return "Knowledge";
+            case StatNames::FAITH:
+                return "Luck";
+
+        }
+    }
+    void BeasthoodState::UpdateCombatEncounter(){
+        encounterManager.removeEncounter(EncounterID::Combat_Encounter);
         Encounter CombatEncounter{
                 EncounterID::Combat_Encounter, // Replace with the actual EncounterID from your global enums
                 EncounterTypeID::Tutorial,  // Replace with the appropriate type from your global enums
@@ -1450,29 +1635,29 @@ namespace JanSordid::SDL_Example {
                                 }
                         },
                         {
-                    "You defeat the Monster, its body crumpling to the ground. The threat has been eliminated, but at what cost?",
-                            EnvironmentType::DenseForest,
-                            {
+                                "You defeat the Monster, its body crumpling to the ground. The threat has been eliminated, but at what cost?",
+                                EnvironmentType::DenseForest,
+                                {
 
-                                    {
-                                            "Leave the area.",
-                                            false,
-                                            StatNames::FIGHT,
-                                            0,
-                                            {},
-                                            {},
-                                            255,
-                                            255,
-                                            {}, // rewardItemIDs
-                                            {}  // failureItemIDs
-                                    }
-                            },
-                            {
-                                    {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                    {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
-                                    {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
-                            }
-                },
+                                        {
+                                                "Leave the area.",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                255,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
+                                }
+                        },
                         {
                                 "<STEALTH check success> You manage to get away from the Monster, either through cunning or sheer luck. For now, you are safe.",
                                 EnvironmentType::DenseForest,
@@ -1582,144 +1767,6 @@ namespace JanSordid::SDL_Example {
                 },
                 DialoguePhase::Scene // Starting dialogue phase
         };
-        encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
-    }
-
-    void BeasthoodState::PopulateMonsterManager(){
-        Monster mon1("Werwolf",
-                     LocationID::UNASSIGNED,
-                     MonsterID::Werewolf,
-                     MonsterType::Beast,
-                     MovementType::Fast,
-                     10,
-                     4,
-                     -3,
-                     1,
-                     -2,
-                     3,
-                     AbilityID::WerwolfCorruptionEffects,
-                     1);
-        monsterManager.addMonster(mon1);
-        mon1 = {"Wolf",
-                LocationID::UNASSIGNED,
-                MonsterID::Wolf,
-                MonsterType::Beast,
-                MovementType::Stalking,
-                4,
-                2,
-                0,
-                0,
-                -1,
-                2,
-                AbilityID::WolfPackAttack,
-                6};
-        monsterManager.addMonster(mon1);
-    }
-
-
-    void BeasthoodState::PopulateLocationEvents(){
-
-        /// TODO add more events
-        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
-       // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
-
-    }
-
-
-    //input character sheets here, maybe add intro choices to modify these TODO
-    //examples on how to fill a character sheet here
-    void BeasthoodState::PopulateBlueprints() {
-
-        std::vector<Item *> temp;
-        temp.push_back(itemManager.GetItem(ItemID::Halbert));
-        blueprintManager.AddBlueprint(std::make_shared<CharacterBlueprint>(
-                "Landsknecht",
-                8, 6,
-                Stats(3, 2, 4, 3, 0, 1),
-                Stats(5, 4, 6, 4, 3, 3),
-                2,
-                abilityManager.GetAbility(AbilityID::ReduceStaminaLoss),
-                "Gain a fate point after defeating a boss",
-                temp
-        ));
-
-        blueprintManager.AddBlueprint(std::make_shared<CharacterBlueprint>(
-                "Monk",
-                5, 8,
-                Stats(4, 2, 1, 6, 6, 1),
-                Stats(4, 5, 4, 6, 6, 4),
-                3,
-                abilityManager.GetAbility(AbilityID::DrawExtraItem),
-                "Gain a fate point after casting 3 spells in a turn",
-                temp
-        ));
-    }
-
-    bool BeasthoodState::IsMouseInsideRect(const SDL_Rect &rect, int mouseX, int mouseY) {
-        return mouseX >= rect.x && mouseX < (rect.x + rect.w) &&
-               mouseY >= rect.y && mouseY < (rect.y + rect.h);
-    }
-
-    //todo placeholder functions
-    void BeasthoodState::renderDicerollAnimation(SkillChallengeEngine& ske)
-    {
-        fmt::println("Testing: {}",ske.currentSkillName());
-        for(uint8_t roll : ske.currentRolls)
-        {
-            fmt::print("{} ", roll);
-        }
-        fmt::println(" - {} Successes for Difficulty {}.", ske.getSuccesses(), ske.getDifficulty());
-        if (ske.getSuccesses() >= ske.getDifficulty()) //todo you can get true from the skillcheck being called-> can save result in WS!
-        {
-            fmt::println("Passed!");
-        }
-        else
-        {
-            //Todo check if FP available
-            fmt::println("Failed! Spend a Will point to roll one more die?");
-            fmt::println("1. Yes");
-            fmt::println("2. No");
-        }
-
-    }
-    void BeasthoodState::renderFateDieAnimation(const SkillChallengeEngine& ske)
-    {
-        fmt::println("Will fate bend to mortal will?");
-        for(uint8_t roll : ske.currentRolls)
-        {
-            fmt::print("{} ", roll);
-        }
-        fmt::println("{} Successes for Difficulty {}.", ske.getSuccesses(), ske.getDifficulty());
-        if (ske.getSuccesses() >= ske.getDifficulty()) //todo you can get true from the skillcheck being called-> can save result in WS!
-        {
-            fmt::println("Passed!");
-        }
-        else
-        {
-            fmt::println("No matter your struggle: You failed.");
-        }
-    }
-
-    std::string BeasthoodState::StatToString(StatNames stat)
-    {
-        switch (stat) {
-
-            case StatNames::FIGHT:
-                return "Fight";
-                // return currentCharacter.Combat;
-            case StatNames::SNEAK:
-                return "Sneak";
-                // return currentCharacter.Stealth;
-            case StatNames::SPEED:
-                return "Speed";
-                //return currentCharacter.Speech;
-            case StatNames::WILLPOWER:
-                return "Willpower";
-            case StatNames::OCCULT:
-                return "Knowledge";
-            case StatNames::FAITH:
-                return "Luck";
-
-        }
+        encounterManager.addEncounter(EncounterID::Combat_Encounter,CombatEncounter);
     }
 }
