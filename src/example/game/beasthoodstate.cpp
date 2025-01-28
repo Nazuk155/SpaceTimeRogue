@@ -354,8 +354,8 @@ namespace JanSordid::SDL_Example {
         // CurrentEncounter = e;
 
 
-       // dialoguePhase = DialoguePhase::Scene;
-       // CurrentEncounter = FirstEncounter;
+        // dialoguePhase = DialoguePhase::Scene;
+        // CurrentEncounter = FirstEncounter;
         character1->RefillFatePoints();
         currentCharacter = character1;
 
@@ -455,6 +455,8 @@ namespace JanSordid::SDL_Example {
                                             currentEncounterIsOnlyCombat = true;
                                             cTracker.location = currentCharacter->GetCurrentLocationID();
                                             cTracker.monID = locationManager.GetItem(cTracker.location)->monsters_or_npcs.back();
+                                            cTracker.monsterIdVector = locationManager.GetItem(cTracker.location)->monsters_or_npcs;
+                                            //TODO use this better and count the encounter till the que is empty
 
                                             cTracker.toughness = monsterManager.getMonsterByID(cTracker.monID)->toughness;
                                             cTracker.awareness = monsterManager.getMonsterByID(cTracker.monID)->awareness;
@@ -498,14 +500,13 @@ namespace JanSordid::SDL_Example {
             }
 
 
-            if ( awaitingInput)
-            {
+
                 if(event.type == SDL_MOUSEMOTION)
                 {
                     SDL_GetMouseState(&mouseOverX, &mouseOverY); //TODO REDUNDANCY
                 }
 
-            }
+
 
             if (!eTracker.chooseFateReroll && awaitingInput) {
 
@@ -577,9 +578,12 @@ namespace JanSordid::SDL_Example {
                     SDL_Rect button;
                     SDL_GetMouseState(&mouseX, &mouseY);
                     fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseX, mouseY);
-                    for(int i = 0;i<OptionVector.size();i++)
+                    for(int i = 0;i<2;i++)
                     {
-                        button = OptionVector[i];
+                        button = OptionVector[0];
+                        if(i == 1){
+                            button.y = button.y+button.h;
+                        }
                         fmt::println("Checking button {}",i);
                         fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}",button.x,button.y, button.w,button.h);
                         //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
@@ -643,8 +647,6 @@ namespace JanSordid::SDL_Example {
             if (movementPoints > 0) {
                 if (playerMoved) {
                     if(!currentEncounterIsOnlyCombat) {
-
-
 
                         character1->SetCurrentLocation(moveTarget);
                         character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
@@ -749,14 +751,18 @@ namespace JanSordid::SDL_Example {
                     //if we hit a 255 jump we reset the encounterTracker and activate the next Game Phase
                     if (!currentEncounterIsOnlyCombat) {
                         Phase = GamePhases::DISASTER;
+                        eTracker.szene = 0;
+                        awaitingInput = false;
+                        eTracker.diaPhase = DialoguePhase::Scene;
                     } else {
                         Phase = GamePhases::MOVEMENT;
                         currentEncounterIsOnlyCombat = false;
-                    }
+                    }// TODO encounter queque and track killed enemies
 
                     eTracker.szene = 0;
                     awaitingInput = false;
                     eTracker.diaPhase = DialoguePhase::Scene;
+
                 }
 
 
@@ -911,7 +917,7 @@ namespace JanSordid::SDL_Example {
                 }
                 //render character icon on map
                 if (character1->GetCurrentLocationID() != LocationID::UNASSIGNED) {
-                  //  renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
+                    //  renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
                 }
             }
         }
@@ -1051,16 +1057,16 @@ namespace JanSordid::SDL_Example {
 
 
                                 OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
-                                static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01)*windowSize.y),
-                                static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
-                                static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
+                                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01)*windowSize.y),
+                                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
+                                                        static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
                                 OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
                                                         static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01+EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y),
                                                         static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
                                                         static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
                                 Texture * optionTextYes;
                                 Texture * optionTextNo;
-                                    //renderText(DialogueMainField,optionText);
+                                //renderText(DialogueMainField,optionText);
 
                                 optionTextYes = textToTexture("Yes. (-1 WP)");
                                 optionTextNo = textToTexture("No.");
@@ -1095,11 +1101,11 @@ namespace JanSordid::SDL_Example {
 
 
 
-                                    //fmt::println("OptionVector size {}", OptionVector.size());
-                                    SDL_DestroyTexture(optionTextYes); //prevent leak
-                                    optionTextYes= nullptr;
-                                    SDL_DestroyTexture(optionTextNo); //prevent leak
-                                    optionTextNo= nullptr;
+                                //fmt::println("OptionVector size {}", OptionVector.size());
+                                SDL_DestroyTexture(optionTextYes); //prevent leak
+                                optionTextYes= nullptr;
+                                SDL_DestroyTexture(optionTextNo); //prevent leak
+                                optionTextNo= nullptr;
 
 
 
@@ -1146,7 +1152,7 @@ namespace JanSordid::SDL_Example {
 
 //Version using a SDL_Rect to pull values from. Added for utility and because everything should have a Rect
     void BeasthoodState::renderFromSpritesheet(Rect values, SDL_Texture *t, SDL_Rect *clip, double angle, SDL_Point *center,
-                                          SDL_RendererFlip flip, bool useClipSize) {
+                                               SDL_RendererFlip flip, bool useClipSize) {
         SDL_Rect renderQuad = {values.x, values.y, values.w, values.h};
 
         if (clip != nullptr && useClipSize) {
@@ -1370,9 +1376,9 @@ namespace JanSordid::SDL_Example {
                 },
                 DialoguePhase::Scene // Starting dialogue phase
         };
-    encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
+        encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
 
-      //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
+        //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
 
     void BeasthoodState::PopulateMonsterManager(){
@@ -1410,7 +1416,7 @@ namespace JanSordid::SDL_Example {
     void BeasthoodState::PopulateLocationEvents(){
 
         /// TODO add more events
-       // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
+        // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
         locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
 
     }
