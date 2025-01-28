@@ -345,9 +345,7 @@ namespace JanSordid::SDL_Example {
         character1 = new Character(*landsknechtBlueprint);
 
 
-        PopulateEventManager();
-        PopulateLocationEvents();
-        PopulateMonsterManager();
+
 
 
         locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
@@ -366,6 +364,13 @@ namespace JanSordid::SDL_Example {
         fmt::println("Fate available: {}",
                      character1->GetFatePoints()); //todo 0 fate dialogue makes no sense, prints options that should not be printed
         std::cout.flush();
+
+        currentCharacter->SetCurrentLocation(LocationID::Forest);
+
+        PopulateMonsterManager();
+        PopulateEventManager();
+        PopulateLocationEvents();
+
 
 
 
@@ -405,6 +410,18 @@ namespace JanSordid::SDL_Example {
                 switch (event.key.keysym.sym) {
                     case SDLK_SPACE:
                         endMovementConfirmation = true;
+                        if(!locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters_or_npcs.empty()){
+                            currentEncounterIsOnlyCombat = true;
+                            cTracker.location = currentCharacter->GetCurrentLocationID();
+                            cTracker.monID = locationManager.GetItem(cTracker.location)->monsters_or_npcs.back();
+
+                            cTracker.toughness = monsterManager.getMonsterByID(cTracker.monID)->toughness;
+                            cTracker.awareness = monsterManager.getMonsterByID(cTracker.monID)->awareness;
+                            cTracker.combatDamage = monsterManager.getMonsterByID(cTracker.monID)->combatDamage;
+                            cTracker.horrorDamage = monsterManager.getMonsterByID(cTracker.monID)->horrorDamage;
+                            cTracker.combatRating = monsterManager.getMonsterByID(cTracker.monID)->combatRating;
+                            cTracker.horrorRating = monsterManager.getMonsterByID(cTracker.monID)->horrorRating;
+                        }
                         break;
                 }
             }
@@ -429,6 +446,18 @@ namespace JanSordid::SDL_Example {
                                         //setzen location vom charakter und pos auf das aktuelle e da dies die node ist die gecklickt wurde
                                         moveTarget = e.location_id;
                                         playerMoved = true;
+                                        if(!locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters_or_npcs.empty()){
+                                            currentEncounterIsOnlyCombat = true;
+                                            cTracker.location = currentCharacter->GetCurrentLocationID();
+                                            cTracker.monID = locationManager.GetItem(cTracker.location)->monsters_or_npcs.back();
+
+                                            cTracker.toughness = monsterManager.getMonsterByID(cTracker.monID)->toughness;
+                                            cTracker.awareness = monsterManager.getMonsterByID(cTracker.monID)->awareness;
+                                            cTracker.combatDamage = monsterManager.getMonsterByID(cTracker.monID)->combatDamage;
+                                            cTracker.horrorDamage = monsterManager.getMonsterByID(cTracker.monID)->horrorDamage;
+                                            cTracker.combatRating = monsterManager.getMonsterByID(cTracker.monID)->combatRating;
+                                            cTracker.horrorRating = monsterManager.getMonsterByID(cTracker.monID)->horrorRating;
+                                        }
 
 
                                         std::cout.flush();
@@ -605,6 +634,10 @@ namespace JanSordid::SDL_Example {
 
             if (movementPoints > 0) {
                 if (playerMoved) {
+                    if(currentEncounterIsOnlyCombat){
+                        Phase = GamePhases::ENCOUNTER;
+
+                    }
                     character1->SetCurrentLocation(moveTarget);
                     character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
                     movementPoints--;
@@ -1296,6 +1329,260 @@ namespace JanSordid::SDL_Example {
                 DialoguePhase::Scene // Starting dialogue phase
         };
     encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
+        Encounter CombatEncounter{
+                EncounterID::Combat_Encounter, // Replace with the actual EncounterID from your global enums
+                EncounterTypeID::Tutorial,  // Replace with the appropriate type from your global enums
+                {
+                        {
+                                "You are confronted by a Monster. Its presence chills you to the bone. Do you try to evade it or stand your ground?",
+                                EnvironmentType::DenseForest,
+                                {
+                                        {
+                                                "Evade the monster (SNEAK)" ,
+                                                true,
+                                                StatNames::SNEAK,
+                                                cTracker.awareness,
+                                                {},
+                                                {},
+                                                5,
+                                                7,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        },
+                                        {
+                                                "Face the monster head-on. (FIGHT)",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                1,
+                                                1,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::EnemyMain}
+
+                                }
+                        },
+                        {
+                                "The Monsters nightmarish visage fills your mind with dread. You must summon your will to avoid breaking down.",
+                                EnvironmentType::DenseForest,
+                                {
+
+                                        {
+                                                "Make a Willpower check",
+                                                true,
+                                                StatNames::WILLPOWER,
+                                                1,
+                                                {},
+                                                {{ExecuteFlags::SanityLoss,cTracker.horrorDamage}},
+                                                2,
+                                                8,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                }
+                        },
+                        {
+                                "With a surge of courage, you attempt to slay the Monster. Can you overpower the beast?",
+                                EnvironmentType::DenseForest,
+                                {
+
+                                        {
+                                                "Make a Fight check",
+                                                true,
+                                                StatNames::FIGHT,
+                                                cTracker.toughness,
+                                                {},
+                                                {{ExecuteFlags::Wound,cTracker.combatDamage}},
+                                                4,
+                                                3,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                }
+                        },
+                        {
+                                "<failed check> Having failed your attempt the Monster takes advantage and strikes you with brutal ferocity.",
+                                EnvironmentType::DenseForest,
+                                {
+
+                                        {
+                                                "Continue fighting (Retry Combat Check)",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                2,
+                                                2,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        },
+                                        {
+                                                "Attempt to Escape (SNEAK)",
+                                                true,
+                                                StatNames::SNEAK,
+                                                cTracker.awareness,
+                                                {},
+                                                {{ExecuteFlags::Wound,cTracker.combatDamage}},
+                                                5,
+                                                3,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                }
+                        },
+                        {
+                    "You defeat the Monster, its body crumpling to the ground. The threat has been eliminated, but at what cost?",
+                            EnvironmentType::DenseForest,
+                            {
+
+                                    {
+                                            "Leave the area.",
+                                            false,
+                                            StatNames::FIGHT,
+                                            0,
+                                            {},
+                                            {},
+                                            255,
+                                            255,
+                                            {}, // rewardItemIDs
+                                            {}  // failureItemIDs
+                                    }
+                            },
+                            {
+                                    {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                    {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
+                                    {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
+                            }
+                },
+                        {
+                                "<STEALTH check success> You manage to get away from the Monster, either through cunning or sheer luck. For now, you are safe.",
+                                EnvironmentType::DenseForest,
+                                {
+
+                                        {
+                                                "Move on.",
+                                                false,
+                                                StatNames::NONE,
+                                                0,
+                                                {},
+                                                {},
+                                                255,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}
+                                }
+                        },
+                        {
+                                "<WILLPOWER check failed> Both mind and body are ravaged as the Monster spots you in your attempted cowardice!",
+                                EnvironmentType::DenseForest,
+                                {
+
+                                        {
+                                                "Steel yourself and fight (FIGHT)",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                2,
+                                                2,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        },
+                                        {
+                                                "Attempt to Escape again (SNEAK)",
+                                                true,
+                                                StatNames::SNEAK,
+                                                cTracker.awareness,
+                                                {},
+                                                {{ExecuteFlags::Wound,cTracker.combatDamage}},
+                                                5,
+                                                3,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
+                                }
+                        },
+                        {
+                                "<STEALTH check failed> Failing to evade its gaze, you attempt to guard your mind from slipping into panic as the creatures horrifying form ravages your body!",
+                                EnvironmentType::DenseForest,
+                                {
+
+                                        {
+                                                "Steel yourself (Willpower Check)",
+                                                true,
+                                                StatNames::WILLPOWER,
+                                                1,
+                                                {{ExecuteFlags::Wound,cTracker.combatDamage}},
+                                                {{ExecuteFlags::SanityLoss,cTracker.horrorDamage},{ExecuteFlags::Wound,cTracker.combatDamage}},
+                                                3,
+                                                6,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                }
+                        },
+                        {
+                                "<WILLPOWER check failed> Your mind writhes in abject horror as the creatures visage meets your gaze.",
+                                EnvironmentType::DenseForest,
+                                {
+
+                                        {
+                                                "Gather your Courage and continue",
+                                                false,
+                                                StatNames::WILLPOWER,
+                                                0,
+                                                {},
+                                                {},
+                                                2,
+                                                2,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                }
+                        }
+
+                },
+                DialoguePhase::Scene // Starting dialogue phase
+        };
+        encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
 
     void BeasthoodState::PopulateMonsterManager(){
@@ -1305,6 +1592,7 @@ namespace JanSordid::SDL_Example {
                      MonsterType::Beast,
                      MovementType::Fast,
                      10,
+                     4,
                      -3,
                      1,
                      -2,
@@ -1318,6 +1606,7 @@ namespace JanSordid::SDL_Example {
                 MonsterType::Beast,
                 MovementType::Stalking,
                 4,
+                2,
                 0,
                 0,
                 -1,
@@ -1331,7 +1620,9 @@ namespace JanSordid::SDL_Example {
     void BeasthoodState::PopulateLocationEvents(){
 
         /// TODO add more events
-        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
+        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
+       // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
+
     }
 
 
@@ -1344,7 +1635,7 @@ namespace JanSordid::SDL_Example {
         blueprintManager.AddBlueprint(std::make_shared<CharacterBlueprint>(
                 "Landsknecht",
                 8, 6,
-                Stats(5, 1, 6, 1, 3, 0),
+                Stats(3, 2, 4, 3, 0, 1),
                 Stats(5, 4, 6, 4, 3, 3),
                 2,
                 abilityManager.GetAbility(AbilityID::ReduceStaminaLoss),

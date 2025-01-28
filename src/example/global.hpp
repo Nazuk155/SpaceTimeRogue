@@ -34,6 +34,7 @@ std::unordered_map<StatNames, std::string> StatNamesStringMap //can likely be do
         */
 enum class EncounterID{
     NO_ENCOUNTER_ASSIGNED, // never assign this to a event. Only output when a location has no events in vector
+    Combat_Encounter,
     Forest_Thievery,
     Generic_FindSurvivor,
     Church_HolyWaterConversation

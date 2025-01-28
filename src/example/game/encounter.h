@@ -2,9 +2,6 @@
 #pragma once
 #include "../global.hpp"
 
-/// TODO rip out the testing code and put encounters into an EncounterManager,
-/// split SkillCheckEngine into fight and skill checks as well as a separate dice roller.
-
 enum class EnvironmentType
 {
     VillageOutskirts,

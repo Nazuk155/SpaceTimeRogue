@@ -391,6 +391,20 @@ namespace JanSordid::SDL_Example {
         bool awaitingInput = false;
 
 
+        //sets up the combat encounters values when triggered
+        struct CombatTracker{
+            LocationID location = LocationID::Forest;
+            MonsterID monID = MonsterID::UNASSIGNED;
+            int awareness = 0; // monsterManager.getMonsterByID(locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters_or_npcs.back())->awareness etc.
+            int toughness = 0;
+            int horrorDamage = 0;
+            int combatDamage = 0;
+            int horrorRating = 0;
+            int combatRating = 0;
+        };
+        CombatTracker cTracker;
+
+
 
         Point blendedTextSize = {0, 0};
         Point _blendedTextSize = {0, 0};

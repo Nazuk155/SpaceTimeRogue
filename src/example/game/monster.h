@@ -13,6 +13,7 @@ public:
     MonsterType type = MonsterType::None;
     MovementType moveType = MovementType::Stalking;
     int toughness = 0;
+    int awareness = 0;
     int horrorRating = 0;
     int horrorDamage = 0;
     int combatRating = 0;
@@ -30,6 +31,7 @@ public:
             MonsterType type,
             MovementType moveType,
             int toughness,
+            int awareness,
             int horrorRating,
             int horrorDamage,
             int combatRating,
@@ -42,6 +44,7 @@ public:
               type(type),
               moveType(moveType),
               toughness(toughness),
+              awareness(awareness),
               horrorRating(horrorRating),
               horrorDamage(horrorDamage),
               combatRating(combatRating),
