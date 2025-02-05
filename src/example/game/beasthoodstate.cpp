@@ -363,6 +363,8 @@ namespace JanSordid::SDL_Example {
         character1->RefillFatePoints();
         currentCharacter = character1;
 
+        inventoryScreen = InventoryScreen(currentCharacter);
+
         // get character into SKE
         ske.changeCharacter(currentCharacter);
         fmt::println("Fate available: {}",
@@ -408,182 +410,216 @@ namespace JanSordid::SDL_Example {
     }
 
     bool BeasthoodState::HandleEvent(const Event &event) {
+        if(bInInventory) //todo expand functionality of inventory screen
+        {
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                //int mouseX, mouseY;
+                SDL_GetMouseState(&mouseOverX, &mouseOverY);
+                if (event.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    inventoryScreen.currentPage.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y);
+                }
+            }
+            if (event.type == SDL_MOUSEMOTION ) {
+                //int mouseX, mouseY;
+                SDL_GetMouseState(&mouseOverX, &mouseOverY);
 
 
-        if (Phase == GamePhases::MOVEMENT) {
+                inventoryScreen.currentPage.MouseOver(mouseOverX,mouseOverY);
+            }
+
+
             if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
                 switch (event.key.keysym.sym) {
-                    case SDLK_SPACE:
-                        //endMovementConfirmation = true;
+
+                        case SDLK_i:
+                        bInInventory=!bInInventory;
                         break;
                 }
             }
-            if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
-                //int mouseX, mouseY;
-                SDL_GetMouseState(&mouseOverX, &mouseOverY);
-                if(event.type == SDL_MOUSEBUTTONDOWN) {
-                    if (IsMouseInsideRect({static_cast<int>(SidebarLayout.EndTurnButtonStart.x*windowSize.x*0.01 - 0.5*(SidebarLayout.EndTurnbuttonHeight*SpriteData.Turn_Button.x/SpriteData.Turn_Button.y*windowSize.y*0.01)),
-                                           static_cast<int>(SidebarLayout.EndTurnButtonStart.y*windowSize.y*0.01),
-                                           static_cast<int>(SidebarLayout.EndTurnbuttonHeight*SpriteData.Turn_Button.x/SpriteData.Turn_Button.y*windowSize.y*0.01),
-                                           static_cast<int>(SidebarLayout.EndTurnbuttonHeight*windowSize.y*0.01)
-                                          },mouseOverX,mouseOverY))
 
-                    {endMovementConfirmation = true;}
+        }
+        else {
+            if (Phase == GamePhases::MOVEMENT) {
+                if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                    switch (event.key.keysym.sym) {
+                        case SDLK_SPACE:
+                            //endMovementConfirmation = true;
+                            break;
+                        case SDLK_i:
+                            bInInventory=!bInInventory;
+                            break;
+                    }
                 }
+                if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
+                    //int mouseX, mouseY;
+                    SDL_GetMouseState(&mouseOverX, &mouseOverY);
+                    if (event.type == SDL_MOUSEBUTTONDOWN) {
+                        if (IsMouseInsideRect(
+                                {static_cast<int>(SidebarLayout.EndTurnButtonStart.x * windowSize.x * 0.01 - 0.5 *
+                                                                                                             (SidebarLayout.EndTurnbuttonHeight *
+                                                                                                              SpriteData.Turn_Button.x /
+                                                                                                              SpriteData.Turn_Button.y *
+                                                                                                              windowSize.y *
+                                                                                                              0.01)),
+                                 static_cast<int>(SidebarLayout.EndTurnButtonStart.y * windowSize.y * 0.01),
+                                 static_cast<int>(SidebarLayout.EndTurnbuttonHeight * SpriteData.Turn_Button.x /
+                                                  SpriteData.Turn_Button.y * windowSize.y * 0.01),
+                                 static_cast<int>(SidebarLayout.EndTurnbuttonHeight * windowSize.y * 0.01)
+                                }, mouseOverX, mouseOverY)) { endMovementConfirmation = true; }
+                    }
 
-                for (auto e: map.slots) {
-                    if (IsMouseInsideRect(e.rect, mouseOverX, mouseOverY)) {
-                        if (event.type == SDL_MOUSEMOTION) {
-                            std::cout << "Mouse moved inside the rectangle.\n";
-                            std::cout.flush();
+                    for (auto e: map.slots) {
+                        if (IsMouseInsideRect(e.rect, mouseOverX, mouseOverY)) {
+                            if (event.type == SDL_MOUSEMOTION) {
+                                std::cout << "Mouse moved inside the rectangle.\n";
+                                std::cout.flush();
 
-                        } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-                            if (movementPoints > 0) {
-                                //mausklick reagiert nur wenn die location einen pfad zum aktuellen standort des characters hat
-                                for (auto c: e.connections) {
-                                    //durchsuchen die aktiven connections der aktuellen node nach einam pfad zum character
-                                    if (character1->GetCurrentLocationID() == map.GetSlotByID(c.first)->location_id &&
-                                        c.second == true) {
-                                        std::cout << "Mouse clicked inside the rectangle.\n";
-                                        //setzen location vom charakter und pos auf das aktuelle e da dies die node ist die gecklickt wurde
-                                        moveTarget = e.location_id;
-                                        playerMoved = true;
+                            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+                                if (movementPoints > 0) {
+                                    //mausklick reagiert nur wenn die location einen pfad zum aktuellen standort des characters hat
+                                    for (auto c: e.connections) {
+                                        //durchsuchen die aktiven connections der aktuellen node nach einam pfad zum character
+                                        if (character1->GetCurrentLocationID() ==
+                                            map.GetSlotByID(c.first)->location_id &&
+                                            c.second == true) {
+                                            std::cout << "Mouse clicked inside the rectangle.\n";
+                                            //setzen location vom charakter und pos auf das aktuelle e da dies die node ist die gecklickt wurde
+                                            moveTarget = e.location_id;
+                                            playerMoved = true;
 
 
-                                        std::cout.flush();
+                                            std::cout.flush();
+                                        }
                                     }
+
                                 }
 
+
                             }
-
-
-                        }
-                    } else if (!IsMouseInsideRect(e.rect, mouseOverX, mouseOverY)) {
-                        if (event.type == SDL_MOUSEMOTION) {
-                            std::cout << "Mouse moved OUTSIDE the rectangle. " << e.id;
-                            std::cout << " \n";
-                            std::cout.flush();
+                        } else if (!IsMouseInsideRect(e.rect, mouseOverX, mouseOverY)) {
+                            if (event.type == SDL_MOUSEMOTION) {
+                                std::cout << "Mouse moved OUTSIDE the rectangle. " << e.id;
+                                std::cout << " \n";
+                                std::cout.flush();
+                            }
                         }
                     }
                 }
             }
-        }
 
-        if (Phase == GamePhases::ENCOUNTER) {
+            if (Phase == GamePhases::ENCOUNTER) {
 
-            //Build Option Rects
-            std::vector<SDL_Rect> OptionVector= {};
-            for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options)
-            {
-                OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
-                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01+OptionVector.size()*EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y),
-                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
-                                        static_cast<int>((EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y)});
-            }
-
-
-            if ( awaitingInput)
-            {
-                if(event.type == SDL_MOUSEMOTION)
-                {
-                    SDL_GetMouseState(&mouseOverX, &mouseOverY); //TODO REDUNDANCY
+                //Build Option Rects
+                std::vector<SDL_Rect> OptionVector = {};
+                for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
+                    OptionVector.push_back(
+                            {static_cast<int>((EncounterLayout.DialogueMainTextStart.x * 0.01 * windowSize.x)),
+                             static_cast<int>((EncounterLayout.DialogueMainTextEnd.y * 0.01 +
+                                               OptionVector.size() * EncounterLayout.DialogueOptionFieldScale.y *
+                                               0.01) * windowSize.y),
+                             static_cast<int>((EncounterLayout.DialogueMainTextEnd.x * 0.01 * windowSize.x)),
+                             static_cast<int>((EncounterLayout.DialogueOptionFieldScale.y * 0.01) * windowSize.y)});
                 }
 
-            }
 
-            if (!eTracker.chooseFateReroll && awaitingInput) {
+                if (awaitingInput) {
+                    if (event.type == SDL_MOUSEMOTION) {
+                        SDL_GetMouseState(&mouseOverX, &mouseOverY); //TODO REDUNDANCY
+                    }
 
-                if (event.type == SDL_MOUSEBUTTONDOWN)
-                {
+                }
 
-                    //int mouseX, mouseY;
-                    SDL_Rect button;
-                    SDL_GetMouseState(&mouseOverX, &mouseOverY);
-                    fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
-                    for(int i = 0;i<OptionVector.size();i++)
-                    {
-                        button = OptionVector[i];
-                        fmt::println("Checking button {}",i);
-                        fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}",button.x,button.y, button.w,button.h);
-                        //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
-                        //SDL_RenderFillRect(renderer(),&button);
-                        //SDL_Delay(150);
+                if (!eTracker.chooseFateReroll && awaitingInput) {
 
-                        if(IsMouseInsideRect(button,mouseOverX,mouseOverY))
-                        {
-                            fmt::println("Clicked option {}",i);
-                            eTracker.selectedOption = i;
-                            awaitingInput = false;
+                    if (event.type == SDL_MOUSEBUTTONDOWN) {
+
+                        //int mouseX, mouseY;
+                        SDL_Rect button;
+                        SDL_GetMouseState(&mouseOverX, &mouseOverY);
+                        fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
+                        for (int i = 0; i < OptionVector.size(); i++) {
+                            button = OptionVector[i];
+                            fmt::println("Checking button {}", i);
+                            fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}", button.x, button.y, button.w, button.h);
+                            //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
+                            //SDL_RenderFillRect(renderer(),&button);
+                            //SDL_Delay(150);
+
+                            if (IsMouseInsideRect(button, mouseOverX, mouseOverY)) {
+                                fmt::println("Clicked option {}", i);
+                                eTracker.selectedOption = i;
+                                awaitingInput = false;
+                            }
                         }
                     }
-                }
 
-                if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
-                    switch (event.key.keysym.sym) {
-                        case SDLK_SPACE:
-                            break;
-                        case SDLK_1:
-                            eTracker.selectedOption = 0;
-                            awaitingInput = false;
-                            break;
-                        case SDLK_2:
-                            eTracker.selectedOption = 1;
-                            awaitingInput = false;
-                            break;
-                        case SDLK_3:
-                            eTracker.selectedOption = 2;
-                            awaitingInput = false;
-                            break;
+                    if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                        switch (event.key.keysym.sym) {
+                            case SDLK_SPACE:
+                                break;
+                            case SDLK_1:
+                                eTracker.selectedOption = 0;
+                                awaitingInput = false;
+                                break;
+                            case SDLK_2:
+                                eTracker.selectedOption = 1;
+                                awaitingInput = false;
+                                break;
+                            case SDLK_3:
+                                eTracker.selectedOption = 2;
+                                awaitingInput = false;
+                                break;
 
 
+                        }
                     }
-                }
-            } else {
-                if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
-                    switch (event.key.keysym.sym) {
-                        case SDLK_SPACE:
-                            break;
-                        case SDLK_1:
-                            eTracker.fateRerollChoice = 0;
-                            eTracker.diaPhase = DialoguePhase::FateReroll;
-                            break;
-                        case SDLK_2:
-                            eTracker.fateRerollChoice = 1;
-                            break;
-
-
-                    }
-                }
-                if (event.type == SDL_MOUSEBUTTONDOWN)
-                {
-
-                    //int mouseX, mouseY;
-                    SDL_Rect button;
-                    SDL_GetMouseState(&mouseOverX, &mouseOverY);
-                    fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
-                    for(int i = 0;i<OptionVector.size();i++)
-                    {
-                        button = OptionVector[i];
-                        fmt::println("Checking button {}",i);
-                        fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}",button.x,button.y, button.w,button.h);
-                        //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
-                        //SDL_RenderFillRect(renderer(),&button);
-                        //SDL_Delay(150);
-
-                        if(IsMouseInsideRect(button,mouseOverX,mouseOverY))
-                        {
-                            fmt::println("Clicked option {}",i);
-                            if(i == 0)
+                } else {
+                    if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                        switch (event.key.keysym.sym) {
+                            case SDLK_SPACE:
+                                break;
+                            case SDLK_1:
+                                eTracker.fateRerollChoice = 0;
                                 eTracker.diaPhase = DialoguePhase::FateReroll;
-                            eTracker.fateRerollChoice = i;
-                            awaitingInput = false;
+                                break;
+                            case SDLK_2:
+                                eTracker.fateRerollChoice = 1;
+                                break;
+
+
                         }
                     }
+                    if (event.type == SDL_MOUSEBUTTONDOWN) {
+
+                        //int mouseX, mouseY;
+                        SDL_Rect button;
+                        SDL_GetMouseState(&mouseOverX, &mouseOverY);
+                        fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
+                        for (int i = 0; i < OptionVector.size(); i++) {
+                            button = OptionVector[i];
+                            fmt::println("Checking button {}", i);
+                            fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}", button.x, button.y, button.w, button.h);
+                            //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
+                            //SDL_RenderFillRect(renderer(),&button);
+                            //SDL_Delay(150);
+
+                            if (IsMouseInsideRect(button, mouseOverX, mouseOverY)) {
+                                fmt::println("Clicked option {}", i);
+                                if (i == 0)
+                                    eTracker.diaPhase = DialoguePhase::FateReroll;
+                                eTracker.fateRerollChoice = i;
+                                awaitingInput = false;
+                            }
+                        }
+                    }
+
+
                 }
-
-
             }
+
         }
+
         return false;
 
     }
@@ -760,7 +796,7 @@ namespace JanSordid::SDL_Example {
                     {SceneCompositionSlots::Enemy_3,{EncounterLayout.enemyMainPoint.x+2,EncounterLayout.enemyMainPoint.y-5}},
                     {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint}
             };
-    void BeasthoodState::RenderSceneComposition(std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>> compositionVector)
+    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector)
     {
         SDL_Rect targetRect;
 
@@ -801,6 +837,7 @@ namespace JanSordid::SDL_Example {
 
         }
     }
+
 
     void BeasthoodState::RenderSidebar()
     {
@@ -873,7 +910,7 @@ namespace JanSordid::SDL_Example {
 
         //Sketch out Inventory
 
-        //Equipped Items //todo single them out further
+
 
         //Inventory proper
 
@@ -888,10 +925,119 @@ namespace JanSordid::SDL_Example {
         SDL_SetRenderDrawColor(renderer(),5,5,5,0);
         SDL_RenderFillRect(renderer(),&InventoryMain);
 
+        //Equipped Items //todo single them out further
+        SDL_Rect EquipR =
+                {
+                        static_cast<int>((SidebarLayout.InventoryStart.x * windowSize.x*0.01)),
+                        static_cast<int>(SidebarLayout.InventoryStart.y*windowSize.y*0.01),
+                        static_cast<int>(SidebarLayout.InventoryItemScale.x*windowSize.y*0.01),
+                        static_cast<int>(SidebarLayout.InventoryItemScale.y*windowSize.y*0.01),
+
+                };
+        std::pair<Item*, Item*>currentEquipment = currentCharacter->GetEquipment();
+        if(get<0>(currentEquipment)!= nullptr)
+        {
+            //fmt::println("{} in right hand", get<0>(currentEquipment)->GetName());
+            //if sth equipped in 0, render icon,
+            SDL_SetRenderDrawColor(renderer(),5,5,100,0);
+            SDL_RenderFillRect(renderer(),&EquipR);
+            //if mouse over icon render mouseover
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(renderer(),100,5,30,0);
+            SDL_RenderFillRect(renderer(),&EquipR);
+            //fmt::println("nothing in right hand");
+        }
+
+        SDL_Rect EquipL =
+                {
+                        static_cast<int>(((SidebarLayout.InventoryStart.x+SidebarLayout.InventoryItemScale.x) * windowSize.x*0.01)),
+                        static_cast<int>(SidebarLayout.InventoryStart.y*windowSize.y*0.01),
+                        static_cast<int>(SidebarLayout.InventoryItemScale.x*windowSize.y*0.01),
+                        static_cast<int>(SidebarLayout.InventoryItemScale.y*windowSize.y*0.01),
+
+                };
+
+        if(get<1>(currentEquipment)!= nullptr || (get<0>(currentEquipment)!= nullptr && get<0>(currentEquipment)->GetHandsNeeded()==2))
+        {
+            //fmt::println("{} in left hand", get<0>(currentEquipment)->GetName());
+            //if sth equipped in 0, render icon,
+
+
+            SDL_SetRenderDrawColor(renderer(),5,5,100,0);
+            SDL_RenderFillRect(renderer(),&EquipL);
+            //if mouse over icon render mouseover
+        }
+        else
+        {
+            //fmt::println("nothing in left hand");
+            SDL_SetRenderDrawColor(renderer(),100,5,30,0);
+            SDL_RenderFillRect(renderer(),&EquipL);
+        }
+
+        //fmt::println("{} items in inventory", currentCharacter->GetInventory().size());
+
 
         SDL_DestroyTexture(SidebarText);
         SidebarText = nullptr;
     }
+    void BeasthoodState::RenderInventorySelection(int mouseX, int mouseY, int screenWidth, int screenHeight) const
+    {
+            /*
+            if (inventoryScreen.currentPage.MouseOverIcon)
+            {
+                fmt::println("Mouse over {}", inventoryScreen.currentPage.MouseOverIcon->referencedItem->GetName());
+            }
+            else
+            {
+                fmt::println("mouse over NULL - sth wrong");
+            }
+            */
+
+
+            SDL_Rect Selection {static_cast<int>(screenWidth*(inventoryScreen.currentPage.StartPoint.x -ItemDetailedView.Dimensions.x)*0.01),
+                                static_cast<int>(screenHeight*(inventoryScreen.currentPage.StartPoint.y )*0.01),
+                                static_cast<int>(screenWidth*ItemDetailedView.Dimensions.x*0.01),
+                                static_cast<int>(screenWidth*ItemDetailedView.Dimensions.y*0.01)};
+
+
+            //open submenu pop-up/lock pop-up in place, if implemented in hover
+            SDL_RenderFillRect(renderer(),&Selection);
+
+
+            SDL_Rect ButtonEquipRight={
+                    static_cast<int>(Selection.x + ItemDetailedView.EquipRightPos.x*0.01*screenWidth),
+                    static_cast<int>(Selection.y +ItemDetailedView.EquipRightPos.y*0.01*screenWidth),
+                    static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
+                    static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
+            };
+
+            SDL_Rect ButtonEquipLeft={
+                    static_cast<int>(Selection.x + ItemDetailedView.EquipLeftPos.x*0.01*screenWidth),
+                    static_cast<int>(Selection.y +ItemDetailedView.EquipLeftPos.y*0.01*screenWidth),
+                    static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
+                    static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
+            };
+            SDL_SetRenderDrawColor(renderer(),240,0,0,0);
+            SDL_RenderFillRect(renderer(),&ButtonEquipRight);
+
+            SDL_RenderFillRect(renderer(),&ButtonEquipLeft);
+
+
+
+
+    }
+    void BeasthoodState::RenderInventory()
+    {
+        inventoryScreen.currentPage.RenderInventoryPage(renderer(),windowSize.x,windowSize.y);
+
+        if(inventoryScreen.currentPage.bIconHover || inventoryScreen.currentPage.bIconSelected)
+        {
+            RenderInventorySelection(mouseOverX,mouseOverY,windowSize.x,windowSize.y); //todo externalize
+        }
+    }
+
     void BeasthoodState::RenderTurnButton(bool bIsActive)
     {
         SDL_Rect buttonPlacement =
@@ -1224,8 +1370,14 @@ namespace JanSordid::SDL_Example {
 
             // SDL_RenderPresent( renderer() );
 
+            //TODO TEST
 
         }
+        if(bInInventory)
+        {
+            RenderInventory();
+        }
+
     }
 
 

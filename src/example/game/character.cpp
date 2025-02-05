@@ -59,6 +59,7 @@ void Character::RemoveFromInventory(ItemName item_id) {
 void Character::EquipItem(Item* item, bool is_left_hand) {
     if (is_left_hand) equipped_items.first = item;
     else equipped_items.second = item;
+    item->Equip();
 }
 
 // Gameplay Methods
@@ -95,4 +96,21 @@ void Character::AdjustHealth(int amount) {
 void Character::SpendFate()
 {
     fate_points--;
+}
+
+const std::pair<Item *, Item *> Character::GetEquipment() {
+    return equipped_items;
+}
+
+void Character::UnequipItem(bool is_left_hand) {
+    if(is_left_hand) {
+        equipped_items.first->Unequip();
+        equipped_items.first = nullptr;
+    }
+    else
+    {
+        equipped_items.second->Unequip();
+        equipped_items.second = nullptr;
+    }
+
 }

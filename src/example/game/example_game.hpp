@@ -16,6 +16,8 @@
 #include "skillCheckEngine.h"
 #include "encounter_manager.h"
 
+#include "inventory_components.h"
+
 namespace JanSordid::SDL_Example {
     using namespace JanSordid;
     using namespace JanSordid::SDL;
@@ -312,6 +314,9 @@ namespace JanSordid::SDL_Example {
         LocationManager locationManager;
         Character *character1;
 
+        InventoryScreen inventoryScreen;
+        bool bInInventory = false;
+
         //   std::vector<Location> locations;
         Font *font = nullptr;
         Owned<Font> _font = nullptr;
@@ -475,11 +480,15 @@ namespace JanSordid::SDL_Example {
 
         void renderText(Rect values, SDL_Texture *tn, int colorIndex);
 
-        void RenderSceneComposition(std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>> compositionVector);
+        void RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>>& compositionVector);
 
         void RenderSidebar();
 
         void RenderTurnButton(bool bIsActive);
+
+        void RenderInventory();
+
+        void RenderInventorySelection(int mouseX, int mouseY, int screenWidth, int screenHeight) const;
     };
 
 }

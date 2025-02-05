@@ -56,6 +56,7 @@ public:
     int GetFatePoints() const;
     LocationID GetCurrentLocationID() const;
     const std::vector<Item *> & GetInventory() const;
+    const std::pair<Item*, Item*> GetEquipment();
     SDL_Rect GetRect();
 
     // Setters
@@ -66,6 +67,7 @@ public:
     void AddToInventory(Item *item);
     void RemoveFromInventory(ItemName name);
     void EquipItem(Item* item, bool is_left_hand);
+    void UnequipItem(bool is_left_hand);
 
     // Gameplay Methods
     void UseFocus(StatNames statToIncrease, StatNames statToDecrease);
