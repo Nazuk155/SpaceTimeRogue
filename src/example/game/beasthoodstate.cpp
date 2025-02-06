@@ -952,7 +952,7 @@ namespace JanSordid::SDL_Example {
                     {SceneCompositionSlots::Enemy_3,{EncounterLayout.enemyMainPoint.x+2,EncounterLayout.enemyMainPoint.y-5}},
                     {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint}
             };
-    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector)
+    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>> compositionVector)
     {
         SDL_Rect targetRect;
 

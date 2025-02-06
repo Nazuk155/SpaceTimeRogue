@@ -198,15 +198,6 @@ const std::pair<Item *, Item *> Character::GetEquipment() {
     return equipped_items;
 }
 
-void Character::UnequipItem(bool is_left_hand) {
-    if(is_left_hand) {
-        equipped_items.first->Unequip();
-        equipped_items.first = nullptr;
-    }
-    else
-    {
-        equipped_items.second->Unequip();
-        equipped_items.second = nullptr;
-    }
 
-}
+
+

@@ -158,8 +158,10 @@ add_executable( sor-example
         src/example/game/ability.cpp
         src/example/game/ability.h
         src/example/game/ability_manager.h
-        src/example/game/ReduceStaminaLoss_ability.h
-        src/example/game/DrawExtraItem_ability.h
+        src/example/game/ability_ReduceStaminaLoss.h
+        src/example/game/ability_DrawExtraItem.h
+        src/example/game/ability_WerwolfCorruptionEffects.h
+        src/example/game/ability_WolfPackAttack.h
         src/example/game/item.h
         src/example/game/item_manager.h
         src/example/game/character_blueprint.cpp

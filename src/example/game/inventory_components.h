@@ -141,23 +141,23 @@ public:
                 {
                     if(currentCharacter->GetEquipment().first==MouseOverIcon->referencedItem)
                     {
-                        currentCharacter->UnequipItem(true);
+                        currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
                     }
                     else if(currentCharacter->GetEquipment().second==MouseOverIcon->referencedItem)
                     {
-                        currentCharacter->UnequipItem(false);
+                        currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
                     }
                 }
 
                 if(currentCharacter->GetEquipment().second)
                 {
-                    currentCharacter->UnequipItem(false);
+                    currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
                 }
                 if(currentCharacter->GetEquipment().first && MouseOverIcon->referencedItem->GetHandsNeeded()==2)
                 {
                     currentCharacter->GetEquipment().first->Unequip();
                 }
-                currentCharacter->EquipItem(MouseOverIcon->referencedItem,false);
+                currentCharacter->EquipItem(MouseOverIcon->referencedItem);
                 fmt::println("Clicked equip {} in Right Hand",currentCharacter->GetEquipment().second->GetName());
 
                 return;
@@ -179,19 +179,19 @@ public:
                 {
                     if(currentCharacter->GetEquipment().first==MouseOverIcon->referencedItem)
                     {
-                        currentCharacter->UnequipItem(true);
+                        currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
 
                     }
                     else if(currentCharacter->GetEquipment().second==MouseOverIcon->referencedItem)
                     {
-                        currentCharacter->UnequipItem(false);
+                        currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
 
                     }
                 }
 
                 if(currentCharacter->GetEquipment().first)
                 {
-                    currentCharacter->UnequipItem(true);
+                    currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
 
                 }
                 if(currentCharacter->GetEquipment().second && MouseOverIcon->referencedItem->GetHandsNeeded()==2)
@@ -201,7 +201,7 @@ public:
                 }
 
                 fmt::print("Clicked equip {} in Left Hand",MouseOverIcon->referencedItem->GetName());
-                currentCharacter->EquipItem(MouseOverIcon->referencedItem,true);
+                currentCharacter->EquipItem(MouseOverIcon->referencedItem);
 
 
                 return;
