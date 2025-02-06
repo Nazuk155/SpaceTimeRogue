@@ -316,6 +316,8 @@ namespace JanSordid::SDL_Example {
 
         InventoryScreen inventoryScreen;
         bool bInInventory = false;
+        bool bShowRightItemInfo = false;
+        bool bShowLeftItemInfo = false;
 
         //   std::vector<Location> locations;
         Font *font = nullptr;
@@ -488,7 +490,9 @@ namespace JanSordid::SDL_Example {
 
         void RenderInventory();
 
-        void RenderInventorySelection(int mouseX, int mouseY, int screenWidth, int screenHeight) const;
+        void RenderInventorySelection(int mouseX, int mouseY, int screenWidth, int screenHeight);
+
+        void RenderInventorySelectionNoOption(int mouseX, int mouseY, int screenWidth, int screenHeight,bool left_item);
     };
 
 }

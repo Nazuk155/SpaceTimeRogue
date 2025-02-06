@@ -24,7 +24,7 @@ private:
     int player_id;                    // Assigned player (for multiplayer, -1 if single-player)
     Stats base_stats;                 // Base stats
     Stats base_stats_boundary;
-    Stats current_stats;              // Current stats (modified by items/events)
+    Stats current_stats;              // Current stats (modified by items/events) //todo do stats actually change?
     int focus;                        // Number of focus points available
 
     Ability* ability;

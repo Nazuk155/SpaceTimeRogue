@@ -23,6 +23,15 @@
 // TODO item class as well as character ability and fate refill then do events and event manager
 
 namespace JanSordid::SDL_Example {
+    struct {
+
+        InventoryIcon Left {false,SidebarLayout.EquippedItemsStart.x,SidebarLayout.InventoryStart.y,7,7};
+
+        InventoryIcon Right {false,SidebarLayout.EquippedItemsStart.x+SidebarLayout.InventoryScale.x-7,
+                             SidebarLayout.InventoryStart.y,
+                             7,7};
+
+    }SidebarIcons; //todo move somwhwew
 
 
 
@@ -410,6 +419,64 @@ namespace JanSordid::SDL_Example {
     }
 
     bool BeasthoodState::HandleEvent(const Event &event) {
+
+        if (event.type == SDL_MOUSEMOTION ) {
+            //int mouseX, mouseY;
+            SDL_GetMouseState(&mouseOverX, &mouseOverY);
+            inventoryScreen.currentPage.MouseOver(mouseOverX,mouseOverY);
+            SDL_Rect equipIcon= //Equip R
+                    {
+                            static_cast<int>((SidebarIcons.Right.position.x * windowSize.x*0.01)),
+                            static_cast<int>(SidebarIcons.Right.position.y*windowSize.y*0.01),
+                            static_cast<int>(SidebarIcons.Right.position.w*windowSize.y*0.01),
+                            static_cast<int>(SidebarIcons.Right.position.h*windowSize.y*0.01),
+
+                    };
+
+            if(IsMouseInsideRect(equipIcon,mouseOverX,mouseOverY) && currentCharacter->GetEquipment().second) //todo this approach is wrong.
+            {
+                fmt::println("Mouse over right equip {}", currentCharacter->GetEquipment().second->GetName());
+
+                SidebarIcons.Right.referencedItem = currentCharacter->GetEquipment().second;
+                inventoryScreen.currentPage.MouseOverIcon = &SidebarIcons.Right;
+                bShowRightItemInfo = true;
+                RenderInventorySelection(mouseOverX, mouseOverY,windowSize.x,windowSize.y);
+
+            }
+            else
+            {
+                //SidebarIcons.Right.referencedItem = nullptr;
+                //inventoryScreen.currentPage.MouseOverIcon = nullptr;
+                bShowRightItemInfo = false;
+            }
+            equipIcon= //Equip L
+                    {
+                            static_cast<int>((SidebarIcons.Left.position.x * windowSize.x*0.01)),
+                            static_cast<int>(SidebarIcons.Left.position.y*windowSize.y*0.01),
+                            static_cast<int>(SidebarIcons.Left.position.w*windowSize.y*0.01),
+                            static_cast<int>(SidebarIcons.Left.position.h*windowSize.y*0.01),
+
+                    };
+
+            if(IsMouseInsideRect(equipIcon,mouseOverX,mouseOverY) && currentCharacter->GetEquipment().first) //todo this approach is wrong.
+            {
+                fmt::println("Mouse over left equip {}", currentCharacter->GetEquipment().first->GetName());
+
+                SidebarIcons.Left.referencedItem = currentCharacter->GetEquipment().first;
+                inventoryScreen.currentPage.MouseOverIcon = &SidebarIcons.Left;
+                bShowLeftItemInfo = true;
+                RenderInventorySelection(mouseOverX, mouseOverY,windowSize.x,windowSize.y);
+
+            }
+            else
+            {
+                bShowLeftItemInfo = false;
+                //inventoryScreen.currentPage.MouseOverIcon = nullptr;
+                //SidebarIcons.Left.referencedItem = nullptr;
+            }
+        }
+
+
         if(bInInventory) //todo expand functionality of inventory screen
         {
             if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -420,13 +487,7 @@ namespace JanSordid::SDL_Example {
                     inventoryScreen.currentPage.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y);
                 }
             }
-            if (event.type == SDL_MOUSEMOTION ) {
-                //int mouseX, mouseY;
-                SDL_GetMouseState(&mouseOverX, &mouseOverY);
 
-
-                inventoryScreen.currentPage.MouseOver(mouseOverX,mouseOverY);
-            }
 
 
             if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
@@ -552,6 +613,8 @@ namespace JanSordid::SDL_Example {
                                 awaitingInput = false;
                             }
                         }
+
+
                     }
 
                     if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
@@ -926,16 +989,18 @@ namespace JanSordid::SDL_Example {
         SDL_RenderFillRect(renderer(),&InventoryMain);
 
         //Equipped Items //todo single them out further
+
+
         SDL_Rect EquipR =
                 {
-                        static_cast<int>((SidebarLayout.InventoryStart.x * windowSize.x*0.01)),
-                        static_cast<int>(SidebarLayout.InventoryStart.y*windowSize.y*0.01),
-                        static_cast<int>(SidebarLayout.InventoryItemScale.x*windowSize.y*0.01),
-                        static_cast<int>(SidebarLayout.InventoryItemScale.y*windowSize.y*0.01),
+                        static_cast<int>((SidebarIcons.Right.position.x * windowSize.x*0.01)),
+                        static_cast<int>(SidebarIcons.Right.position.y*windowSize.y*0.01),
+                        static_cast<int>(SidebarIcons.Right.position.h*windowSize.y*0.01),
+                        static_cast<int>(SidebarIcons.Right.position.w*windowSize.y*0.01),
 
                 };
         std::pair<Item*, Item*>currentEquipment = currentCharacter->GetEquipment();
-        if(get<0>(currentEquipment)!= nullptr)
+        if(get<1>(currentEquipment)!= nullptr)
         {
             //fmt::println("{} in right hand", get<0>(currentEquipment)->GetName());
             //if sth equipped in 0, render icon,
@@ -952,14 +1017,14 @@ namespace JanSordid::SDL_Example {
 
         SDL_Rect EquipL =
                 {
-                        static_cast<int>(((SidebarLayout.InventoryStart.x+SidebarLayout.InventoryItemScale.x) * windowSize.x*0.01)),
-                        static_cast<int>(SidebarLayout.InventoryStart.y*windowSize.y*0.01),
-                        static_cast<int>(SidebarLayout.InventoryItemScale.x*windowSize.y*0.01),
-                        static_cast<int>(SidebarLayout.InventoryItemScale.y*windowSize.y*0.01),
+                        static_cast<int>((SidebarIcons.Left.position.x * windowSize.x*0.01)),
+                        static_cast<int>(SidebarIcons.Left.position.y*windowSize.y*0.01),
+                        static_cast<int>(SidebarIcons.Left.position.h*windowSize.y*0.01),
+                        static_cast<int>(SidebarIcons.Left.position.w*windowSize.y*0.01),
 
                 };
 
-        if(get<1>(currentEquipment)!= nullptr || (get<0>(currentEquipment)!= nullptr && get<0>(currentEquipment)->GetHandsNeeded()==2))
+        if(get<0>(currentEquipment)!= nullptr || (get<1>(currentEquipment)!= nullptr && get<1>(currentEquipment)->GetHandsNeeded()==2))
         {
             //fmt::println("{} in left hand", get<0>(currentEquipment)->GetName());
             //if sth equipped in 0, render icon,
@@ -976,54 +1041,197 @@ namespace JanSordid::SDL_Example {
             SDL_RenderFillRect(renderer(),&EquipL);
         }
 
+        if(bShowLeftItemInfo)
+        {
+            RenderInventorySelectionNoOption(mouseOverX,mouseOverY,windowSize.x,windowSize.y, true);
+        }
+        if(bShowRightItemInfo)
+        {
+            RenderInventorySelectionNoOption(mouseOverX,mouseOverY,windowSize.x,windowSize.y,false);
+        }
+
         //fmt::println("{} items in inventory", currentCharacter->GetInventory().size());
 
 
         SDL_DestroyTexture(SidebarText);
         SidebarText = nullptr;
     }
-    void BeasthoodState::RenderInventorySelection(int mouseX, int mouseY, int screenWidth, int screenHeight) const
+    void BeasthoodState::RenderInventorySelection(int mouseX, int mouseY, int screenWidth, int screenHeight) {
+
+
+        SDL_Rect Selection{static_cast<int>(screenWidth *
+                                            (inventoryScreen.currentPage.StartPoint.x - ItemDetailedView.Dimensions.x) *
+                                            0.01),
+                           static_cast<int>(screenHeight * (inventoryScreen.currentPage.StartPoint.y) * 0.01),
+                           static_cast<int>(screenWidth * ItemDetailedView.Dimensions.x * 0.01),
+                           static_cast<int>(screenWidth * ItemDetailedView.Dimensions.y * 0.01)};
+
+
+        //open submenu pop-up/lock pop-up in place, if implemented in hover
+        SDL_RenderFillRect(renderer(), &Selection);
+
+
+        SDL_Rect ButtonEquipRight = {
+                static_cast<int>(Selection.x + ItemDetailedView.EquipRightPos.x * 0.01 * screenWidth),
+                static_cast<int>(Selection.y + ItemDetailedView.EquipRightPos.y * 0.01 * screenWidth),
+                static_cast<int>(ItemDetailedView.ButtonScale.x * 0.01 * screenWidth),
+                static_cast<int>(ItemDetailedView.ButtonScale.y * 0.01 * screenWidth)
+        };
+
+        SDL_Rect ButtonEquipLeft = {
+                static_cast<int>(Selection.x + ItemDetailedView.EquipLeftPos.x * 0.01 * screenWidth),
+                static_cast<int>(Selection.y + ItemDetailedView.EquipLeftPos.y * 0.01 * screenWidth),
+                static_cast<int>(ItemDetailedView.ButtonScale.x * 0.01 * screenWidth),
+                static_cast<int>(ItemDetailedView.ButtonScale.y * 0.01 * screenWidth)
+        };
+        SDL_SetRenderDrawColor(renderer(), 240, 0, 0, 0);
+        SDL_RenderFillRect(renderer(), &ButtonEquipRight);
+
+        SDL_RenderFillRect(renderer(), &ButtonEquipLeft);
+
+
+        Texture *DisplayText{};
+        Item *ItemToDisplay = inventoryScreen.currentPage.MouseOverIcon->referencedItem;
+
+
+        DisplayText = textToTexture(ItemToDisplay->GetName().c_str());
+
+        renderText({Selection.x, static_cast<int>(Selection.y), 10, 10}, DisplayText);
+        SDL_DestroyTexture(DisplayText); //todo there is a better way surely
+
+        //todo parse and render item
+
+
+        DisplayText = textToTexture(
+                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT)) + " FIGHT").c_str());
+        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.02), 10, 10}, DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture(
+                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SPEED)) + " SPEED").c_str());
+        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.03), 10, 10}, DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture(
+                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SNEAK)) + " SNEAK").c_str());
+        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.04), 10, 10}, DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture(
+                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::WILLPOWER)) + " WILLPOWER").c_str());
+        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.05), 10, 10}, DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture(
+                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::LUCK)) + " LUCK").c_str());
+        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.06), 10, 10}, DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture(
+                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::KNOWLEDGE)) + " KNOWLEDGE").c_str());
+        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+
+        if (ItemToDisplay->GetAbility()) {
+            switch (ItemToDisplay->GetAbility()->GetName()) {
+                case (AbilityName::DrawExtraItem):
+                    DisplayText = textToTexture("Draw Extra Item - change to sth different, drawing too abstract");
+                    break;
+                case (AbilityName::ReduceStaminaLoss):
+                    DisplayText = textToTexture("Reduce Stamina Loss");
+                    break;
+                default:
+                    DisplayText = textToTexture("unknown or no ability?");
+                    break;
+
+            }
+            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.085), 10, 10}, DisplayText);
+            SDL_DestroyTexture(DisplayText);
+        }
+    }
+
+
+
+
+
+
+
+    void BeasthoodState::RenderInventorySelectionNoOption(int mouseX, int mouseY, int screenWidth, int screenHeight, bool left_item)
     {
-            /*
-            if (inventoryScreen.currentPage.MouseOverIcon)
-            {
-                fmt::println("Mouse over {}", inventoryScreen.currentPage.MouseOverIcon->referencedItem->GetName());
-            }
-            else
-            {
-                fmt::println("mouse over NULL - sth wrong");
-            }
-            */
+        SDL_Rect Selection {static_cast<int>(mouseX-static_cast<int>(screenWidth*ItemDetailedView.Dimensions.x*0.01)),
+                            static_cast<int>(mouseY-static_cast<int>(screenWidth*ItemDetailedView.Dimensions.y*0.01)),
+                            static_cast<int>(screenWidth*ItemDetailedView.Dimensions.x*0.01),
+                            static_cast<int>(screenWidth*ItemDetailedView.Dimensions.y*0.01)};
 
 
-            SDL_Rect Selection {static_cast<int>(screenWidth*(inventoryScreen.currentPage.StartPoint.x -ItemDetailedView.Dimensions.x)*0.01),
-                                static_cast<int>(screenHeight*(inventoryScreen.currentPage.StartPoint.y )*0.01),
-                                static_cast<int>(screenWidth*ItemDetailedView.Dimensions.x*0.01),
-                                static_cast<int>(screenWidth*ItemDetailedView.Dimensions.y*0.01)};
+        //open submenu pop-up/lock pop-up in place, if implemented in hover
+        SDL_RenderFillRect(renderer(),&Selection);
+
+        Texture * DisplayText {};
+        Item * ItemToDisplay = nullptr;
+        if(left_item){
+             ItemToDisplay= currentCharacter->GetEquipment().first;
+        }
+        else
+        {
+            ItemToDisplay= currentCharacter->GetEquipment().second;
+        }
+        DisplayText = textToTexture(ItemToDisplay->GetName().c_str());
+
+        renderText({Selection.x,static_cast<int>(Selection.y), 10,10 },DisplayText);
+        SDL_DestroyTexture(DisplayText); //todo there is a better way surely
+
+        //todo parse and render item
 
 
-            //open submenu pop-up/lock pop-up in place, if implemented in hover
-            SDL_RenderFillRect(renderer(),&Selection);
+        DisplayText = textToTexture((std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT))+" FIGHT").c_str());
+        renderText({Selection.x,static_cast<int>(Selection.y+screenHeight*0.02), 10,10 },DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture((std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SPEED))+" SPEED").c_str());
+        renderText({Selection.x,static_cast<int>(Selection.y+screenHeight*0.03), 10,10 },DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture((std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SNEAK))+" SNEAK").c_str());
+        renderText({Selection.x,static_cast<int>(Selection.y+screenHeight*0.04), 10,10 },DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture((std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::WILLPOWER))+" WILLPOWER").c_str());
+        renderText({Selection.x,static_cast<int>(Selection.y+screenHeight*0.05), 10,10 },DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture((std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::LUCK))+" LUCK").c_str());
+        renderText({Selection.x,static_cast<int>(Selection.y+screenHeight*0.06), 10,10 },DisplayText);
+        SDL_DestroyTexture(DisplayText);
+
+        DisplayText = textToTexture((std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::KNOWLEDGE))+" KNOWLEDGE").c_str());
+        renderText({Selection.x,static_cast<int>(Selection.y+screenHeight*0.07), 10,10 },DisplayText);
+        SDL_DestroyTexture(DisplayText);
 
 
-            SDL_Rect ButtonEquipRight={
-                    static_cast<int>(Selection.x + ItemDetailedView.EquipRightPos.x*0.01*screenWidth),
-                    static_cast<int>(Selection.y +ItemDetailedView.EquipRightPos.y*0.01*screenWidth),
-                    static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
-                    static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
-            };
+        if( ItemToDisplay->GetAbility())
+         {
+             switch (ItemToDisplay->GetAbility()->GetName()) {
+                 case(AbilityName::DrawExtraItem):
+                     DisplayText = textToTexture("Draw Extra Item - change to sth different, drawing too abstract");
+                     break;
+                 case(AbilityName::ReduceStaminaLoss):
+                     DisplayText = textToTexture("Reduce Stamina Loss");
+                     break;
+                 default:
+                     DisplayText = textToTexture("unknown or no ability?");
+                     break;
 
-            SDL_Rect ButtonEquipLeft={
-                    static_cast<int>(Selection.x + ItemDetailedView.EquipLeftPos.x*0.01*screenWidth),
-                    static_cast<int>(Selection.y +ItemDetailedView.EquipLeftPos.y*0.01*screenWidth),
-                    static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
-                    static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
-            };
-            SDL_SetRenderDrawColor(renderer(),240,0,0,0);
-            SDL_RenderFillRect(renderer(),&ButtonEquipRight);
+             }
+             renderText({Selection.x,static_cast<int>(Selection.y+screenHeight*0.085), 10,10 },DisplayText);
+             SDL_DestroyTexture(DisplayText);
+         }
 
-            SDL_RenderFillRect(renderer(),&ButtonEquipLeft);
 
+
+        DisplayText = nullptr;
+        //ItemToDisplay = nullptr;
 
 
 
@@ -1177,8 +1385,7 @@ namespace JanSordid::SDL_Example {
                 }
 
                 RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector);
-                RenderSidebar();
-                RenderTurnButton(false);
+
 
                 //Render Foreground //todo decouple from bg, if needed?
                 switch(eTracker.activeEncounter->scenes[eTracker.szene].background)
@@ -1207,6 +1414,9 @@ namespace JanSordid::SDL_Example {
                 renderText(DialogueMainField,sceneText);
                 SDL_DestroyTexture(sceneText); //prevent leak
                 sceneText= nullptr;
+
+                RenderSidebar();
+                RenderTurnButton(false);
 
 
 

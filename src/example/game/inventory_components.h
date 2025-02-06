@@ -16,19 +16,7 @@ struct InventoryIcon //maybe not
   Item* referencedItem = nullptr;
 };
 
-class Button {
-    SDL_Rect ButtonRect;
-    std::unique_ptr<SDL_Texture> ButtonImg;
-    std::unique_ptr<SDL_Texture> ButtonMouseoverImg;
-    std::unique_ptr<SDL_Texture> ButtonDisbledImg;
 
-    bool bMouseOverEvent;
-    //todo Mouseover render?
-
-    //what do event?
-    //use enum class? + identifier?
-
-};
 
 struct
 {
@@ -169,9 +157,9 @@ public:
                 {
                     currentCharacter->GetEquipment().first->Unequip();
                 }
-
-                fmt::println("Clicked equip {} in Right Hand",MouseOverIcon->referencedItem->GetName());
                 currentCharacter->EquipItem(MouseOverIcon->referencedItem,false);
+                fmt::println("Clicked equip {} in Right Hand",currentCharacter->GetEquipment().second->GetName());
+
                 return;
             }
 
@@ -192,24 +180,29 @@ public:
                     if(currentCharacter->GetEquipment().first==MouseOverIcon->referencedItem)
                     {
                         currentCharacter->UnequipItem(true);
+
                     }
                     else if(currentCharacter->GetEquipment().second==MouseOverIcon->referencedItem)
                     {
                         currentCharacter->UnequipItem(false);
+
                     }
                 }
 
                 if(currentCharacter->GetEquipment().first)
                 {
                     currentCharacter->UnequipItem(true);
+
                 }
                 if(currentCharacter->GetEquipment().second && MouseOverIcon->referencedItem->GetHandsNeeded()==2)
                 {
                     currentCharacter->GetEquipment().second->Unequip();
+
                 }
 
                 fmt::print("Clicked equip {} in Left Hand",MouseOverIcon->referencedItem->GetName());
-                currentCharacter->EquipItem(MouseOverIcon->referencedItem,true); //todo 2-handed handling
+                currentCharacter->EquipItem(MouseOverIcon->referencedItem,true);
+
 
                 return;
             }
