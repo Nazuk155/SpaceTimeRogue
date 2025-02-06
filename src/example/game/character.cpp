@@ -51,15 +51,60 @@ bool Character::AdjustStat(StatNames stat, int amount) {
 }
 
 void Character::AddToInventory(Item *item) { inventory.push_back((Item *const) item); }
-void Character::RemoveFromInventory(ItemName item_id) {
+void Character::RemoveFromInventory(ItemID item_id) {
     inventory.erase(std::remove_if(inventory.begin(), inventory.end(),
-                                   [item_id](Item *i) { return i->GetItemName() == item_id; }), inventory.end());
+                                   [item_id](Item *i) { return i->GetItemID() == item_id; }), inventory.end());
 }
 
-void Character::EquipItem(Item* item, bool is_left_hand) {
-    if (is_left_hand) equipped_items.first = item;
-    else equipped_items.second = item;
-    item->Equip();
+void Character::EquipItem(Item* item) {
+    if (item->GetHandsNeeded() > 0) {
+        if (item->GetHandsNeeded() == 2) {
+            if (equipped_items.first == nullptr && equipped_items.second == nullptr) {
+                equipped_items.first = item;
+                LHand = item->GetItemID();
+                equipped_items.second = item;
+                RHand = item->GetItemID();
+                RemoveFromInventory(item->GetItemID());
+            }
+        } else {
+            if (item->GetHandsNeeded() == 1) {
+                if (equipped_items.first == nullptr) {
+                    equipped_items.first = item;
+                    LHand = item->GetItemID();
+                    RemoveFromInventory(item->GetItemID());
+                }else{
+                    if (equipped_items.second == nullptr) {
+                        equipped_items.second = item;
+                        RHand = item->GetItemID();
+                        RemoveFromInventory(item->GetItemID());
+                    }
+                }
+            }
+
+
+        }
+    }
+}
+void Character::UnequipItem(ItemID id) {
+    if (LHand != ItemID::NONE || RHand != ItemID::NONE) {
+        if (id == RHand && id == LHand) {
+            AddToInventory(equipped_items.first);
+            RHand = ItemID::NONE;
+            LHand = ItemID::NONE;
+            equipped_items.first = nullptr;
+            equipped_items.second = nullptr;
+        } else {
+            if (id == LHand) {
+                AddToInventory(equipped_items.first);
+                LHand = ItemID::NONE;
+                equipped_items.first = nullptr;
+            } else {
+                AddToInventory(equipped_items.second);
+                RHand = ItemID::NONE;
+                equipped_items.second = nullptr;
+            }
+        }
+    }
 }
 
 // Gameplay Methods
@@ -96,6 +141,57 @@ void Character::AdjustHealth(int amount) {
 void Character::SpendFate()
 {
     fate_points--;
+}
+void Character::ResetToBaseStats(){
+    current_stats = base_stats;
+}
+void Character::UpdateCurrentStats() {
+    ResetToBaseStats();
+
+    if (equipped_items.first != nullptr && equipped_items.second != nullptr) {
+        if (equipped_items.first->hasStats) {
+            if (equipped_items.first->GetHandsNeeded() == 2) {
+                if(equipped_items.first->GetItemType() != ItemType::Ranged) {
+                    current_stats += equipped_items.first->GetStats();
+                }else{
+                    if(equipped_items.first->isLoaded){
+                        current_stats += equipped_items.first->GetStats();
+                    }
+                }
+            }
+        }
+    }
+    if (equipped_items.first != nullptr) {
+        if (equipped_items.first->hasStats && equipped_items.first->GetHandsNeeded() == 1) {
+            if(equipped_items.first->GetItemType() != ItemType::Ranged) {
+                current_stats += equipped_items.first->GetStats();
+            }else{
+                if(equipped_items.first->isLoaded){
+                    current_stats += equipped_items.first->GetStats();
+                }
+            }
+        }
+    }
+
+    if (equipped_items.second != nullptr) {
+        if (equipped_items.second->hasStats && equipped_items.second->GetHandsNeeded() == 1) {
+            if (equipped_items.second->GetItemType() != ItemType::Ranged) {
+                current_stats += equipped_items.second->GetStats();
+            }else{
+                if(equipped_items.second->isLoaded){
+                    current_stats += equipped_items.second->GetStats();
+                }
+            }
+        }
+    }
+
+    for(auto e : inventory){
+        if(e != nullptr) {
+            if (e->hasStats && e->GetHandsNeeded() == 0) {
+                current_stats += e->GetStats();
+            }
+        }
+    }
 }
 
 const std::pair<Item *, Item *> Character::GetEquipment() {

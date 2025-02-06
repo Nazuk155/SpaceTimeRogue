@@ -3,7 +3,7 @@
 
 // Constructor for Map_Slot
 Map_Slot::Map_Slot(int id, SDL_Point pos)
-        : id(id), position(pos),rect({pos.x,pos.y,128,128}), location_id(LocationID::UNASSIGNED) {}
+        : id(id), position(pos), locationRect({pos.x, pos.y, 128, 128}), location_id(LocationID::UNASSIGNED) {initializeRects();}
 
 // Adds a connection to another slot
 void Map_Slot::AddConnection(int other_slot_id, bool is_active) {
@@ -74,3 +74,18 @@ void Map::SetLocation(int mapslotID, Location& location) {
         std::cerr << "Error: Map_Slot with ID " << mapslotID << " does not exist.\n";
     }
 }
+std::array<SDL_Rect, 5> Map::generateMonsterRects(SDL_Point position, int textureSize) {
+    std::array<SDL_Rect, 5> monsterRects;
+
+    // Define static offsets relative to the top-left corner
+    int offset = textureSize + 10; // Spacing between the location and monster textures
+
+    monsterRects[0] = {position.x - offset, position.y - offset, textureSize, textureSize}; // Top-left
+    monsterRects[1] = {position.x + offset, position.y - offset, textureSize, textureSize}; // Top-right
+    monsterRects[2] = {position.x - offset, position.y + offset, textureSize, textureSize}; // Bottom-left
+    monsterRects[3] = {position.x + offset, position.y + offset, textureSize, textureSize}; // Bottom-right
+    monsterRects[4] = {position.x, position.y + 2 * offset, textureSize, textureSize};      // Below the location texture
+
+    return monsterRects;
+}
+

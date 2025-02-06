@@ -19,7 +19,7 @@ enum class GamePhases
         };
 
 
-enum StatNames { SPEED, SNEAK, FIGHT, WILLPOWER, KNOWLEDGE, LUCK };
+enum StatNames { SPEED, SNEAK, FIGHT, WILLPOWER, OCCULT, FAITH ,NONE};
 
 /*
 std::unordered_map<StatNames, std::string> StatNamesStringMap //can likely be done more elegantly?
@@ -28,11 +28,13 @@ std::unordered_map<StatNames, std::string> StatNamesStringMap //can likely be do
                 {StatNames::SNEAK, "Sneak"},
                 {StatNames::FIGHT, "Fight"},
                 {StatNames:WILLPOWER, "Willpower"},
-                {StatNames::KNOWLEDGE, "Knowledge"},
-                {StatNames::LUCK, "Luck"}
+                {StatNames::OCCULT, "Knowledge"},
+                {StatNames::FAITH, "Luck"}
         };
         */
 enum class EncounterID{
+    NO_ENCOUNTER_ASSIGNED, // never assign this to a event. Only output when a location has no events in vector
+    Combat_Encounter,
     Forest_Thievery,
     Generic_FindSurvivor,
     Church_HolyWaterConversation
@@ -46,8 +48,12 @@ enum class EncounterTypeID{
     Unique,
     //etc add as needed
 };
-enum class ItemName {Halbert,Torch,Tome};
-enum class ItemType {Weapon,Magic,Unique};
+enum class ItemID {
+    NONE,
+    Halbert,
+    Torch,
+    Tome};
+enum class ItemType {Melee,Ranged,Magic,Unique};
 enum class LocationID {
     Forest,
     Church,
@@ -64,7 +70,10 @@ enum class LocationID {
     UNASSIGNED
 };
 
-enum class AbilityName {
+enum class AbilityID {
+    NONE,   //signifier for empty ability
+    WerwolfCorruptionEffects,
+    WolfPackAttack,
     ReduceStaminaLoss,
     DrawExtraItem,
     // Add more abilities as needed
@@ -75,18 +84,58 @@ enum class QuestID {
     //add more as needed
 };
 
+enum class MonsterID {
+    UNASSIGNED,
+    Wolf,
+    Ghoul,
+    Werewolf,
+    Vampire,
+    // Add other monsters here
+};
+
+enum class MonsterType {
+    None,
+    Undead,
+    Beast,
+    Spirit,
+    // Add other types here
+};
+
+enum class MovementType {
+    Stalking,
+    Fast,
+    Flying,
+    // Add other movement types here
+};
+
+
 
 struct Stats {
     std::unordered_map<StatNames, int> stats;
 
-    Stats(int speed, int sneak, int fight, int willpower, int knowledge, int luck) {
+    Stats(int speed, int sneak, int fight, int willpower, int occult, int faith) {
         stats[SPEED] = speed;
         stats[SNEAK] = sneak;
         stats[FIGHT] = fight;
         stats[WILLPOWER] = willpower;
-        stats[KNOWLEDGE] = knowledge;
-        stats[LUCK] = luck;
+        stats[OCCULT] = occult;
+        stats[FAITH] = faith;
     }
+
+    // Overload += operator
+    Stats& operator+=(const Stats& rhs) {
+        for (const auto& [stat_name, value] : rhs.stats) {
+            this->stats[stat_name] += value;
+        }
+        return *this;
+    }
+    Stats& operator=(const Stats& rhs) {
+        for (const auto& [stat_name, value] : rhs.stats) {
+            this->stats[stat_name] = value;
+        }
+        return *this;
+    }
+
 
     // Get a stat value
     int GetStat(StatNames stat_name) const {

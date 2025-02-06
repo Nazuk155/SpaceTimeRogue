@@ -40,16 +40,7 @@ public:
         return encounters.find(id) != encounters.end();
     }
 
-    bool isSelectedOptionSkillcheck(EncounterID eID,int szene,int input){
 
-        if(getEncounter(eID)->scenes[szene].options[input - 1].isSkillCheck)
-        {
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
 
 /*
     bool ResolveEncounter(Encounter &encounter,int szene,int input,SkillChallengeEngine ske, Character & currentCharacter) {
@@ -166,7 +157,7 @@ public:
 */
 
 
-void iterateOverOutcomes(const Vector<ItemName>& rewards, const std::vector<std::tuple<ExecuteFlags, int8_t>> &outcomes, Character &currentCharacter) const {
+void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::tuple<ExecuteFlags, int8_t>> &outcomes, Character &currentCharacter) const {
     for (std::tuple<ExecuteFlags, int8_t> outcome: outcomes) {
 
         switch (get<0>(outcome)) {
