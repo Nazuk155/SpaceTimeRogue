@@ -339,6 +339,16 @@ namespace JanSordid::SDL_Example {
         Texture *endTurnButtonOff = nullptr;
         Texture *endTurnButtonMouseover = nullptr;
 
+        Texture *emptyInventoryItem = nullptr;
+
+        Texture *dice1 = nullptr;
+        Texture *dice2 = nullptr;
+        Texture *dice3 = nullptr;
+        Texture *dice4 = nullptr;
+        Texture *dice5 = nullptr;
+        Texture *dice6 = nullptr;
+
+
 
         Texture *enemyWereWolfMainSprite = nullptr;
 

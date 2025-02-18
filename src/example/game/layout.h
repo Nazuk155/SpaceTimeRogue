@@ -67,6 +67,10 @@ struct
     SDL_Point DialogueOptionFieldScale = {78,4};
 
 
+    SDL_Point DiceFieldStart {15,0};
+    SDL_Point DiceFieldEnd {45,10};
+
+
 
 } EncounterLayout;
 

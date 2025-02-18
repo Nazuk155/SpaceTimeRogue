@@ -63,6 +63,14 @@ namespace JanSordid::SDL_Example {
         string endTurnButtonOnPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_button_PLACEHOLDER.png";
         string endTurnButtonOffPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_disabled_PLACEHOLDER.png";
         string endTurnButtonMouseoverPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_mouseover_PLACEHOLDER.png";
+        string emptyInventoryItemPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/icon_empty.png";
+
+        string dice1Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_1.png";
+        string dice2Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_2.png";
+        string dice3Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_3.png";
+        string dice4Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_4.png";
+        string dice5Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_5.png";
+        string dice6Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_6.png";
 
         //--------------- load textures from file
         forestLocationIconTexture = loadFromFile(forestLocationIconPath);
@@ -77,7 +85,14 @@ namespace JanSordid::SDL_Example {
         endTurnButtonOn = loadFromFile(endTurnButtonOnPath);
         endTurnButtonOff = loadFromFile(endTurnButtonOffPath);
         endTurnButtonMouseover = loadFromFile(endTurnButtonMouseoverPath);
-
+        emptyInventoryItem = loadFromFile(emptyInventoryItemPath);
+        //DIce Textures
+        dice1 = loadFromFile(dice1Path);
+        dice2 = loadFromFile(dice2Path);
+        dice3 = loadFromFile(dice3Path);
+        dice4 = loadFromFile(dice4Path);
+        dice5 = loadFromFile(dice5Path);
+        dice6 = loadFromFile(dice6Path);
 
         //struct
         struct LocationTextures {
@@ -330,10 +345,14 @@ namespace JanSordid::SDL_Example {
         abilityManager.AddAbility(std::move(staminaAbility));
 
         // Create and add items
-        auto sword = std::make_unique<Item>(ItemID::Halbert, ItemType::Melee, "Halbert of Valor", 2);
+        auto sword = std::make_unique<Item>(ItemID::Halbert, ItemType::Melee, "Halberd of Valor", 2);
         sword->SetStats({0, 0, 5, 0, 0, 0}); // Attack 10
         sword->SetAbility(staminaAbilityPtr); // Associate ability with item
         itemManager.AddItem(std::move(sword));
+
+        auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Common Torch",1);
+        torch->SetStats({0, 0, 1, 2, 0, 1}); // Attack 10
+        itemManager.AddItem(std::move(torch));
 
         // Access and use an item
         Item *item = itemManager.GetItem(ItemID::Halbert);
@@ -376,6 +395,8 @@ namespace JanSordid::SDL_Example {
         character1->RefillFatePoints();
         currentCharacter = character1;
 
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
+
         inventoryScreen = InventoryScreen(currentCharacter);
 
         // get character into SKE
@@ -385,7 +406,7 @@ namespace JanSordid::SDL_Example {
         std::cout.flush();
 
         currentCharacter->SetCurrentLocation(LocationID::Forest);
-        currentCharacter->EquipItem(currentCharacter->GetInventory().back());
+        //currentCharacter->EquipItem(currentCharacter->GetInventory().back());
         currentCharacter->UpdateCurrentStats();
 
         PopulateMonsterManager();
@@ -409,6 +430,14 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(endTurnButtonOn);
         SDL_DestroyTexture(endTurnButtonMouseover);
 
+        SDL_DestroyTexture(emptyInventoryItem);
+        SDL_DestroyTexture(dice1);
+        SDL_DestroyTexture(dice2);
+        SDL_DestroyTexture(dice3);
+        SDL_DestroyTexture(dice4);
+        SDL_DestroyTexture(dice5);
+        SDL_DestroyTexture(dice6);
+
         SDL_DestroyTexture(enemyWereWolfMainSprite);
 
         for (auto e: locationTextureMap) {
@@ -428,6 +457,14 @@ namespace JanSordid::SDL_Example {
         endTurnButtonMouseover = nullptr;
         endTurnButtonOn = nullptr;
 
+        emptyInventoryItem = nullptr;
+        dice1= nullptr;
+        dice2 = nullptr;
+        dice3 = nullptr;
+        dice4 = nullptr;
+        dice5 = nullptr;
+        dice6 = nullptr;
+
         Base::Destroy();
     }
 
@@ -436,7 +473,8 @@ namespace JanSordid::SDL_Example {
         if (event.type == SDL_MOUSEMOTION ) {
             //int mouseX, mouseY;
             SDL_GetMouseState(&mouseOverX, &mouseOverY);
-            inventoryScreen.currentPage.MouseOver(mouseOverX,mouseOverY);
+            if(bInInventory)
+                inventoryScreen.currentPage.MouseOver(mouseOverX,mouseOverY);
             SDL_Rect equipIcon= //Equip R
                     {
                             static_cast<int>((SidebarIcons.Right.position.x * windowSize.x*0.01)),
@@ -458,8 +496,7 @@ namespace JanSordid::SDL_Example {
             }
             else
             {
-                //SidebarIcons.Right.referencedItem = nullptr;
-                //inventoryScreen.currentPage.MouseOverIcon = nullptr;
+
                 bShowRightItemInfo = false;
             }
             equipIcon= //Equip L
@@ -484,8 +521,7 @@ namespace JanSordid::SDL_Example {
             else
             {
                 bShowLeftItemInfo = false;
-                //inventoryScreen.currentPage.MouseOverIcon = nullptr;
-                //SidebarIcons.Left.referencedItem = nullptr;
+
             }
         }
 
@@ -497,7 +533,8 @@ namespace JanSordid::SDL_Example {
                 SDL_GetMouseState(&mouseOverX, &mouseOverY);
                 if (event.type == SDL_MOUSEBUTTONDOWN)
                 {
-                    inventoryScreen.currentPage.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y);
+                    inventoryScreen.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y);
+                    //inventoryScreen.BuildInventory(); //CTD RIP
                 }
             }
 
@@ -1331,7 +1368,7 @@ namespace JanSordid::SDL_Example {
     }
     void BeasthoodState::RenderInventory()
     {
-        inventoryScreen.currentPage.RenderInventoryPage(renderer(),windowSize.x,windowSize.y);
+        inventoryScreen.currentPage.RenderInventoryPage(renderer(),windowSize.x,windowSize.y, emptyInventoryItem);
 
         if(inventoryScreen.currentPage.bIconHover || inventoryScreen.currentPage.bIconSelected)
         {
@@ -1348,7 +1385,7 @@ namespace JanSordid::SDL_Example {
                  static_cast<int>(SidebarLayout.EndTurnbuttonHeight*windowSize.y*0.01)
                 };
         SDL_Rect srcRect = {0,0,SpriteData.Turn_Button.x,SpriteData.Turn_Button.y};
-        if(bIsActive)
+        if(bIsActive && !bInInventory)
         {
             if(IsMouseInsideRect(buttonPlacement, mouseOverX,mouseOverY))
             {
@@ -1473,7 +1510,7 @@ namespace JanSordid::SDL_Example {
 
                 RenderSidebar();
                 RenderTurnButton(false);
-
+                //renderDicerollAnimation(ske);
 
 
                 std::vector<SDL_Rect> OptionVector= {};
@@ -1550,7 +1587,10 @@ namespace JanSordid::SDL_Example {
                         break;
                     case DialoguePhase::DieRoll:
                         if(!eTracker.alreadyDisplayedText) {
-                            //renderDicerollAnimation(ske);
+                            renderDicerollAnimation(ske);
+
+                            //TODO MAIN TEXT - "You failed etc..."
+
                             if(ske.getSuccesses() >= ske.getDifficulty()) {
                                 eTracker.diaPhase = DialoguePhase::Scene; //TODO MOVE TO UPDATE?
                             }else
@@ -1570,7 +1610,13 @@ namespace JanSordid::SDL_Example {
                                                         static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
                                 Texture * optionTextYes;
                                 Texture * optionTextNo;
-                                //renderText(DialogueMainField,optionText);
+                                Texture * optionText;
+
+                                optionText = textToTexture(("You failed a Difficulty "+ std::to_string(ske.getDifficulty()) +" check. Spend 1 Will Point to add one more dice?").c_str());
+                                SDL_SetRenderDrawColor(renderer(),13,13,10,0);
+                                SDL_RenderFillRect(renderer(),&txtField);
+
+                                renderText(DialogueMainField,optionText);
 
                                 optionTextYes = textToTexture("Yes. (-1 WP)");
                                 optionTextNo = textToTexture("No.");
@@ -1610,6 +1656,8 @@ namespace JanSordid::SDL_Example {
                                 optionTextYes= nullptr;
                                 SDL_DestroyTexture(optionTextNo); //prevent leak
                                 optionTextNo= nullptr;
+                                SDL_DestroyTexture(optionText); //prevent leak
+                                optionText= nullptr;
 
 
 
@@ -1622,7 +1670,9 @@ namespace JanSordid::SDL_Example {
                     case DialoguePhase::FateReroll:
                         if(!eTracker.alreadyDisplayedText) {
                             renderFateDieAnimation(ske);
+                            renderDicerollAnimation(ske);
                             eTracker.diaPhase = DialoguePhase::Scene;
+                            //todo exit after roll result? do we want to allow the spending of all wp in one check?
 
                         }
 
@@ -1967,30 +2017,44 @@ namespace JanSordid::SDL_Example {
     }
 
     //todo placeholder functions
-    void BeasthoodState::renderDicerollAnimation(SkillChallengeEngine& ske)
+    void BeasthoodState::renderDicerollAnimation( SkillChallengeEngine& skillCheck)
     {
-        fmt::println("Testing: {}",ske.currentSkillName());
-        for(uint8_t roll : ske.currentRolls)
+        SDL_Rect targetRect {static_cast<int>(EncounterLayout.DiceFieldStart.x*windowSize.x*0.01),
+                             static_cast<int>(EncounterLayout.DiceFieldStart.y*0.01*windowSize.y),
+                             static_cast<int>(5*windowSize.x*0.01),static_cast<int>(5*windowSize.x*0.01)};
+        SDL_Rect srcRect {0,0,128,128};
+        for(unsigned char currentRoll : skillCheck.currentRolls)
         {
-            fmt::print("{} ", roll);
+            targetRect.x += static_cast<int>(5*windowSize.x*0.01);
+            switch (currentRoll) {
+                case 1:SDL_RenderCopy(renderer(),dice1,&srcRect,&targetRect);
+                    break;
+                case 2:SDL_RenderCopy(renderer(),dice2,&srcRect,&targetRect);
+                    break;
+                case 3:SDL_RenderCopy(renderer(),dice3,&srcRect,&targetRect);
+                    break;
+                case 4:SDL_RenderCopy(renderer(),dice4,&srcRect,&targetRect);
+                    break;
+                case 5:SDL_RenderCopy(renderer(),dice5,&srcRect,&targetRect);
+                    break;
+                case 6:SDL_RenderCopy(renderer(),dice6,&srcRect,&targetRect);
+                    break;
+                default: fmt::println("impossible dice result");
+                    break; //should be impossible
+
+            }
+
         }
-        fmt::println(" - {} Successes for Difficulty {}.", ske.getSuccesses(), ske.getDifficulty());
-        if (ske.getSuccesses() >= ske.getDifficulty()) //todo you can get true from the skillcheck being called-> can save result in WS!
-        {
-            fmt::println("Passed!");
-        }
-        else
-        {
-            //Todo check if FP available
-            fmt::println("Failed! Spend a Will point to roll one more die?");
-            fmt::println("1. Yes");
-            fmt::println("2. No");
-        }
+
+
+
+        //fmt::println("rendering DICE");
 
     }
     void BeasthoodState::renderFateDieAnimation(const SkillChallengeEngine& ske)
     {
         fmt::println("Will fate bend to mortal will?");
+        //renderDicerollAnimation(ske);
         for(uint8_t roll : ske.currentRolls)
         {
             fmt::print("{} ", roll);

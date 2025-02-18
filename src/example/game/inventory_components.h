@@ -43,7 +43,7 @@ class InventoryPage
     //8x*5y icons - 40?
 public:
     Character* currentCharacter = nullptr; //todo this is a mess
-    std::array<InventoryIcon,40> icons;
+    std::vector<InventoryIcon> icons;
     SDL_Point StartPoint{20,20};
     SDL_Point Dimensions{60,60};
     InventoryIcon* MouseOverIcon = nullptr;
@@ -52,7 +52,7 @@ public:
     bool bIconSelected = false;
 
 //public:
-    void RenderInventoryPage(SDL_Renderer*renderer, int screenWidth, int screenHeight)
+    void RenderInventoryPage(SDL_Renderer*renderer, int screenWidth, int screenHeight, SDL_Texture* baseIcon)
     {
         SDL_Rect window = {static_cast<int>(StartPoint.x*screenWidth*0.01), static_cast<int>(StartPoint.y*screenHeight*0.01),
                            static_cast<int>(Dimensions.x*screenWidth*0.01),static_cast<int>(Dimensions.y*screenHeight*0.01)};
@@ -72,7 +72,8 @@ public:
                 icon.x=static_cast<int>(window.x + ((0.0025+0.0725)*screenWidth)*i);
                 icon.y=static_cast<int>(window.y + ((0.0025+0.0725)*screenWidth)*j);
                 icons[i+8*j].position=icon;
-
+                SDL_Rect  sourceRect {0,0,67,67};
+                SDL_RenderCopy(renderer,baseIcon,&sourceRect,&icon);
                 if(icons[i+8*j].active)
                 {
                     SDL_SetRenderDrawColor(renderer,0,200,10,0);
@@ -81,12 +82,9 @@ public:
                 }
                 else
                 {
-                    SDL_SetRenderDrawColor(renderer,10,10,10,0);
-                    SDL_RenderFillRect(renderer,&icon);
+                    //SDL_SetRenderDrawColor(renderer,10,10,10,0);
+                    //SDL_RenderFillRect(renderer,&icon);
                 }
-
-
-
             }
         }
 
@@ -117,127 +115,6 @@ public:
         }
         //no else, hovering nowhere is irrelevant
     }
-    void Click(int mouseX, int mouseY, int screenWidth, int screenHeight)
-    {
-
-        if(bIconSelected )
-        {
-            //fmt::println("Clicked while selection locked");
-
-
-            SDL_Rect ButtonRect //Right
-            ={
-                    static_cast<int>((screenWidth*0.01)*(StartPoint.x -ItemDetailedView.Dimensions.x + ItemDetailedView.EquipRightPos.x)),
-                    static_cast<int>((screenHeight*(StartPoint.y )*0.01)+ItemDetailedView.EquipRightPos.y*0.01*screenWidth),
-                    static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
-                    static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
-
-            };
-            if(mouseX >= ButtonRect.x && mouseX < (ButtonRect.x + ButtonRect.w) &&
-               mouseY >= ButtonRect.y && mouseY < (ButtonRect.y + ButtonRect.h))
-            {
-
-                if(MouseOverIcon->referencedItem->IsEquipped())
-                {
-                    if(currentCharacter->GetEquipment().first==MouseOverIcon->referencedItem)
-                    {
-                        currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
-                    }
-                    else if(currentCharacter->GetEquipment().second==MouseOverIcon->referencedItem)
-                    {
-                        currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
-                    }
-                }
-
-                if(currentCharacter->GetEquipment().second)
-                {
-                    currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
-                }
-                if(currentCharacter->GetEquipment().first && MouseOverIcon->referencedItem->GetHandsNeeded()==2)
-                {
-                    currentCharacter->GetEquipment().first->Unequip();
-                }
-                currentCharacter->EquipItem(MouseOverIcon->referencedItem);
-                fmt::println("Clicked equip {} in Right Hand",currentCharacter->GetEquipment().second->GetName());
-
-                return;
-            }
-
-            ButtonRect //Left
-                    ={
-                    static_cast<int>((screenWidth*0.01)*(StartPoint.x -ItemDetailedView.Dimensions.x + ItemDetailedView.EquipLeftPos.x)),
-                    static_cast<int>((screenHeight*(StartPoint.y )*0.01)+ItemDetailedView.EquipRightPos.y*0.01*screenWidth),
-                    static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
-                    static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
-
-            };
-            if(mouseX >= ButtonRect.x && mouseX < (ButtonRect.x + ButtonRect.w) &&
-               mouseY >= ButtonRect.y && mouseY < (ButtonRect.y + ButtonRect.h))
-            {
-
-                if(MouseOverIcon->referencedItem->IsEquipped())
-                {
-                    if(currentCharacter->GetEquipment().first==MouseOverIcon->referencedItem)
-                    {
-                        currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
-
-                    }
-                    else if(currentCharacter->GetEquipment().second==MouseOverIcon->referencedItem)
-                    {
-                        currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
-
-                    }
-                }
-
-                if(currentCharacter->GetEquipment().first)
-                {
-                    currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
-
-                }
-                if(currentCharacter->GetEquipment().second && MouseOverIcon->referencedItem->GetHandsNeeded()==2)
-                {
-                    currentCharacter->GetEquipment().second->Unequip();
-
-                }
-
-                fmt::print("Clicked equip {} in Left Hand",MouseOverIcon->referencedItem->GetName());
-                currentCharacter->EquipItem(MouseOverIcon->referencedItem);
-
-
-                return;
-            }
-
-
-
-
-        }
-
-
-        //iterate over icons
-        for(InventoryIcon &icon : icons)
-        {
-            if(mouseX >= icon.position.x && mouseX < (icon.position.x + icon.position.w) &&
-               mouseY >= icon.position.y && mouseY < (icon.position.y + icon.position.h) &&
-               icon.active && !bIconSelected) //mouse in icon, icon has meaning and not clicked
-            {
-
-                MouseOverIcon=&icon;
-                bIconHover=true;
-                bIconSelected = true;
-                return;
-
-            }
-            else
-            {
-                MouseOverIcon = nullptr;
-                bIconHover=false;
-                bIconSelected = false;
-
-            }
-        }
-    }
-
-
 
 };
 
@@ -264,10 +141,42 @@ class InventoryScreen
 
     void BuildInventory() //TODO currently 40 item max, build other pages, deal with potential memory leak form that expansion
     {
+        currentPage.currentCharacter = currentCharacter;
+
+
+        SDL_Rect iconRect {0,0,
+                           0,
+                           0};
+        for(int j=0;j<5;j++)
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                if(i+8*j < currentCharacter->GetInventory().size()) //todo screenwidth currently in Render()-> move to constructor params?
+                    // get item
+                {/*
+                    iconRect.x=static_cast<int>(window.x + ((0.0025+0.0725)*screenWidth)*i);
+                    iconRect.y=static_cast<int>(window.y + ((0.0025+0.0725)*screenWidth)*j);
+                    icons[i+8*j].position=iconRect;
+                    */
+                    currentPage.icons.push_back(InventoryIcon{true,iconRect,currentCharacter->GetInventory()[i+8*j]});
+
+
+                }
+                else
+                {
+                    //empty icon
+                    currentPage.icons.push_back(InventoryIcon{false,iconRect, nullptr});
+
+                }
+
+            }
+        }
+/*
         if(currentCharacter->GetInventory().size() <= 40)
         {
-            currentPage.currentCharacter = currentCharacter; //todo this is beyond stupid
+
             for (int i = 0; i < currentCharacter->GetInventory().size(); i++) {
+                currentPage.icons.push_back(InventoryIcon{true,currentCharacter->GetInventory()[i]});
                 currentPage.icons[i] = {true};
                 currentPage.icons[i].referencedItem = currentCharacter->GetInventory()[i];
                 fmt::println("Assigned item {}", currentPage.icons[i].referencedItem->GetName() );
@@ -288,9 +197,147 @@ class InventoryScreen
 
             }
         }
+        */
+    }
+    void RebuildInventory()
+    {
+        SDL_Rect iconRect {0,0,
+                           0,
+                           0};
+        for(int j=0;j<5;j++)
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                if(i+8*j < currentCharacter->GetInventory().size()) //todo screenwidth currently in Render()-> move to constructor params?
+                    // get item
+                {/*
+                    iconRect.x=static_cast<int>(window.x + ((0.0025+0.0725)*screenWidth)*i);
+                    iconRect.y=static_cast<int>(window.y + ((0.0025+0.0725)*screenWidth)*j);
+                    icons[i+8*j].position=iconRect;
+                    */
+                    currentPage.icons[i+8*j]=InventoryIcon{true,iconRect,currentCharacter->GetInventory()[i+8*j]};
+
+
+                }
+                else
+                {
+                    //empty icon
+                    currentPage.icons[i+8*j]=InventoryIcon{false,iconRect, nullptr};
+
+                }
+
+            }
+        }
     }
 
+
+
+    void Click(int mouseX, int mouseY, int screenWidth, int screenHeight)
+    {
+
+        if(currentPage.bIconSelected )
+        {
+            //fmt::println("Clicked while selection locked");
+
+
+            SDL_Rect ButtonRect //Right
+                    ={
+                            static_cast<int>((screenWidth*0.01)*(currentPage.StartPoint.x -ItemDetailedView.Dimensions.x + ItemDetailedView.EquipRightPos.x)),
+                            static_cast<int>((screenHeight*(currentPage.StartPoint.y )*0.01)+ItemDetailedView.EquipRightPos.y*0.01*screenWidth),
+                            static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
+                            static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
+
+                    };
+            if(mouseX >= ButtonRect.x && mouseX < (ButtonRect.x + ButtonRect.w) &&
+               mouseY >= ButtonRect.y && mouseY < (ButtonRect.y + ButtonRect.h))
+            {
+
+                if(currentCharacter->GetEquipment().second)
+                {
+                    currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
+                }
+                if(currentCharacter->GetEquipment().first && (currentPage.MouseOverIcon->referencedItem->GetHandsNeeded()==2 || currentCharacter->GetEquipment().first->GetHandsNeeded()==2))
+                {
+                    //currentCharacter->GetEquipment().first->Unequip();
+                    currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
+                }
+
+                currentCharacter->EquipItem(currentPage.MouseOverIcon->referencedItem);
+                //fmt::println("Clicked equip {} in Right Hand",currentCharacter->GetEquipment().second->GetName());
+                RebuildInventory();
+                currentCharacter->UpdateCurrentStats();
+
+
+                return;
+            }
+
+            ButtonRect //Left
+                    ={
+                    static_cast<int>((screenWidth*0.01)*(currentPage.StartPoint.x -ItemDetailedView.Dimensions.x + ItemDetailedView.EquipLeftPos.x)),
+                    static_cast<int>((screenHeight*(currentPage.StartPoint.y )*0.01)+ItemDetailedView.EquipRightPos.y*0.01*screenWidth),
+                    static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
+                    static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
+
+            };
+            if(mouseX >= ButtonRect.x && mouseX < (ButtonRect.x + ButtonRect.w) &&
+               mouseY >= ButtonRect.y && mouseY < (ButtonRect.y + ButtonRect.h))
+            {
+
+                if(currentCharacter->GetEquipment().first)
+                {
+                    currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
+
+                }
+                if(currentCharacter->GetEquipment().second && (currentPage.MouseOverIcon->referencedItem->GetHandsNeeded()==2 || currentCharacter->GetEquipment().second->GetHandsNeeded()==2))
+                {
+                    //currentCharacter->GetEquipment().second->Unequip();
+                    currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
+
+                }
+
+               // fmt::print("Clicked equip {} in Left Hand",currentPage.MouseOverIcon->referencedItem->GetName());
+                currentCharacter->EquipItem(currentPage.MouseOverIcon->referencedItem);
+                RebuildInventory();
+
+
+                currentCharacter->UpdateCurrentStats();
+                return;
+            }
+
+
+
+
+        }
+
+
+        //iterate over icons
+        for(InventoryIcon &icon : currentPage.icons)
+        {
+            if(mouseX >= icon.position.x && mouseX < (icon.position.x + icon.position.w) &&
+               mouseY >= icon.position.y && mouseY < (icon.position.y + icon.position.h) &&
+               icon.active && !currentPage.bIconSelected) //mouse in icon, icon has meaning and not clicked
+            {
+
+                currentPage.MouseOverIcon=&icon;
+                currentPage.bIconHover=true;
+                currentPage.bIconSelected = true;
+                return;
+
+            }
+            else
+            {
+                currentPage.MouseOverIcon = nullptr;
+                currentPage.bIconHover=false;
+                currentPage.bIconSelected = false;
+
+            }
+        }
+    }
+
+
+
 };
+
 
 
 
