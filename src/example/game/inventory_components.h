@@ -210,11 +210,7 @@ class InventoryScreen
             {
                 if(i+8*j < currentCharacter->GetInventory().size()) //todo screenwidth currently in Render()-> move to constructor params?
                     // get item
-                {/*
-                    iconRect.x=static_cast<int>(window.x + ((0.0025+0.0725)*screenWidth)*i);
-                    iconRect.y=static_cast<int>(window.y + ((0.0025+0.0725)*screenWidth)*j);
-                    icons[i+8*j].position=iconRect;
-                    */
+                {
                     currentPage.icons[i+8*j]=InventoryIcon{true,iconRect,currentCharacter->GetInventory()[i+8*j]};
 
 
@@ -251,22 +247,29 @@ class InventoryScreen
             if(mouseX >= ButtonRect.x && mouseX < (ButtonRect.x + ButtonRect.w) &&
                mouseY >= ButtonRect.y && mouseY < (ButtonRect.y + ButtonRect.h))
             {
-
+                fmt::println("click right");
                 if(currentCharacter->GetEquipment().second)
                 {
+                    fmt::println("unequipping second");
                     currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
                 }
                 if(currentCharacter->GetEquipment().first && (currentPage.MouseOverIcon->referencedItem->GetHandsNeeded()==2 || currentCharacter->GetEquipment().first->GetHandsNeeded()==2))
                 {
-                    //currentCharacter->GetEquipment().first->Unequip();
+                    fmt::println("unequipping first");
                     currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
                 }
 
                 currentCharacter->EquipItem(currentPage.MouseOverIcon->referencedItem);
+                fmt::println("click past checks - to equip");
                 //fmt::println("Clicked equip {} in Right Hand",currentCharacter->GetEquipment().second->GetName());
+                fmt::println("click past equip");
                 RebuildInventory();
                 currentCharacter->UpdateCurrentStats();
 
+                //prevent 'empty item' being displayed/handled
+                currentPage.MouseOverIcon = nullptr;
+                currentPage.bIconHover=false;
+                currentPage.bIconSelected = false;
 
                 return;
             }
@@ -282,25 +285,31 @@ class InventoryScreen
             if(mouseX >= ButtonRect.x && mouseX < (ButtonRect.x + ButtonRect.w) &&
                mouseY >= ButtonRect.y && mouseY < (ButtonRect.y + ButtonRect.h))
             {
-
+                fmt::println("click left");
                 if(currentCharacter->GetEquipment().first)
                 {
+                    fmt::println("unequipping first");
                     currentCharacter->UnequipItem(currentCharacter->GetEquipment().first->GetItemID());
 
                 }
                 if(currentCharacter->GetEquipment().second && (currentPage.MouseOverIcon->referencedItem->GetHandsNeeded()==2 || currentCharacter->GetEquipment().second->GetHandsNeeded()==2))
                 {
-                    //currentCharacter->GetEquipment().second->Unequip();
+                    fmt::println("unequipping second");
                     currentCharacter->UnequipItem(currentCharacter->GetEquipment().second->GetItemID());
 
                 }
-
+                fmt::println("click past checks - to equip");
                // fmt::print("Clicked equip {} in Left Hand",currentPage.MouseOverIcon->referencedItem->GetName());
                 currentCharacter->EquipItem(currentPage.MouseOverIcon->referencedItem);
+                fmt::println("click past equip");
                 RebuildInventory();
-
-
                 currentCharacter->UpdateCurrentStats();
+
+                //prevent 'empty item' being displayed/handled
+                currentPage.MouseOverIcon = nullptr;
+                currentPage.bIconHover=false;
+                currentPage.bIconSelected = false;
+
                 return;
             }
 

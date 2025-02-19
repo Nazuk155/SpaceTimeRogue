@@ -134,9 +134,7 @@ void Character::CompleteQuest(QuestID quest_id) {
 }
 
 
-void Character::AdjustHealth(int amount) {
-    health = std::max(0, std::min(base_health, health + amount));
-}
+
 
 void Character::SpendFate()
 {
@@ -161,6 +159,7 @@ void Character::UpdateCurrentStats() {
             }
         }
     }
+    fmt::println("update past check 1");
     if (equipped_items.first != nullptr) {
         if (equipped_items.first->hasStats && equipped_items.first->GetHandsNeeded() == 1) {
             if(equipped_items.first->GetItemType() != ItemType::Ranged) {
@@ -172,7 +171,7 @@ void Character::UpdateCurrentStats() {
             }
         }
     }
-
+    fmt::println("update past check 2");
     if (equipped_items.second != nullptr) {
         if (equipped_items.second->hasStats && equipped_items.second->GetHandsNeeded() == 1) {
             if (equipped_items.second->GetItemType() != ItemType::Ranged) {
@@ -184,7 +183,7 @@ void Character::UpdateCurrentStats() {
             }
         }
     }
-
+    fmt::println("update past check 3");
     for(auto e : inventory){
         if(e != nullptr) {
             if (e->hasStats && e->GetHandsNeeded() == 0) {
@@ -192,6 +191,7 @@ void Character::UpdateCurrentStats() {
             }
         }
     }
+    fmt::println("update done");
 }
 
 const std::pair<Item *, Item *> Character::GetEquipment() {

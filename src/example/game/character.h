@@ -18,8 +18,8 @@ public:
 private:
     std::string name;                 // Character's name
     int stamina, sanity;              // Current stamina and sanity
-    int base_health,base_stamina, base_sanity;    // Max stamina and sanity
-    int health;
+    int base_stamina, base_sanity;    // Max stamina and sanity
+
 
     int player_id;                    // Assigned player (for multiplayer, -1 if single-player)
     Stats base_stats;                 // Base stats
@@ -79,7 +79,7 @@ public:
 
     void SetPos(SDL_Rect newRect);
 
-    void AdjustHealth(int amount);
+
 
     void SpendFate();
 

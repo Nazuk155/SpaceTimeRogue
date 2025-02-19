@@ -164,7 +164,7 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
             case ExecuteFlags::Wound:
 
                 fmt::print("Debug- Injury");
-                currentCharacter.AdjustHealth(-get<1>(outcome));
+                currentCharacter.AdjustStamina(-get<1>(outcome));
                 break;
             case ExecuteFlags::GainItem:
                 for(auto e : rewards) {
@@ -173,7 +173,7 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
                 //TODO Ressources
                 break;
             case ExecuteFlags::Heal:
-                currentCharacter.AdjustHealth(get<1>(outcome));
+                currentCharacter.AdjustStamina(get<1>(outcome));
                 break;
             case ExecuteFlags::SanityLoss:
                 currentCharacter.AdjustSanity(-get<1>(outcome)); //todo fix this mess/warning

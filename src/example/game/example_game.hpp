@@ -531,6 +531,8 @@ namespace JanSordid::SDL_Example {
         void RenderInventorySelection(int mouseX, int mouseY, int screenWidth, int screenHeight);
 
         void RenderInventorySelectionNoOption(int mouseX, int mouseY, int screenWidth, int screenHeight,bool left_item);
+
+        bool bOptionRequirementMet(std::tuple<RequirementFlags, int8_t> requirement);
     };
 
 }

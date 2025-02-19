@@ -20,6 +20,26 @@ enum class ExecuteFlags {
     GainItem
 };
 
+enum class RequirementFlags
+{
+    speed,
+    sneak,
+    fight,
+    willpower,
+    occult,
+    faith,
+
+    stamina,
+    sanity,
+
+    item,  //check if in inventory
+    quest //todo might reed more, unless we enconde -> quest 12 ar stage 100 = 012100 etc
+
+
+
+};
+
+
 
 
 enum class DialoguePhase {
@@ -38,9 +58,10 @@ struct SceneOption {
     std::vector<std::tuple<ExecuteFlags, int8_t>> failureOutcomes;
     int jumpTargetSuccess;
     int jumpTargetFail;
-    Vector<ItemID> rewardItemIDs; //TODO seens to be a redundancy
+    Vector<ItemID> rewardItemIDs; //TODO seems to be a redundancy
     Vector<ItemID> failureItemIDs;
-
+    Vector<std::tuple<RequirementFlags, int8_t>> requirements = {};
+    bool bHasRequirements = false;
 
 };
 enum class SceneCompositionEntities

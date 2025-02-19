@@ -350,8 +350,8 @@ namespace JanSordid::SDL_Example {
         sword->SetAbility(staminaAbilityPtr); // Associate ability with item
         itemManager.AddItem(std::move(sword));
 
-        auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Common Torch",1);
-        torch->SetStats({0, 0, 1, 2, 0, 1}); // Attack 10
+        auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Not so Common Torch",1);
+        torch->SetStats({0, 0, 1, 2, 0, 10}); // Attack 10
         itemManager.AddItem(std::move(torch));
 
         // Access and use an item
@@ -531,11 +531,11 @@ namespace JanSordid::SDL_Example {
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 //int mouseX, mouseY;
                 SDL_GetMouseState(&mouseOverX, &mouseOverY);
-                if (event.type == SDL_MOUSEBUTTONDOWN)
-                {
+
                     inventoryScreen.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y);
+                    fmt::println("equip handled?");
                     //inventoryScreen.BuildInventory(); //CTD RIP
-                }
+
             }
 
 
@@ -1051,9 +1051,11 @@ namespace JanSordid::SDL_Example {
 
         renderText(SidebarTextTarget,SidebarText); //TODO complete Placeholder, ideally replace with premade image/portrait etc.
 
-        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y; //todo make font size variable
+        //todo make font size variable
+
+        SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
         SDL_DestroyTexture(SidebarText);
-        SidebarText = textToTexture(("Health   "+ std::to_string(currentCharacter->GetStamina())).c_str());
+        SidebarText = textToTexture(("Stamina   "+ std::to_string(currentCharacter->GetStamina())).c_str());
         renderText(SidebarTextTarget,SidebarText);
 
         SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
@@ -1188,7 +1190,8 @@ namespace JanSordid::SDL_Example {
     }
     void BeasthoodState::RenderInventorySelection(int mouseX, int mouseY, int screenWidth, int screenHeight) {
 
-
+        if(inventoryScreen.currentPage.MouseOverIcon->referencedItem)
+        {
         SDL_Rect Selection{static_cast<int>(screenWidth *
                                             (inventoryScreen.currentPage.StartPoint.x - ItemDetailedView.Dimensions.x) *
                                             0.01),
@@ -1224,60 +1227,62 @@ namespace JanSordid::SDL_Example {
         Item *ItemToDisplay = inventoryScreen.currentPage.MouseOverIcon->referencedItem;
 
 
-        DisplayText = textToTexture(ItemToDisplay->GetName().c_str());
 
-        renderText({Selection.x, static_cast<int>(Selection.y), 10, 10}, DisplayText);
-        SDL_DestroyTexture(DisplayText); //todo there is a better way surely
+            DisplayText = textToTexture(ItemToDisplay->GetName().c_str());
 
-        //todo parse and render item
-
-
-        DisplayText = textToTexture(
-                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT)) + " FIGHT").c_str());
-        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.02), 10, 10}, DisplayText);
-        SDL_DestroyTexture(DisplayText);
-
-        DisplayText = textToTexture(
-                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SPEED)) + " SPEED").c_str());
-        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.03), 10, 10}, DisplayText);
-        SDL_DestroyTexture(DisplayText);
-
-        DisplayText = textToTexture(
-                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SNEAK)) + " SNEAK").c_str());
-        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.04), 10, 10}, DisplayText);
-        SDL_DestroyTexture(DisplayText);
-
-        DisplayText = textToTexture(
-                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::WILLPOWER)) + " WILLPOWER").c_str());
-        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.05), 10, 10}, DisplayText);
-        SDL_DestroyTexture(DisplayText);
-
-        DisplayText = textToTexture(
-                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FAITH)) + " FAITH").c_str());
-        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.06), 10, 10}, DisplayText);
-        SDL_DestroyTexture(DisplayText);
-
-        DisplayText = textToTexture(
-                (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::OCCULT)) + " OCCULT").c_str());
-        renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
-        SDL_DestroyTexture(DisplayText);
-
-
-        if (ItemToDisplay->GetAbility()) {
-            switch (ItemToDisplay->GetAbility()->GetName()) {
-                case (AbilityID::DrawExtraItem):
-                    DisplayText = textToTexture("Draw Extra Item - change to sth different, drawing too abstract");
-                    break;
-                case (AbilityID::ReduceStaminaLoss):
-                    DisplayText = textToTexture("Reduce Stamina Loss");
-                    break;
-                default:
-                    DisplayText = textToTexture("unknown or no ability?");
-                    break;
-
-            }
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.085), 10, 10}, DisplayText);
+            renderText({Selection.x, static_cast<int>(Selection.y), 10, 10}, DisplayText);
             SDL_DestroyTexture(DisplayText);
+
+            //todo parse and render item
+
+
+            DisplayText = textToTexture(
+                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT)) + " FIGHT").c_str());
+            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.02), 10, 10}, DisplayText);
+            SDL_DestroyTexture(DisplayText);
+
+            DisplayText = textToTexture(
+                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SPEED)) + " SPEED").c_str());
+            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.03), 10, 10}, DisplayText);
+            SDL_DestroyTexture(DisplayText);
+
+            DisplayText = textToTexture(
+                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SNEAK)) + " SNEAK").c_str());
+            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.04), 10, 10}, DisplayText);
+            SDL_DestroyTexture(DisplayText);
+
+            DisplayText = textToTexture(
+                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::WILLPOWER)) + " WILLPOWER").c_str());
+            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.05), 10, 10}, DisplayText);
+            SDL_DestroyTexture(DisplayText);
+
+            DisplayText = textToTexture(
+                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FAITH)) + " FAITH").c_str());
+            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.06), 10, 10}, DisplayText);
+            SDL_DestroyTexture(DisplayText);
+
+            DisplayText = textToTexture(
+                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::OCCULT)) + " OCCULT").c_str());
+            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
+            SDL_DestroyTexture(DisplayText);
+
+
+            if (ItemToDisplay->GetAbility()) {
+                switch (ItemToDisplay->GetAbility()->GetName()) {
+                    case (AbilityID::DrawExtraItem):
+                        DisplayText = textToTexture("Draw Extra Item - change to sth different, drawing too abstract");
+                        break;
+                    case (AbilityID::ReduceStaminaLoss):
+                        DisplayText = textToTexture("Reduce Stamina Loss");
+                        break;
+                    default:
+                        DisplayText = textToTexture("unknown or no ability?");
+                        break;
+
+                }
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.085), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
+            }
         }
     }
 
@@ -1286,7 +1291,7 @@ namespace JanSordid::SDL_Example {
 
 
 
-
+    //todo check if same bug is present as in upper version
     void BeasthoodState::RenderInventorySelectionNoOption(int mouseX, int mouseY, int screenWidth, int screenHeight, bool left_item)
     {
         SDL_Rect Selection {static_cast<int>(mouseX-static_cast<int>(screenWidth*ItemDetailedView.Dimensions.x*0.01)),
@@ -1541,47 +1546,62 @@ namespace JanSordid::SDL_Example {
                             eTracker.alreadyDisplayedText = true;
                         }
                         for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
-
-                            OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
-                                                    static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01+OptionVector.size()*EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y),
-                                                    static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
-                                                    static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
-                            Texture * optionText;
-                            //renderText(DialogueMainField,optionText);
-
-
-
-                            if (o.isSkillCheck) {
-                                String fullOptionText = "["+StatToString(o.skill)+ "] " + o.text;
-                                optionText = textToTexture(fullOptionText.c_str());
-                                //fmt::println("[{}] {}", StatToString(o.skill), o.text);
-                                //std::cout.flush();
-
-                            } else {
-                                optionText = textToTexture(o.text);
-                                //fmt::println("{}", o.text);
-                                //std::cout.flush();
-
-                            }
-
-                            if(IsMouseInsideRect(OptionVector.back(),mouseOverX,mouseOverY))
+                            //TODO requirements
+                            bool bMeetsCriteria = true;
+                            if(o.bHasRequirements)
                             {
-                                //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
-                                //SDL_RenderFillRect(renderer(),&OptionVector.back());
-                                renderText(OptionVector.back(),optionText, 10);
+
+                                //loop over all requirements and check if fulfilled
+                                for(std::tuple<RequirementFlags, int8_t> req: o.requirements)
+                                {
+                                    if(!bOptionRequirementMet(req))
+                                       bMeetsCriteria = false;
+                                }
+
                             }
-                            else
+
+                            if(bMeetsCriteria)
                             {
-                                //SDL_SetRenderDrawColor(renderer(),0,0,200,0);
-                                //SDL_RenderFillRect(renderer(),&OptionVector.back());
-                                renderText(OptionVector.back(),optionText,7);
+                                OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
+                                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01+OptionVector.size()*EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y),
+                                                        static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
+                                                        static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
+                                Texture * optionText;
+                                //renderText(DialogueMainField,optionText);
+
+
+
+                                if (o.isSkillCheck) {
+                                    String fullOptionText = "["+StatToString(o.skill)+ "] " + o.text;
+                                    optionText = textToTexture(fullOptionText.c_str());
+                                    //fmt::println("[{}] {}", StatToString(o.skill), o.text);
+                                    //std::cout.flush();
+
+                                } else {
+                                    optionText = textToTexture(o.text);
+                                    //fmt::println("{}", o.text);
+                                    //std::cout.flush();
+
+                                }
+
+                                if(IsMouseInsideRect(OptionVector.back(),mouseOverX,mouseOverY))
+                                {
+
+                                    renderText(OptionVector.back(),optionText, 10);
+                                }
+                                else
+                                {
+
+                                    renderText(OptionVector.back(),optionText,7);
+                                }
+
+
+
+
+                                SDL_DestroyTexture(optionText); //prevent leak
+                                optionText= nullptr;
                             }
 
-
-
-                            //fmt::println("OptionVector size {}", OptionVector.size());
-                            SDL_DestroyTexture(optionText); //prevent leak
-                            optionText= nullptr;
 
                         }
                         break;
@@ -1749,8 +1769,8 @@ namespace JanSordid::SDL_Example {
 //outputs a texture of the input text. Should be saved in a texture *
     Texture *BeasthoodState::textToTexture(const char *text) {
 
-        Point windowSize;
-        SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);
+        //Point windowSize;
+        //SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);
 
         Texture *newTexture = nullptr;
 
@@ -2125,6 +2145,20 @@ namespace JanSordid::SDL_Example {
                                                 1,
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
+                                        },
+                                        {
+                                                "REQUIREMENTCHECK - faith 10",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                1,
+                                                1,
+                                                {}, // rewardItemIDs
+                                                {},  // failureItemIDs
+                                                {{RequirementFlags::faith,10}},
+                                                true
                                         }
                                 },
                                 {
@@ -2348,5 +2382,57 @@ namespace JanSordid::SDL_Example {
                 DialoguePhase::Scene // Starting dialogue phase
         };
         encounterManager.addEncounter(EncounterID::Combat_Encounter,CombatEncounter);
+    }
+
+    bool BeasthoodState::bOptionRequirementMet(std::tuple<RequirementFlags, int8_t> requirement)
+    {
+
+        switch (get<0>(requirement)) {
+            case RequirementFlags::stamina:
+                if(currentCharacter->GetStamina()>=get<1>(requirement))
+                {return true;}
+                else
+                {return false;}
+            case RequirementFlags::sanity:
+                if(currentCharacter->GetSanity()>=get<1>(requirement))
+                {return true;}
+                else
+                {return false;}
+            case RequirementFlags::sneak:
+                if(currentCharacter->GetCurrentStats().GetStat(SNEAK) >=get<1>(requirement))
+                {return true;}
+                else
+                {return false;}
+            case RequirementFlags::speed:
+                if(currentCharacter->GetCurrentStats().GetStat(SPEED) >=get<1>(requirement))
+                {return true;}
+                else
+                {return false;}
+            case RequirementFlags::occult:
+                if(currentCharacter->GetCurrentStats().GetStat(OCCULT) >=get<1>(requirement))
+                {return true;}
+                else
+                {return false;}
+            case RequirementFlags::faith:
+                if(currentCharacter->GetCurrentStats().GetStat(FAITH) >=get<1>(requirement))
+                {return true;}
+                else
+                {return false;}
+            case RequirementFlags::fight:
+                if(currentCharacter->GetCurrentStats().GetStat(FIGHT) >=get<1>(requirement))
+                {return true;}
+                else
+                {return false;}
+            case RequirementFlags::willpower:
+                if(currentCharacter->GetCurrentStats().GetStat(WILLPOWER) >=get<1>(requirement))
+                {return true;}
+                else
+                {return false;}
+            default:
+                return false; //TODO Item and Quest not yet implemented, may need more complex approach
+
+        }
+
+     //currentCharacter->GetCurrentStats()
     }
 }
