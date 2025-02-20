@@ -4,6 +4,7 @@
 
 #include <sor/sdl_game.hpp>
 #include <sor/sdl_shapeops.hpp>
+#include <map>
 //#include <autocast_ptr.h>
 //#include <sor/tiles.h>
 #include "blueprint_manager.h"
@@ -339,6 +340,10 @@ namespace JanSordid::SDL_Example {
         Texture *endTurnButtonOff = nullptr;
         Texture *endTurnButtonMouseover = nullptr;
 
+        Texture *bagIconOn = nullptr;
+        Texture *bagIconMouseover = nullptr;
+        Texture *bagIconOff = nullptr;
+
         Texture *emptyInventoryItem = nullptr;
 
         Texture *dice1 = nullptr;
@@ -348,6 +353,13 @@ namespace JanSordid::SDL_Example {
         Texture *dice5 = nullptr;
         Texture *dice6 = nullptr;
 
+        //incventory icons
+
+        Texture * emptyItem = nullptr;
+        Texture * missingIcon = nullptr;
+
+        Texture * halberdIcon = nullptr;
+        std::vector<Texture*> Icons;
 
 
         Texture *enemyWereWolfMainSprite = nullptr;

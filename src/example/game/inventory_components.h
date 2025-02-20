@@ -1,9 +1,12 @@
 //
 // Created by Prince of Brass on 03.02.2025.
 //
+#pragma once
 #include "../global.hpp"
 #include "item.h"
+//#include "layout.h"
 #include "character.h"
+
 
 
 #ifndef SDL_BASE_INVENTORY_COMPONENTS_H
@@ -14,6 +17,7 @@ struct InventoryIcon //maybe not
   bool active = false;
   SDL_Rect position{};
   Item* referencedItem = nullptr;
+  SDL_Texture* iconImg = nullptr;
 };
 
 
@@ -52,7 +56,7 @@ public:
     bool bIconSelected = false;
 
 //public:
-    void RenderInventoryPage(SDL_Renderer*renderer, int screenWidth, int screenHeight, SDL_Texture* baseIcon)
+    void RenderInventoryPage(SDL_Renderer*renderer, int screenWidth, int screenHeight, SDL_Texture* baseIcon, const std::vector<SDL_Texture*>& iconVector, const SDL_Rect iconScale)
     {
         SDL_Rect window = {static_cast<int>(StartPoint.x*screenWidth*0.01), static_cast<int>(StartPoint.y*screenHeight*0.01),
                            static_cast<int>(Dimensions.x*screenWidth*0.01),static_cast<int>(Dimensions.y*screenHeight*0.01)};
@@ -65,6 +69,15 @@ public:
                        static_cast<int>(0.07*screenWidth),
                        static_cast<int>(0.07*screenWidth)
         };
+        bool bIconsLoaded = true;
+        for(SDL_Texture * icon:iconVector)
+        {
+            if (!icon)
+            {
+                bIconsLoaded= false;
+            }
+
+        }
         for(int i = 0; i < 8; i++)
         {
             for(int j=0;j<5;j++)
@@ -72,16 +85,31 @@ public:
                 icon.x=static_cast<int>(window.x + ((0.0025+0.0725)*screenWidth)*i);
                 icon.y=static_cast<int>(window.y + ((0.0025+0.0725)*screenWidth)*j);
                 icons[i+8*j].position=icon;
-                SDL_Rect  sourceRect {0,0,67,67};
-                SDL_RenderCopy(renderer,baseIcon,&sourceRect,&icon);
-                if(icons[i+8*j].active)
-                {
-                    SDL_SetRenderDrawColor(renderer,0,200,10,0);
-                    SDL_RenderFillRect(renderer,&icon);
+
+
+                if (icons[i + 8 * j].active) {
+                    if (bIconsLoaded) {
+                        switch (icons[i + 8 * j].referencedItem->GetItemID()) {
+
+                            case ItemID::Halberd:
+                                SDL_RenderCopy(renderer, iconVector[1], &iconScale, &icon);
+                                break;
+                            default:
+                                SDL_RenderCopy(renderer, iconVector[0], &iconScale, &icon);
+                                break;
+                        }
+
+                    } else {
+                        SDL_SetRenderDrawColor(renderer, 10, 10, 10, 0);
+                        SDL_RenderFillRect(renderer, &icon);
+                    }
+
 
                 }
                 else
                 {
+                    SDL_Rect  sourceRect {0,0,67,67};
+                    SDL_RenderCopy(renderer,baseIcon,&sourceRect,&icon);
                     //SDL_SetRenderDrawColor(renderer,10,10,10,0);
                     //SDL_RenderFillRect(renderer,&icon);
                 }
@@ -126,6 +154,7 @@ class InventoryScreen
     Character* currentCharacter = nullptr;
     InventoryPage currentPage;
 
+
     //on init and update -> calculate pages
     InventoryScreen()
     {
@@ -137,10 +166,15 @@ class InventoryScreen
         currentCharacter = chara;
         BuildInventory();
 
+
+
+
     }
 
     void BuildInventory() //TODO currently 40 item max, build other pages, deal with potential memory leak form that expansion
     {
+
+
         currentPage.currentCharacter = currentCharacter;
 
 
@@ -153,51 +187,20 @@ class InventoryScreen
             {
                 if(i+8*j < currentCharacter->GetInventory().size()) //todo screenwidth currently in Render()-> move to constructor params?
                     // get item
-                {/*
-                    iconRect.x=static_cast<int>(window.x + ((0.0025+0.0725)*screenWidth)*i);
-                    iconRect.y=static_cast<int>(window.y + ((0.0025+0.0725)*screenWidth)*j);
-                    icons[i+8*j].position=iconRect;
-                    */
-                    currentPage.icons.push_back(InventoryIcon{true,iconRect,currentCharacter->GetInventory()[i+8*j]});
+                {
 
+                    currentPage.icons.push_back(InventoryIcon{true,iconRect,currentCharacter->GetInventory()[i+8*j]});
 
                 }
                 else
                 {
                     //empty icon
                     currentPage.icons.push_back(InventoryIcon{false,iconRect, nullptr});
-
                 }
 
             }
         }
-/*
-        if(currentCharacter->GetInventory().size() <= 40)
-        {
 
-            for (int i = 0; i < currentCharacter->GetInventory().size(); i++) {
-                currentPage.icons.push_back(InventoryIcon{true,currentCharacter->GetInventory()[i]});
-                currentPage.icons[i] = {true};
-                currentPage.icons[i].referencedItem = currentCharacter->GetInventory()[i];
-                fmt::println("Assigned item {}", currentPage.icons[i].referencedItem->GetName() );
-
-            }
-            for(int i = currentCharacter->GetInventory().size(); i < 40; i++)
-            {
-                currentPage.icons[i] = {false};
-            }
-            pages.push_back(currentPage);
-        }
-        else //TODO
-        {
-            for (int i = 0; i < 40; i++) {
-               // currentPage.icons[i] = currentCharacter->GetInventory()[i]
-            }
-            if (currentCharacter->GetInventory().size() > 40) {
-
-            }
-        }
-        */
     }
     void RebuildInventory()
     {
@@ -346,6 +349,7 @@ class InventoryScreen
 
 
 };
+
 
 
 

@@ -32,6 +32,10 @@ enum class RequirementFlags
     stamina,
     sanity,
 
+    //differ from just health/san - depend on relative max for char  -might benefit from differet implenentation - percentages?
+    isPhysicallyWounded, //do not require value - ignored
+    isMentallyWounded,
+
     item,  //check if in inventory
     quest //todo might reed more, unless we enconde -> quest 12 ar stage 100 = 012100 etc
 
@@ -64,6 +68,8 @@ struct SceneOption {
     bool bHasRequirements = false;
 
 };
+
+
 enum class SceneCompositionEntities
 {
     Character,

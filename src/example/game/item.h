@@ -29,6 +29,7 @@ public:
     Ability* GetAbility() const { return ability; }
     void SetAbility(Ability* newAbility) { ability = newAbility; }
 
+
     bool hasStats;
     bool isLoaded;
 
@@ -42,4 +43,5 @@ private:
 
     Stats stats;
     Ability* ability = nullptr; // Pointer to an associated ability
+
 };

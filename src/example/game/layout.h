@@ -14,7 +14,7 @@ struct
     SDL_Point SidebarEnd {100,100};
     SDL_Point SidebarSize {20,100};
 
-    SDL_Point SidebarContentStart {82,4};
+    SDL_Point SidebarContentStart {81,4};
     SDL_Point SidebarContentEnd {98,100};
 
     SDL_Point ClassTextBox {16,4};
@@ -25,11 +25,18 @@ struct
 
     SDL_Point SkillTextScale {16,3};
 
-    SDL_Point EquippedItemsStart {82,7*SkillTextScale.y};
-    SDL_Point InventoryRowScale{16,7};
-    SDL_Point InventoryItemScale{8,7}; //Todo nonsense percentages do not work for square icons x!=y! -> make it so ignore x
-    SDL_Point InventoryScale {16,6*InventoryRowScale.y};
-    SDL_Point InventoryStart {82,EquippedItemsStart.y+InventoryRowScale.y*2};
+    SDL_Point EquippedItemsStart {81,7*SkillTextScale.y};
+    SDL_Point InventoryRowScale{18,7};
+
+    SDL_Point InventoryScale {18,6*InventoryRowScale.y};
+    SDL_Point InventoryStart {81,EquippedItemsStart.y+InventoryRowScale.y*2};
+
+    SDL_Point InventoryItemScale{8,8};
+
+    SDL_Point InventoryIconStart{81,InventoryStart.y+2};
+    SDL_Point InventoryIconScale {8,8};
+    SDL_Point JournalIconStart;//todo implement quest view
+    SDL_Point JournalIconScale {6,6};
 
     int EndTurnbuttonHeight = 15;
 
@@ -87,6 +94,9 @@ struct  //TODO PLACEHOLDER for better system, encounter data etc
 
 
     const SDL_Point Turn_Button = {409, 1040};
+
+    const SDL_Rect BagIconScale {0,0,512,512};
+
 }SpriteData;
 
 //std::map<SceneCompositionEntities,std::tuple<SDL_Texture,SDL_Point>>

@@ -8,6 +8,7 @@
 #include <iostream>
 
 
+
 using namespace JanSordid::Core;
 
 enum class GamePhases
@@ -50,7 +51,7 @@ enum class EncounterTypeID{
 };
 enum class ItemID {
     NONE,
-    Halbert,
+    Halberd,
     Torch,
     Tome};
 enum class ItemType {Melee,Ranged,Magic,Unique};

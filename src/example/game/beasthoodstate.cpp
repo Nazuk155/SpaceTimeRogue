@@ -20,16 +20,21 @@
 #include "layout.h"
 
 
+
 // TODO item class as well as character ability and fate refill then do events and event manager
 
 namespace JanSordid::SDL_Example {
     struct {
 
-        InventoryIcon Left {false,SidebarLayout.EquippedItemsStart.x,SidebarLayout.InventoryStart.y,7,7};
+        InventoryIcon Left {false,SidebarLayout.EquippedItemsStart.x,
+                            SidebarLayout.InventoryStart.y,
+                            SidebarLayout.InventoryItemScale.x,
+                            SidebarLayout.InventoryItemScale.y};
 
-        InventoryIcon Right {false,SidebarLayout.EquippedItemsStart.x+SidebarLayout.InventoryScale.x-7,
+        InventoryIcon Right {false,SidebarLayout.EquippedItemsStart.x+SidebarLayout.InventoryScale.x-SidebarLayout.InventoryItemScale.x,
                              SidebarLayout.InventoryStart.y,
-                             7,7};
+                             SidebarLayout.InventoryItemScale.x,
+                             SidebarLayout.InventoryItemScale.y};
 
     }SidebarIcons; //todo move somwhwew
 
@@ -65,12 +70,24 @@ namespace JanSordid::SDL_Example {
         string endTurnButtonMouseoverPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_mouseover_PLACEHOLDER.png";
         string emptyInventoryItemPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/icon_empty.png";
 
+        string bagIconOnPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/bag_icon_base.png";
+        string bagIconOffPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/bag_icon_off.png";
+        string bagIconMouseoverPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/bag_icon_mouseover.png";
+
+
         string dice1Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_1.png";
         string dice2Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_2.png";
         string dice3Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_3.png";
         string dice4Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_4.png";
         string dice5Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_5.png";
         string dice6Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_6.png";
+
+        // item icon paths
+        String emptyItemPath = BasePath "/src/example/game/Ressources/Image_assets/items/empty_icon.png";
+        String missingItemPath = BasePath "/src/example/game/Ressources/Image_assets/items/missing_icon.png";
+        String halberdIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/halberd_icon.png";
+
+
 
         //--------------- load textures from file
         forestLocationIconTexture = loadFromFile(forestLocationIconPath);
@@ -86,6 +103,11 @@ namespace JanSordid::SDL_Example {
         endTurnButtonOff = loadFromFile(endTurnButtonOffPath);
         endTurnButtonMouseover = loadFromFile(endTurnButtonMouseoverPath);
         emptyInventoryItem = loadFromFile(emptyInventoryItemPath);
+
+        bagIconOn = loadFromFile(bagIconOnPath);
+        bagIconMouseover = loadFromFile(bagIconMouseoverPath);
+        bagIconOff = loadFromFile(bagIconOffPath);
+
         //DIce Textures
         dice1 = loadFromFile(dice1Path);
         dice2 = loadFromFile(dice2Path);
@@ -93,6 +115,18 @@ namespace JanSordid::SDL_Example {
         dice4 = loadFromFile(dice4Path);
         dice5 = loadFromFile(dice5Path);
         dice6 = loadFromFile(dice6Path);
+
+
+        //items
+        emptyItem=loadFromFile(emptyItemPath);
+        halberdIcon =loadFromFile(halberdIconPath);
+        missingIcon= loadFromFile(missingItemPath);
+
+        Icons.push_back(missingIcon);
+        Icons.push_back(halberdIcon);
+
+
+
 
         //struct
         struct LocationTextures {
@@ -345,7 +379,7 @@ namespace JanSordid::SDL_Example {
         abilityManager.AddAbility(std::move(staminaAbility));
 
         // Create and add items
-        auto sword = std::make_unique<Item>(ItemID::Halbert, ItemType::Melee, "Halberd of Valor", 2);
+        auto sword = std::make_unique<Item>(ItemID::Halberd, ItemType::Melee, "Halberd of Valor", 2);
         sword->SetStats({0, 0, 5, 0, 0, 0}); // Attack 10
         sword->SetAbility(staminaAbilityPtr); // Associate ability with item
         itemManager.AddItem(std::move(sword));
@@ -355,7 +389,7 @@ namespace JanSordid::SDL_Example {
         itemManager.AddItem(std::move(torch));
 
         // Access and use an item
-        Item *item = itemManager.GetItem(ItemID::Halbert);
+        Item *item = itemManager.GetItem(ItemID::Halberd);
         if (item) {
             std::cout << "Item: " << item->GetName() << ", Attack: " << item->GetStats().GetStat(FIGHT) << "\n";
             if (item->GetAbility()) {
@@ -431,12 +465,24 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(endTurnButtonMouseover);
 
         SDL_DestroyTexture(emptyInventoryItem);
+        SDL_DestroyTexture(bagIconOn);
+        SDL_DestroyTexture(bagIconMouseover);
+        SDL_DestroyTexture(bagIconOff);
+
         SDL_DestroyTexture(dice1);
         SDL_DestroyTexture(dice2);
         SDL_DestroyTexture(dice3);
         SDL_DestroyTexture(dice4);
         SDL_DestroyTexture(dice5);
         SDL_DestroyTexture(dice6);
+
+        SDL_DestroyTexture(emptyItem);
+        for(auto t:Icons)
+        {
+            SDL_DestroyTexture(t);
+            t= nullptr;
+        }
+
 
         SDL_DestroyTexture(enemyWereWolfMainSprite);
 
@@ -457,6 +503,10 @@ namespace JanSordid::SDL_Example {
         endTurnButtonMouseover = nullptr;
         endTurnButtonOn = nullptr;
 
+        bagIconOn = nullptr;
+        bagIconOff = nullptr;
+        bagIconMouseover = nullptr;
+
         emptyInventoryItem = nullptr;
         dice1= nullptr;
         dice2 = nullptr;
@@ -464,6 +514,9 @@ namespace JanSordid::SDL_Example {
         dice4 = nullptr;
         dice5 = nullptr;
         dice6 = nullptr;
+
+        emptyItem= nullptr;
+
 
         Base::Destroy();
     }
@@ -536,6 +589,15 @@ namespace JanSordid::SDL_Example {
                     fmt::println("equip handled?");
                     //inventoryScreen.BuildInventory(); //CTD RIP
 
+                    //Inventory Button
+                    if(IsMouseInsideRect({static_cast<int>(SidebarLayout.InventoryIconStart.x*0.01*windowSize.x),
+                                          static_cast<int>(SidebarLayout.InventoryIconStart.y*0.01*windowSize.y+SidebarLayout.InventoryItemScale.y*0.01*windowSize.x),
+                                          static_cast<int>(SidebarLayout.InventoryIconScale.x*0.01*windowSize.x),
+                                          static_cast<int>(SidebarLayout.InventoryIconScale.y*0.01*windowSize.x)},mouseOverX,mouseOverY))
+                    {
+                        bInInventory=false;
+                    }
+
             }
 
 
@@ -591,7 +653,17 @@ namespace JanSordid::SDL_Example {
                                  static_cast<int>(SidebarLayout.EndTurnbuttonHeight * SpriteData.Turn_Button.x /
                                                   SpriteData.Turn_Button.y * windowSize.y * 0.01),
                                  static_cast<int>(SidebarLayout.EndTurnbuttonHeight * windowSize.y * 0.01)
-                                }, mouseOverX, mouseOverY)) { endMovementConfirmation = true; }
+                                }, mouseOverX, mouseOverY))
+                        { endMovementConfirmation = true; }
+                        if(IsMouseInsideRect({static_cast<int>(SidebarLayout.InventoryIconStart.x*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconStart.y*0.01*windowSize.y+SidebarLayout.InventoryItemScale.y*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconScale.x*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconScale.y*0.01*windowSize.x)},mouseOverX,mouseOverY))
+
+
+                        {
+                            bInInventory=true;
+                        }
                     }
 
                     for (auto e: map.slots) {
@@ -684,9 +756,7 @@ namespace JanSordid::SDL_Example {
                             button = OptionVector[i];
                             fmt::println("Checking button {}", i);
                             fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}", button.x, button.y, button.w, button.h);
-                            //SDL_SetRenderDrawColor(renderer(),255,0,0,0);
-                            //SDL_RenderFillRect(renderer(),&button);
-                            //SDL_Delay(150);
+
 
                             if (IsMouseInsideRect(button, mouseOverX, mouseOverY)) {
                                 fmt::println("Clicked option {}", i);
@@ -1127,8 +1197,8 @@ namespace JanSordid::SDL_Example {
                 {
                         static_cast<int>((SidebarIcons.Right.position.x * windowSize.x*0.01)),
                         static_cast<int>(SidebarIcons.Right.position.y*windowSize.y*0.01),
-                        static_cast<int>(SidebarIcons.Right.position.h*windowSize.y*0.01),
-                        static_cast<int>(SidebarIcons.Right.position.w*windowSize.y*0.01),
+                        static_cast<int>(SidebarIcons.Right.position.h*windowSize.x*0.01),
+                        static_cast<int>(SidebarIcons.Right.position.w*windowSize.x*0.01),
 
                 };
         std::pair<Item*, Item*>currentEquipment = currentCharacter->GetEquipment();
@@ -1136,14 +1206,28 @@ namespace JanSordid::SDL_Example {
         {
             //fmt::println("{} in right hand", get<0>(currentEquipment)->GetName());
             //if sth equipped in 0, render icon,
-            SDL_SetRenderDrawColor(renderer(),5,5,100,0);
-            SDL_RenderFillRect(renderer(),&EquipR);
+
+
+                switch (get<1>(currentEquipment)->GetItemID()) { //TODO fix redundancy
+
+                    case ItemID::Halberd:
+                        SDL_RenderCopy(renderer(), Icons[1], &SpriteData.BagIconScale, &EquipR);
+                        break;
+                    default:
+                        SDL_RenderCopy(renderer(), Icons[0], &SpriteData.BagIconScale, &EquipR);
+                        break;
+                }
+
+
+
+
             //if mouse over icon render mouseover
         }
         else
         {
-            SDL_SetRenderDrawColor(renderer(),100,5,30,0);
-            SDL_RenderFillRect(renderer(),&EquipR);
+            SDL_RenderCopy(renderer(), emptyItem, &SpriteData.BagIconScale, &EquipR);
+            //SDL_SetRenderDrawColor(renderer(),100,5,30,0);
+            //SDL_RenderFillRect(renderer(),&EquipR);
             //fmt::println("nothing in right hand");
         }
 
@@ -1151,26 +1235,27 @@ namespace JanSordid::SDL_Example {
                 {
                         static_cast<int>((SidebarIcons.Left.position.x * windowSize.x*0.01)),
                         static_cast<int>(SidebarIcons.Left.position.y*windowSize.y*0.01),
-                        static_cast<int>(SidebarIcons.Left.position.h*windowSize.y*0.01),
-                        static_cast<int>(SidebarIcons.Left.position.w*windowSize.y*0.01),
+                        static_cast<int>(SidebarIcons.Left.position.h*windowSize.x*0.01),
+                        static_cast<int>(SidebarIcons.Left.position.w*windowSize.x*0.01),
 
                 };
 
         if(get<0>(currentEquipment)!= nullptr || (get<1>(currentEquipment)!= nullptr && get<1>(currentEquipment)->GetHandsNeeded()==2))
         {
-            //fmt::println("{} in left hand", get<0>(currentEquipment)->GetName());
-            //if sth equipped in 0, render icon,
+            switch (get<0>(currentEquipment)->GetItemID()) { //TODO fix redundancy
 
-
-            SDL_SetRenderDrawColor(renderer(),5,5,100,0);
-            SDL_RenderFillRect(renderer(),&EquipL);
-            //if mouse over icon render mouseover
+                case ItemID::Halberd:
+                    SDL_RenderCopy(renderer(), Icons[1], &SpriteData.BagIconScale, &EquipL);
+                    break;
+                default:
+                    SDL_RenderCopy(renderer(), Icons[0], &SpriteData.BagIconScale, &EquipL);
+                    break;
+            }
         }
         else
         {
             //fmt::println("nothing in left hand");
-            SDL_SetRenderDrawColor(renderer(),100,5,30,0);
-            SDL_RenderFillRect(renderer(),&EquipL);
+            SDL_RenderCopy(renderer(), emptyItem, &SpriteData.BagIconScale, &EquipL);
         }
 
         if(bShowLeftItemInfo)
@@ -1183,6 +1268,26 @@ namespace JanSordid::SDL_Example {
         }
 
         //fmt::println("{} items in inventory", currentCharacter->GetInventory().size());
+
+        //Render Inventory Button
+        SDL_Rect InventoryButton = {
+                static_cast<int>(SidebarLayout.InventoryIconStart.x*0.01*windowSize.x),
+                static_cast<int>(SidebarLayout.InventoryIconStart.y*0.01*windowSize.y+SidebarLayout.InventoryItemScale.y*0.01*windowSize.x),
+                static_cast<int>(SidebarLayout.InventoryIconScale.x*0.01*windowSize.x),
+                static_cast<int>(SidebarLayout.InventoryIconScale.y*0.01*windowSize.x)
+
+        };
+        if (Phase == GamePhases::ENCOUNTER)
+        {
+            SDL_RenderCopy(renderer(),bagIconOff,&SpriteData.BagIconScale,&InventoryButton);
+        }
+        else if(IsMouseInsideRect(InventoryButton,mouseOverX,mouseOverY))
+        {
+            SDL_RenderCopy(renderer(),bagIconMouseover,&SpriteData.BagIconScale,&InventoryButton);
+        }
+        else
+            SDL_RenderCopy(renderer(),bagIconOn,&SpriteData.BagIconScale,&InventoryButton);
+
 
 
         SDL_DestroyTexture(SidebarText);
@@ -1373,7 +1478,7 @@ namespace JanSordid::SDL_Example {
     }
     void BeasthoodState::RenderInventory()
     {
-        inventoryScreen.currentPage.RenderInventoryPage(renderer(),windowSize.x,windowSize.y, emptyInventoryItem);
+        inventoryScreen.currentPage.RenderInventoryPage(renderer(),windowSize.x,windowSize.y, emptyInventoryItem, Icons,SpriteData.BagIconScale);
 
         if(inventoryScreen.currentPage.bIconHover || inventoryScreen.currentPage.bIconSelected)
         {
@@ -2007,7 +2112,7 @@ namespace JanSordid::SDL_Example {
     void BeasthoodState::PopulateBlueprints() {
 
         std::vector<Item *> temp;
-        temp.push_back(itemManager.GetItem(ItemID::Halbert));
+        temp.push_back(itemManager.GetItem(ItemID::Halberd));
         blueprintManager.AddBlueprint(std::make_shared<CharacterBlueprint>(
                 "Landsknecht",
                 8, 6,
@@ -2428,11 +2533,12 @@ namespace JanSordid::SDL_Example {
                 {return true;}
                 else
                 {return false;}
+            //case RequirementFlags::isPhysicallyWounded: //todo define max san, stamina for comparison
+              //  if(currentCharacter.)
             default:
                 return false; //TODO Item and Quest not yet implemented, may need more complex approach
 
         }
 
-     //currentCharacter->GetCurrentStats()
     }
 }
