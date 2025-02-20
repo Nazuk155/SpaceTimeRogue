@@ -51,6 +51,8 @@ public:
     const std::string& GetName() const;
     int GetStamina() const;
     int GetSanity() const;
+    int GetBaseStamina() const;
+    int GetBaseSanity() const;
     const Stats& GetBaseStats() const;
     const Stats& GetCurrentStats() const;
     int GetFocus() const;

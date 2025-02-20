@@ -53,6 +53,10 @@ enum class ItemID {
     NONE,
     Halberd,
     Torch,
+    PrayerBook,
+    Icon,
+    GUN,
+    Talisman,
     Tome};
 enum class ItemType {Melee,Ranged,Magic,Unique};
 enum class LocationID {

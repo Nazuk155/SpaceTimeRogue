@@ -59,9 +59,13 @@ namespace JanSordid::SDL_Example {
 
         string playerMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/lk_sprite.png";
 
+        //NPCs
         string enemyWereWolfMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/garou_sprite.png";
         string errorIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/ERROR.png";
+        string monk1IMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/monk_1_sprite.png";
+        string abbotIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/monk_2_sprite.png";
 
+        //Backgrounds/Foregrounds
         string denseForestBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/dense_forest_test.png";
         string denseForestFGPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/dense_forest_test_fg.png";
 
@@ -96,9 +100,13 @@ namespace JanSordid::SDL_Example {
         denseForestBG = loadFromFile(denseForestBGPath);
         denseForestFG = loadFromFile(denseForestFGPath);
 
+        //NPCs
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
         errorIMG = loadFromFile(errorIMGPath);
+        monk1Sprite = loadFromFile(monk1IMGPath);
+        abbotSprite= loadFromFile(abbotIMGPath);
 
+        //Buttons
         endTurnButtonOn = loadFromFile(endTurnButtonOnPath);
         endTurnButtonOff = loadFromFile(endTurnButtonOffPath);
         endTurnButtonMouseover = loadFromFile(endTurnButtonMouseoverPath);
@@ -385,8 +393,17 @@ namespace JanSordid::SDL_Example {
         itemManager.AddItem(std::move(sword));
 
         auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Not so Common Torch",1);
-        torch->SetStats({0, 0, 1, 2, 0, 10}); // Attack 10
+        torch->SetStats({0, 0, 1, 1, 0, 5}); // Attack 10
         itemManager.AddItem(std::move(torch));
+
+
+        auto prayerBook = std::make_unique<Item>(ItemID::PrayerBook, ItemType::Unique,"Prayer Book of St. Lycon",1);
+        prayerBook->SetStats({0, 0, 1, 2, 2, 6});
+        itemManager.AddItem(std::move(prayerBook));
+
+        auto talisman = std::make_unique<Item>(ItemID::Talisman, ItemType::Unique,"Lead-Sigil of Pan",1);
+        talisman->SetStats({2, 5, 2, 0, 2, 0});
+        itemManager.AddItem(std::move(talisman));
 
         // Access and use an item
         Item *item = itemManager.GetItem(ItemID::Halberd);
@@ -430,6 +447,8 @@ namespace JanSordid::SDL_Example {
         currentCharacter = character1;
 
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
 
         inventoryScreen = InventoryScreen(currentCharacter);
 
@@ -532,8 +551,8 @@ namespace JanSordid::SDL_Example {
                     {
                             static_cast<int>((SidebarIcons.Right.position.x * windowSize.x*0.01)),
                             static_cast<int>(SidebarIcons.Right.position.y*windowSize.y*0.01),
-                            static_cast<int>(SidebarIcons.Right.position.w*windowSize.y*0.01),
-                            static_cast<int>(SidebarIcons.Right.position.h*windowSize.y*0.01),
+                            static_cast<int>(SidebarIcons.Right.position.w*windowSize.x*0.01),
+                            static_cast<int>(SidebarIcons.Right.position.h*windowSize.x*0.01),
 
                     };
 
@@ -556,8 +575,8 @@ namespace JanSordid::SDL_Example {
                     {
                             static_cast<int>((SidebarIcons.Left.position.x * windowSize.x*0.01)),
                             static_cast<int>(SidebarIcons.Left.position.y*windowSize.y*0.01),
-                            static_cast<int>(SidebarIcons.Left.position.w*windowSize.y*0.01),
-                            static_cast<int>(SidebarIcons.Left.position.h*windowSize.y*0.01),
+                            static_cast<int>(SidebarIcons.Left.position.w*windowSize.x*0.01),
+                            static_cast<int>(SidebarIcons.Left.position.h*windowSize.x*0.01),
 
                     };
 
@@ -1086,6 +1105,18 @@ namespace JanSordid::SDL_Example {
                     renderFromSpritesheet(targetRect,enemyWereWolfMainSprite);
 
 
+                    break;
+                case SceneCompositionEntities::Monk:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingvalueMNKY*windowSize.y));
+                    targetRect.w = SpriteData.ScalingvalueMKNX*windowSize.x;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueMNKY*windowSize.y);
+
+                    renderFromSpritesheet(targetRect,monk1Sprite);
+
+                    break;
+                case SceneCompositionEntities::Abbot:
                     break;
                 default:
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
@@ -1706,6 +1737,10 @@ namespace JanSordid::SDL_Example {
                                 SDL_DestroyTexture(optionText); //prevent leak
                                 optionText= nullptr;
                             }
+                            else
+                            {
+                                fmt::println("dropped option");
+                            }
 
 
                         }
@@ -2252,17 +2287,17 @@ namespace JanSordid::SDL_Example {
                                                 {}  // failureItemIDs
                                         },
                                         {
-                                                "REQUIREMENTCHECK - faith 10",
+                                                "REQUIREMENTCHECK - faith 5",
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
                                                 {},
                                                 {},
-                                                1,
+                                                9,
                                                 1,
                                                 {}, // rewardItemIDs
                                                 {},  // failureItemIDs
-                                                {{RequirementFlags::faith,10}},
+                                                {{RequirementFlags::faith,5}},
                                                 true
                                         }
                                 },
@@ -2481,7 +2516,28 @@ namespace JanSordid::SDL_Example {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
                                         {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
                                 }
-                        }
+                        },
+                        {"Sprite Test Monk",
+                         EnvironmentType::DenseForest,
+                         {
+
+                                 {
+                                         "Gather your Courage and continue",
+                                         false,
+                                         StatNames::WILLPOWER,
+                                         0,
+                                         {},
+                                         {},
+                                         2,
+                                         2,
+                                         {}, // rewardItemIDs
+                                         {}  // failureItemIDs
+                                 }
+                         },
+                         {
+                                 {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                 {SceneCompositionEntities::Monk,SceneCompositionSlots::EnemyMain}
+                         }}
 
                 },
                 DialoguePhase::Scene // Starting dialogue phase
@@ -2533,8 +2589,16 @@ namespace JanSordid::SDL_Example {
                 {return true;}
                 else
                 {return false;}
-            //case RequirementFlags::isPhysicallyWounded: //todo define max san, stamina for comparison
-              //  if(currentCharacter.)
+            case RequirementFlags::isPhysicallyWounded:
+                if(currentCharacter->GetStamina() < currentCharacter->GetBaseStamina())
+                {return true;}
+                else
+                {return false;}
+            case RequirementFlags::isMentallyWounded:
+                if(currentCharacter->GetSanity() < currentCharacter->GetBaseSanity())
+                {return true;}
+                else
+                {return false;}
             default:
                 return false; //TODO Item and Quest not yet implemented, may need more complex approach
 

@@ -198,6 +198,14 @@ const std::pair<Item *, Item *> Character::GetEquipment() {
     return equipped_items;
 }
 
+int Character::GetBaseSanity() const {
+    return base_sanity;
+}
+
+int Character::GetBaseStamina() const {
+    return base_stamina;
+}
+
 
 
 

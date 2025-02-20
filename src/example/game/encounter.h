@@ -37,7 +37,8 @@ enum class RequirementFlags
     isMentallyWounded,
 
     item,  //check if in inventory
-    quest //todo might reed more, unless we enconde -> quest 12 ar stage 100 = 012100 etc
+    hasEquipped,//check if item equipped -> todo if loaded gun equipped...
+    quest //todo might need more, unless we encode -> quest 12 ar stage 100 = 12100 etc
 
 
 
@@ -75,9 +76,11 @@ enum class SceneCompositionEntities
     Character,
     Wolf,
     Villager,
+    Healer,
     Werewolf,
     MonasteryGate,
     Monk,
+    Abbot,
     Boar,
     Hermit
 };

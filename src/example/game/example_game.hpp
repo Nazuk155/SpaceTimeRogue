@@ -353,7 +353,7 @@ namespace JanSordid::SDL_Example {
         Texture *dice5 = nullptr;
         Texture *dice6 = nullptr;
 
-        //incventory icons
+        //inventory icons
 
         Texture * emptyItem = nullptr;
         Texture * missingIcon = nullptr;
@@ -361,7 +361,9 @@ namespace JanSordid::SDL_Example {
         Texture * halberdIcon = nullptr;
         std::vector<Texture*> Icons;
 
-
+        //NPCs
+        Texture *monk1Sprite = nullptr;
+        Texture * abbotSprite = nullptr;
         Texture *enemyWereWolfMainSprite = nullptr;
 
         Texture *errorIMG = nullptr;
