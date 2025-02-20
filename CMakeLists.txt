@@ -172,7 +172,6 @@ add_executable( sor-example
         src/example/game/diceRoller.h
         src/example/game/layout.h
         src/example/game/inventory_components.h
-        src/example/game/icons.h
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC
