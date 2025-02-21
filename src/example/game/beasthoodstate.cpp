@@ -70,6 +70,9 @@ namespace JanSordid::SDL_Example {
         string denseForestBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/dense_forest_test.png";
         string denseForestFGPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/dense_forest_test_fg.png";
         string monasteryPathBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/monasteryPath.png";
+        string village1PathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/village_1.png";
+
+        //Buttons
 
         string endTurnButtonOnPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_button_PLACEHOLDER.png";
         string endTurnButtonOffPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_disabled_PLACEHOLDER.png";
@@ -94,6 +97,8 @@ namespace JanSordid::SDL_Example {
         String halberdIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/halberd_icon.png";
         String candleIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/candle_icon.png";
         String prayerbookIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/prayerbook_icon.png";
+        String torchIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/torch_icon.png";
+        String gunIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_icon.png";
 
 
 
@@ -104,6 +109,7 @@ namespace JanSordid::SDL_Example {
         denseForestBG = loadFromFile(denseForestBGPath);
         denseForestFG = loadFromFile(denseForestFGPath);
         monasteryPathBG = loadFromFile(monasteryPathBGPAth);
+        village1 = loadFromFile(village1PathBG);
 
         //NPCs
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
@@ -137,12 +143,16 @@ namespace JanSordid::SDL_Example {
         missingIcon= loadFromFile(missingItemPath);
         candleIcon = loadFromFile(candleIconPath);
         prayerbookIcon = loadFromFile(prayerbookIconPath);
+        gunIcon= loadFromFile(gunIconPath);
+        torchIcon= loadFromFile(torchIconPath);
+
 
         //Icons index!!!
         Icons.push_back(missingIcon); //Missing = 0
         Icons.push_back(halberdIcon); // Halberd=1
         Icons.push_back(prayerbookIcon);//Prayerbook=2
         Icons.push_back(candleIcon);//Candle=3
+        Icons.push_back(torchIcon); //Torch = 4
 
 
 
@@ -489,6 +499,8 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(denseForestBG);
         SDL_DestroyTexture(denseForestFG);
         SDL_DestroyTexture(monasteryPathBG);
+        SDL_DestroyTexture(village1);
+
         SDL_DestroyTexture(errorIMG);
 
         SDL_DestroyTexture(endTurnButtonOff);
@@ -527,8 +539,9 @@ namespace JanSordid::SDL_Example {
         playerMapIconTexture = nullptr;
         playerMainSpite = nullptr;
         denseForestBG = nullptr;
-        denseForestFG= nullptr;
+        denseForestFG = nullptr;
         monasteryPathBG = nullptr;
+        village1 = nullptr;
 
         enemyWereWolfMainSprite = nullptr;
         enemyWolfSprite = nullptr;
@@ -1093,8 +1106,10 @@ namespace JanSordid::SDL_Example {
     std::map<SceneCompositionSlots,SDL_Point> sceneCompositionTarget //  TODO EXPAND AS NEEDED
             {
                     {SceneCompositionSlots::CharacterMain, EncounterLayout.characterMainPoint},
+                    {SceneCompositionSlots::CharacterAtBottomMain, EncounterLayout.characterBottomPoint},
                     {SceneCompositionSlots::CharacterFront,{EncounterLayout.characterMainPoint.x+10,EncounterLayout.characterMainPoint.y}},
                     {SceneCompositionSlots::EnemyMain,EncounterLayout.enemyMainPoint},
+                    {SceneCompositionSlots::NPCAtBottomMain,EncounterLayout.npcBottomPoint},
                     {SceneCompositionSlots::Enemy_2,{EncounterLayout.enemyMainPoint.x+6,EncounterLayout.enemyMainPoint.y+10}},
                     {SceneCompositionSlots::Enemy_3,{EncounterLayout.enemyMainPoint.x+2,EncounterLayout.enemyMainPoint.y-5}},
                     {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint}
@@ -1106,6 +1121,8 @@ namespace JanSordid::SDL_Example {
         switch (environment) {
             case EnvironmentType::DenseForest: perspectiveFactor = 1.0;break;
             case EnvironmentType::MonasteryPath: perspectiveFactor = 0.5;break;
+            case EnvironmentType::Village: perspectiveFactor = 0.5;break;
+            case EnvironmentType::VillageOutskirts: perspectiveFactor = 0.5;break;
             default: perspectiveFactor = 1.0;
 
         }
@@ -1117,7 +1134,7 @@ namespace JanSordid::SDL_Example {
             {
                 case SceneCompositionEntities::Character:
                     targetRect.x = windowSize.x * (sceneCompositionTarget[get<1>(compElement)].x*0.01);
-                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[SceneCompositionSlots::CharacterMain].y )*0.01-(SpriteData.ScalingvalueLKY*windowSize.y*perspectiveFactor));
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueLKY*windowSize.y*perspectiveFactor));
                     targetRect.w = static_cast<int>(SpriteData.ScalingvalueLKX*windowSize.x*perspectiveFactor); // fix res dependence TODO differenciate between different player sprites
                     targetRect.h = static_cast<int>(SpriteData.ScalingvalueLKY*windowSize.y*perspectiveFactor);
                     renderFromSpritesheet(targetRect,playerMainSpite);
@@ -1126,7 +1143,7 @@ namespace JanSordid::SDL_Example {
                 case SceneCompositionEntities::Werewolf:
 
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
-                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor));
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor));
                     targetRect.w = SpriteData.ScalingValueGarouX*windowSize.x*perspectiveFactor;
                     targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor);
                     renderFromSpritesheet(targetRect,enemyWereWolfMainSprite);
@@ -1135,7 +1152,7 @@ namespace JanSordid::SDL_Example {
                     break;
                 case SceneCompositionEntities::Monk:
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
-                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingvalueMNKY*windowSize.y*perspectiveFactor));
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueMNKY*windowSize.y*perspectiveFactor));
                     targetRect.w = SpriteData.ScalingvalueMKNX*windowSize.x*perspectiveFactor;
 
                     targetRect.h = static_cast<int>(SpriteData.ScalingvalueMNKY*windowSize.y*perspectiveFactor);
@@ -1147,7 +1164,7 @@ namespace JanSordid::SDL_Example {
                     break;
                 case SceneCompositionEntities::Wolf:
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
-                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingvalueWolfY*windowSize.y*perspectiveFactor));
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueWolfY*windowSize.y*perspectiveFactor));
                     targetRect.w = SpriteData.ScalingvalueWolfX*windowSize.x*perspectiveFactor;
 
                     targetRect.h = static_cast<int>(SpriteData.ScalingvalueWolfY*windowSize.y*perspectiveFactor);
@@ -1159,7 +1176,7 @@ namespace JanSordid::SDL_Example {
 
                 default:
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
-                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor));
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor));
                     targetRect.w = SpriteData.ScalingValueGarouX*windowSize.x*perspectiveFactor;
                     //fmt::println("Garou X: {}", SpriteData.ScalingValueGarouX*windowSize.x);
                     targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor);
@@ -1289,6 +1306,12 @@ namespace JanSordid::SDL_Example {
                     case ItemID::Candle:
                         SDL_RenderCopy(renderer(), Icons[3], &SpriteData.BagIconScale, &EquipR);
                         break;
+                    case ItemID::Torch:
+                        SDL_RenderCopy(renderer(), Icons[4], &SpriteData.BagIconScale, &EquipR);
+                        break;
+                    case ItemID::GUN:
+                        SDL_RenderCopy(renderer(), Icons[5], &SpriteData.BagIconScale, &EquipR);
+                        break;
                     default:
                         SDL_RenderCopy(renderer(), Icons[0], &SpriteData.BagIconScale, &EquipR);
                         break;
@@ -1328,6 +1351,12 @@ namespace JanSordid::SDL_Example {
                     break;
                 case ItemID::Candle:
                     SDL_RenderCopy(renderer(), Icons[3], &SpriteData.BagIconScale, &EquipL);
+                    break;
+                case ItemID::Torch:
+                    SDL_RenderCopy(renderer(), Icons[4], &SpriteData.BagIconScale, &EquipR);
+                    break;
+                case ItemID::GUN:
+                    SDL_RenderCopy(renderer(), Icons[5], &SpriteData.BagIconScale, &EquipR);
                     break;
                 default:
                     SDL_RenderCopy(renderer(), Icons[0], &SpriteData.BagIconScale, &EquipL);
@@ -1670,6 +1699,11 @@ namespace JanSordid::SDL_Example {
                     case EnvironmentType::MonasteryPath:
                     {
                         renderFromSpritesheet(sceneWindow,monasteryPathBG);
+                        break;
+                    }
+                    case EnvironmentType::Village:
+                    {
+                        renderFromSpritesheet(sceneWindow,village1);
                         break;
                     }
                     default:SDL_RenderFillRect(renderer(),&sceneWindow);
@@ -2030,7 +2064,7 @@ namespace JanSordid::SDL_Example {
                 {
                         {
                                 "Scene 0 \n This is a test scene. You may pay in blood to pass, or try convincing whatever is in front of you.",
-                                EnvironmentType::DenseForest,
+                                EnvironmentType::Village,
                                 {
                                         {
                                                 "MoveTo 1 - Pay in blood",
@@ -2058,8 +2092,8 @@ namespace JanSordid::SDL_Example {
                                         }
                                 },
                                 {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::EnemyMain}
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterAtBottomMain},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::NPCAtBottomMain}
 
                                 }
                         },

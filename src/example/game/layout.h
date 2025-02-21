@@ -63,7 +63,9 @@ struct
     int HorizonLine = 65; //todo figure this out, add img scaling
 
     SDL_Point characterMainPoint = {15,HorizonLine};
+    SDL_Point characterBottomPoint = {15,70};
     SDL_Point enemyMainPoint = {45,HorizonLine};
+    SDL_Point npcBottomPoint = {45,70};
 
 
     SDL_Point DialogueBoxStart = {0,70};

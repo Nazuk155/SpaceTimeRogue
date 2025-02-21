@@ -4,6 +4,7 @@
 
 enum class EnvironmentType
 {
+    Village,
     VillageOutskirts,
     ForestOutskirts,
     MonasteryPath,
@@ -87,8 +88,10 @@ enum class SceneCompositionEntities
 enum class SceneCompositionSlots
 {
     CharacterMain,
+    CharacterAtBottomMain,
     CharacterFront,
     EnemyMain,
+    NPCAtBottomMain,
     Enemy_2,
     Enemy_3,
     InteractionMain

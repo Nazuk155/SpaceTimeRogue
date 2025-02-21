@@ -377,6 +377,7 @@ namespace JanSordid::SDL_Example {
         Texture *denseForestBG = nullptr;
         Texture *denseForestFG = nullptr;
         Texture* monasteryPathBG = nullptr;
+        Texture* village1 = nullptr;
 
         /* refactored already but keep in case of need for testing
         Texture *forestNameTexture = nullptr;

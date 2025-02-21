@@ -100,6 +100,11 @@ public:
                             case ItemID::Candle:
                                 SDL_RenderCopy(renderer, iconVector[3], &iconScale, &icon);
                                 break;
+                            case ItemID::Torch:
+                                SDL_RenderCopy(renderer, iconVector[4], &iconScale, &icon);
+                                break;
+                            case ItemID::GUN:
+                                SDL_RenderCopy(renderer, iconVector[5], &iconScale, &icon);
                             default:
                                 SDL_RenderCopy(renderer, iconVector[0], &iconScale, &icon);
                                 break;
