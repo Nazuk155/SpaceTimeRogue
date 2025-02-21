@@ -52,9 +52,15 @@ enum class EncounterTypeID{
 enum class ItemID {
     NONE,
     Halberd,
+    Sword,
+    BetterSword,
     Torch,
     PrayerBook,
+    Honorius,
+    Clavicule,
     Icon,
+    Candle,
+    HandOfGlory,
     GUN,
     Talisman,
     Tome};

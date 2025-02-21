@@ -101,6 +101,10 @@ struct  //TODO PLACEHOLDER for better system, encounter data etc
     const float ScalingvalueABBTX = Abbot_IMG.x/(1920*2.5);
     const float ScalingvalueABBTY = Abbot_IMG.y/(1080*2.5);
 
+    const SDL_Point Wolf_IMG = {1139,1016};
+    const float ScalingvalueWolfX = Wolf_IMG.x/(1920*2.1);
+    const float ScalingvalueWolfY = Wolf_IMG.y/(1080*2.1);
+
     const SDL_Point Turn_Button = {409, 1040};
 
     const SDL_Rect BagIconScale {0,0,512,512};

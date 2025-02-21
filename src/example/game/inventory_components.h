@@ -32,8 +32,8 @@ struct
     //String Name = referencedItem->GetName(); //possibly redundant? more readable
     //String Text; //todo add descriptions/loretext to items
 
-    SDL_Point EquipRightPos{1,11};
-    SDL_Point EquipLeftPos {9,11};
+    SDL_Point EquipLeftPos{1,11};
+    SDL_Point EquipRightPos {9,11};
     SDL_Point ButtonScale {5,3};
     //Button EquipRight;
     //Button EquipLeft;
@@ -49,7 +49,7 @@ public:
     Character* currentCharacter = nullptr; //todo this is a mess
     std::vector<InventoryIcon> icons;
     SDL_Point StartPoint{20,20};
-    SDL_Point Dimensions{60,60};
+    SDL_Point Dimensions{60,66};
     InventoryIcon* MouseOverIcon = nullptr;
 
     bool bIconHover = false;
@@ -93,6 +93,12 @@ public:
 
                             case ItemID::Halberd:
                                 SDL_RenderCopy(renderer, iconVector[1], &iconScale, &icon);
+                                break;
+                            case ItemID::PrayerBook:
+                                SDL_RenderCopy(renderer, iconVector[2], &iconScale, &icon);
+                                break;
+                            case ItemID::Candle:
+                                SDL_RenderCopy(renderer, iconVector[3], &iconScale, &icon);
                                 break;
                             default:
                                 SDL_RenderCopy(renderer, iconVector[0], &iconScale, &icon);

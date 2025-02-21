@@ -103,6 +103,7 @@ struct Scene {
     std::vector<SceneOption> options; // Ensure at least one option exists.
 
     std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>> compositionVector ={};
+    //bool bShowPreviousDicerolls=false;
 
     bool validate() const {
         return !options.empty();

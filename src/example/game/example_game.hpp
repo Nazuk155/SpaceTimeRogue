@@ -357,6 +357,8 @@ namespace JanSordid::SDL_Example {
 
         Texture * emptyItem = nullptr;
         Texture * missingIcon = nullptr;
+        Texture * candleIcon = nullptr;
+        Texture * prayerbookIcon = nullptr;
 
         Texture * halberdIcon = nullptr;
         std::vector<Texture*> Icons;
@@ -365,12 +367,14 @@ namespace JanSordid::SDL_Example {
         Texture *monk1Sprite = nullptr;
         Texture * abbotSprite = nullptr;
         Texture *enemyWereWolfMainSprite = nullptr;
+        Texture *enemyWolfSprite = nullptr;
 
         Texture *errorIMG = nullptr;
 
         //environments
         Texture *denseForestBG = nullptr;
         Texture *denseForestFG = nullptr;
+        Texture* monasteryPathBG = nullptr;
 
         /* refactored already but keep in case of need for testing
         Texture *forestNameTexture = nullptr;
@@ -423,6 +427,7 @@ namespace JanSordid::SDL_Example {
             DialoguePhase diaPhase = DialoguePhase::Scene;
             bool alreadyDisplayedText = false;
             int lastSzeneTextDisplayed = 0;
+            bool bShowPreviousDicerolls=false;
         };
         EncounterTracker eTracker;
         bool awaitingInput = false;
@@ -529,7 +534,7 @@ namespace JanSordid::SDL_Example {
 
         void renderText(Rect values, SDL_Texture *tn, int colorIndex);
 
-        void RenderSceneComposition(std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>> compositionVector);
+        void RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>>& compositionVector, EnvironmentType environment);
 
         void PopulateMonsterManager();
 

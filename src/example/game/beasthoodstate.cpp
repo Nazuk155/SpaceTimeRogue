@@ -36,7 +36,7 @@ namespace JanSordid::SDL_Example {
                              SidebarLayout.InventoryItemScale.x,
                              SidebarLayout.InventoryItemScale.y};
 
-    }SidebarIcons; //todo move somwhwew
+    }SidebarIcons; //todo move somewhere
 
 
 
@@ -61,6 +61,7 @@ namespace JanSordid::SDL_Example {
 
         //NPCs
         string enemyWereWolfMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/garou_sprite.png";
+        string enemyWolfSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/wolf_sprite.png";
         string errorIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/ERROR.png";
         string monk1IMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/monk_1_sprite.png";
         string abbotIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/monk_2_sprite.png";
@@ -68,6 +69,7 @@ namespace JanSordid::SDL_Example {
         //Backgrounds/Foregrounds
         string denseForestBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/dense_forest_test.png";
         string denseForestFGPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/dense_forest_test_fg.png";
+        string monasteryPathBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/monasteryPath.png";
 
         string endTurnButtonOnPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_button_PLACEHOLDER.png";
         string endTurnButtonOffPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_disabled_PLACEHOLDER.png";
@@ -90,6 +92,8 @@ namespace JanSordid::SDL_Example {
         String emptyItemPath = BasePath "/src/example/game/Ressources/Image_assets/items/empty_icon.png";
         String missingItemPath = BasePath "/src/example/game/Ressources/Image_assets/items/missing_icon.png";
         String halberdIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/halberd_icon.png";
+        String candleIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/candle_icon.png";
+        String prayerbookIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/prayerbook_icon.png";
 
 
 
@@ -99,9 +103,11 @@ namespace JanSordid::SDL_Example {
         playerMainSpite = loadFromFile(playerMainSpritePath);
         denseForestBG = loadFromFile(denseForestBGPath);
         denseForestFG = loadFromFile(denseForestFGPath);
+        monasteryPathBG = loadFromFile(monasteryPathBGPAth);
 
         //NPCs
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
+        enemyWolfSprite = loadFromFile(enemyWolfSpritePath);
         errorIMG = loadFromFile(errorIMGPath);
         monk1Sprite = loadFromFile(monk1IMGPath);
         abbotSprite= loadFromFile(abbotIMGPath);
@@ -129,9 +135,14 @@ namespace JanSordid::SDL_Example {
         emptyItem=loadFromFile(emptyItemPath);
         halberdIcon =loadFromFile(halberdIconPath);
         missingIcon= loadFromFile(missingItemPath);
+        candleIcon = loadFromFile(candleIconPath);
+        prayerbookIcon = loadFromFile(prayerbookIconPath);
 
-        Icons.push_back(missingIcon);
-        Icons.push_back(halberdIcon);
+        //Icons index!!!
+        Icons.push_back(missingIcon); //Missing = 0
+        Icons.push_back(halberdIcon); // Halberd=1
+        Icons.push_back(prayerbookIcon);//Prayerbook=2
+        Icons.push_back(candleIcon);//Candle=3
 
 
 
@@ -477,6 +488,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(playerMainSpite);
         SDL_DestroyTexture(denseForestBG);
         SDL_DestroyTexture(denseForestFG);
+        SDL_DestroyTexture(monasteryPathBG);
         SDL_DestroyTexture(errorIMG);
 
         SDL_DestroyTexture(endTurnButtonOff);
@@ -502,8 +514,9 @@ namespace JanSordid::SDL_Example {
             t= nullptr;
         }
 
-
+        //Enemies
         SDL_DestroyTexture(enemyWereWolfMainSprite);
+        SDL_DestroyTexture(enemyWolfSprite);
 
         for (auto e: locationTextureMap) {
             SDL_DestroyTexture(e.second.iconTexture);
@@ -515,7 +528,10 @@ namespace JanSordid::SDL_Example {
         playerMainSpite = nullptr;
         denseForestBG = nullptr;
         denseForestFG= nullptr;
+        monasteryPathBG = nullptr;
+
         enemyWereWolfMainSprite = nullptr;
+        enemyWolfSprite = nullptr;
         errorIMG = nullptr;
 
         endTurnButtonOff = nullptr;
@@ -955,6 +971,7 @@ namespace JanSordid::SDL_Example {
                             eTracker.selectedOption != -1) {
                             //resolve skillcheck if the option triggers one
                             if (eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].isSkillCheck) {
+                                eTracker.bShowPreviousDicerolls = true;
                                 ske.setDifficulty(
                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].difficulty);
                                 ske.setModifier(0); //todo figure out what gives a modifier? Map Aura? Temporary Buffs?
@@ -978,6 +995,7 @@ namespace JanSordid::SDL_Example {
                                     eTracker.alreadyDisplayedText = false;
                                     awaitingInput = true;
 
+
                                 }
                             } else {
                                 ///TODO add alternative to skillchecks in encounter. Check for item or quest progresss for example
@@ -988,6 +1006,7 @@ namespace JanSordid::SDL_Example {
                                 eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                                 eTracker.selectedOption = -1;
                                 eTracker.alreadyDisplayedText = false;
+                                eTracker.bShowPreviousDicerolls = false;
                                 awaitingInput = true;
                             }
                         } else {
@@ -1004,10 +1023,12 @@ namespace JanSordid::SDL_Example {
                     if (!currentEncounterIsOnlyCombat) {
                         Phase = GamePhases::DISASTER;
                         eTracker.szene = 0;
+                        eTracker.bShowPreviousDicerolls = false;
                         awaitingInput = false;
                         eTracker.diaPhase = DialoguePhase::Scene;
                     } else {
                         Phase = GamePhases::MOVEMENT;
+                        eTracker.bShowPreviousDicerolls = false;
                         currentEncounterIsOnlyCombat = false;
                     }// TODO encounter queque and track killed enemies
 
@@ -1078,52 +1099,70 @@ namespace JanSordid::SDL_Example {
                     {SceneCompositionSlots::Enemy_3,{EncounterLayout.enemyMainPoint.x+2,EncounterLayout.enemyMainPoint.y-5}},
                     {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint}
             };
-    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>> compositionVector)
+    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector, const EnvironmentType environment)
     {
         SDL_Rect targetRect;
+        float perspectiveFactor = 1.0;//multiply with h und w to adjust to background
+        switch (environment) {
+            case EnvironmentType::DenseForest: perspectiveFactor = 1.0;break;
+            case EnvironmentType::MonasteryPath: perspectiveFactor = 0.5;break;
+            default: perspectiveFactor = 1.0;
+
+        }
 
         for(std::tuple<SceneCompositionEntities,SceneCompositionSlots> compElement: compositionVector)
         {
+
             switch(get<0>(compElement))
             {
                 case SceneCompositionEntities::Character:
                     targetRect.x = windowSize.x * (sceneCompositionTarget[get<1>(compElement)].x*0.01);
-                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[SceneCompositionSlots::CharacterMain].y )*0.01-(SpriteData.ScalingvalueLKY*windowSize.y));
-                    targetRect.w = static_cast<int>(SpriteData.ScalingvalueLKX*windowSize.x); // fix res dependence TODO differenciate between different player sprites
-                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueLKY*windowSize.y);
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[SceneCompositionSlots::CharacterMain].y )*0.01-(SpriteData.ScalingvalueLKY*windowSize.y*perspectiveFactor));
+                    targetRect.w = static_cast<int>(SpriteData.ScalingvalueLKX*windowSize.x*perspectiveFactor); // fix res dependence TODO differenciate between different player sprites
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueLKY*windowSize.y*perspectiveFactor);
                     renderFromSpritesheet(targetRect,playerMainSpite);
 
                     break;
                 case SceneCompositionEntities::Werewolf:
 
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
-                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y));
-                    targetRect.w = SpriteData.ScalingValueGarouX*windowSize.x;
-                    //fmt::println("Garou X: {}", SpriteData.ScalingValueGarouX*windowSize.x);
-                    targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y);
-                    //fmt::println("Garou Y: {} = {} * {} * {}", SpriteData.ScalingValueGarouY*windowSize.y,SpriteData.Garou_IMG.y,SpriteData.ScalingValueGarouY,windowSize.y);
+                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingValueGarouX*windowSize.x*perspectiveFactor;
+                    targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor);
                     renderFromSpritesheet(targetRect,enemyWereWolfMainSprite);
 
 
                     break;
                 case SceneCompositionEntities::Monk:
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
-                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingvalueMNKY*windowSize.y));
-                    targetRect.w = SpriteData.ScalingvalueMKNX*windowSize.x;
+                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingvalueMNKY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueMKNX*windowSize.x*perspectiveFactor;
 
-                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueMNKY*windowSize.y);
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueMNKY*windowSize.y*perspectiveFactor);
 
                     renderFromSpritesheet(targetRect,monk1Sprite);
 
                     break;
                 case SceneCompositionEntities::Abbot:
                     break;
+                case SceneCompositionEntities::Wolf:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingvalueWolfY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueWolfX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueWolfY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,enemyWolfSprite);
+
+                    break;
+
+
                 default:
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
-                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y));
-                    targetRect.w = SpriteData.ScalingValueGarouX*windowSize.x;
+                    targetRect.y = static_cast<int>(windowSize.y*(EncounterLayout.characterMainPoint.y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingValueGarouX*windowSize.x*perspectiveFactor;
                     //fmt::println("Garou X: {}", SpriteData.ScalingValueGarouX*windowSize.x);
-                    targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y);
+                    targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor);
                     //fmt::println("Garou Y: {} = {} * {} * {}", SpriteData.ScalingValueGarouY*windowSize.y,SpriteData.Garou_IMG.y,SpriteData.ScalingValueGarouY,windowSize.y);
                     renderFromSpritesheet(targetRect,errorIMG);
                     fmt::println("Scene Element not yet implemented");
@@ -1244,6 +1283,12 @@ namespace JanSordid::SDL_Example {
                     case ItemID::Halberd:
                         SDL_RenderCopy(renderer(), Icons[1], &SpriteData.BagIconScale, &EquipR);
                         break;
+                    case ItemID::PrayerBook:
+                        SDL_RenderCopy(renderer(), Icons[2], &SpriteData.BagIconScale, &EquipR);
+                        break;
+                    case ItemID::Candle:
+                        SDL_RenderCopy(renderer(), Icons[3], &SpriteData.BagIconScale, &EquipR);
+                        break;
                     default:
                         SDL_RenderCopy(renderer(), Icons[0], &SpriteData.BagIconScale, &EquipR);
                         break;
@@ -1273,10 +1318,16 @@ namespace JanSordid::SDL_Example {
 
         if(get<0>(currentEquipment)!= nullptr || (get<1>(currentEquipment)!= nullptr && get<1>(currentEquipment)->GetHandsNeeded()==2))
         {
-            switch (get<0>(currentEquipment)->GetItemID()) { //TODO fix redundancy
+            switch (get<0>(currentEquipment)->GetItemID()) {
 
                 case ItemID::Halberd:
                     SDL_RenderCopy(renderer(), Icons[1], &SpriteData.BagIconScale, &EquipL);
+                    break;
+                case ItemID::PrayerBook:
+                    SDL_RenderCopy(renderer(), Icons[2], &SpriteData.BagIconScale, &EquipL);
+                    break;
+                case ItemID::Candle:
+                    SDL_RenderCopy(renderer(), Icons[3], &SpriteData.BagIconScale, &EquipL);
                     break;
                 default:
                     SDL_RenderCopy(renderer(), Icons[0], &SpriteData.BagIconScale, &EquipL);
@@ -1337,7 +1388,8 @@ namespace JanSordid::SDL_Example {
 
 
         //open submenu pop-up/lock pop-up in place, if implemented in hover
-        SDL_RenderFillRect(renderer(), &Selection);
+            SDL_SetRenderDrawColor(renderer(),5,5,5,0);
+            SDL_RenderFillRect(renderer(), &Selection);
 
 
         SDL_Rect ButtonEquipRight = {
@@ -1366,10 +1418,10 @@ namespace JanSordid::SDL_Example {
 
             DisplayText = textToTexture(ItemToDisplay->GetName().c_str());
 
-            renderText({Selection.x, static_cast<int>(Selection.y), 10, 10}, DisplayText);
+            renderText({Selection.x, static_cast<int>(Selection.y), 10, 10}, DisplayText); //Todo move text a bit to the right, add borders
             SDL_DestroyTexture(DisplayText);
 
-            //todo parse and render item
+
 
 
             DisplayText = textToTexture(
@@ -1437,6 +1489,7 @@ namespace JanSordid::SDL_Example {
 
 
         //open submenu pop-up/lock pop-up in place, if implemented in hover
+        SDL_SetRenderDrawColor(renderer(),5,5,5,0);
         SDL_RenderFillRect(renderer(),&Selection);
 
         Texture * DisplayText {};
@@ -1453,7 +1506,6 @@ namespace JanSordid::SDL_Example {
         renderText({Selection.x,static_cast<int>(Selection.y), 10,10 },DisplayText);
         SDL_DestroyTexture(DisplayText); //todo there is a better way surely
 
-        //todo parse and render item
 
 
         DisplayText = textToTexture((std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT))+" FIGHT").c_str());
@@ -1615,10 +1667,15 @@ namespace JanSordid::SDL_Example {
                         renderFromSpritesheet(sceneWindow, denseForestBG);
                         break;
                     }
+                    case EnvironmentType::MonasteryPath:
+                    {
+                        renderFromSpritesheet(sceneWindow,monasteryPathBG);
+                        break;
+                    }
                     default:SDL_RenderFillRect(renderer(),&sceneWindow);
                 }
 
-                RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector);
+                RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector,eTracker.activeEncounter->scenes[eTracker.szene].background);
 
 
                 //Render Foreground //todo decouple from bg, if needed?
@@ -1629,7 +1686,7 @@ namespace JanSordid::SDL_Example {
                         renderFromSpritesheet(sceneWindow, denseForestFG);
                         break;
                     }
-                    default:SDL_RenderFillRect(renderer(),&sceneWindow);
+                    default: break;
                 }
 
 
@@ -1659,7 +1716,13 @@ namespace JanSordid::SDL_Example {
 
                 switch (eTracker.diaPhase) {
                     case DialoguePhase::Scene:
+                        if(eTracker.bShowPreviousDicerolls)
+                        {
+                            renderDicerollAnimation(ske); //TODO check for problems/missing flase-setters
+                        }
                         if(!eTracker.alreadyDisplayedText) {
+
+
                             std::cout << eTracker.activeEncounter->scenes[eTracker.szene].sceneText << std::endl;
                             std::cout.flush();
 
@@ -1996,13 +2059,13 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::EnemyMain}
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::EnemyMain}
 
                                 }
                         },
                         {
                                 "Scene 1",
-                                EnvironmentType::DenseForest,
+                                EnvironmentType::MonasteryPath,
                                 {
 
                                         {
@@ -2518,7 +2581,7 @@ namespace JanSordid::SDL_Example {
                                 }
                         },
                         {"Sprite Test Monk",
-                         EnvironmentType::DenseForest,
+                         EnvironmentType::MonasteryPath,
                          {
 
                                  {
