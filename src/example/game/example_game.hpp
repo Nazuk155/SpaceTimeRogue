@@ -368,8 +368,20 @@ namespace JanSordid::SDL_Example {
         //NPCs
         Texture *monk1Sprite = nullptr;
         Texture * abbotSprite = nullptr;
+
+        Texture* anthonySprite = nullptr;
+        Texture* peasant1Sprite = nullptr;
+        Texture* peasant1CoupleSprite = nullptr;
+        Texture* peasant2Sprite = nullptr;
+        Texture* hunterSprite = nullptr;
+        Texture* peasantWomanSprite = nullptr;
+
+
         Texture *enemyWereWolfMainSprite = nullptr;
         Texture *enemyWolfSprite = nullptr;
+        Texture* enemyBearSprite=nullptr;
+
+
 
         Texture *errorIMG = nullptr;
 
@@ -378,6 +390,21 @@ namespace JanSordid::SDL_Example {
         Texture *denseForestFG = nullptr;
         Texture* monasteryPathBG = nullptr;
         Texture* village1 = nullptr;
+        Texture * village2 = nullptr;
+
+        Texture* outskirtsPath= nullptr;
+        Texture* windmillOutskirts= nullptr;
+        Texture* oakPath= nullptr;
+        Texture* hunterCamp = nullptr;
+
+        Texture* forestLakeBG= nullptr;
+        Texture *forestHermitLodge = nullptr;
+        Texture* forestClearingBG= nullptr;
+        Texture* forestPathToHeartBG= nullptr;
+        Texture* forestPathToHeartFG= nullptr;
+        Texture* forestHeartBG= nullptr;
+
+
 
         /* refactored already but keep in case of need for testing
         Texture *forestNameTexture = nullptr;

@@ -91,8 +91,8 @@ struct  //TODO PLACEHOLDER for better system, encounter data etc
     const float ScalingvalueLKY = LK_IMG.y/(1080*1.4);
 
     const SDL_Point Garou_IMG = {336,537};
-    const float ScalingValueGarouX = Garou_IMG.x*1.2/1920;
-    const float ScalingValueGarouY = Garou_IMG.y*1.2/1080;
+    const float ScalingValueGarouX = Garou_IMG.x*1.5/1920;
+    const float ScalingValueGarouY = Garou_IMG.y*1.5/1080;
 
 
     const SDL_Point Monk_IMG = {512,1228};
@@ -106,6 +106,38 @@ struct  //TODO PLACEHOLDER for better system, encounter data etc
     const SDL_Point Wolf_IMG = {1139,1016};
     const float ScalingvalueWolfX = Wolf_IMG.x/(1920*2.1);
     const float ScalingvalueWolfY = Wolf_IMG.y/(1080*2.1);
+
+    const SDL_Point Bear_IMG {998,1406};
+    const float ScalingvalueBearX = Bear_IMG.x/(1920*2.1);
+    const float ScalingvalueBearY = Bear_IMG.y/(1080*2.1);
+
+    SDL_Point Anthony_IMG {1032,750};
+    const float ScalingvalueAnthonyX = Anthony_IMG.x/(1920*2.5);
+    const float ScalingvalueAnthonyY = Anthony_IMG.y/(1080*2.5);
+
+    SDL_Point Hunter_IMG {1033,1250};
+    const float ScalingvalueHunterX = Hunter_IMG.x/(1920*2.5);
+    const float ScalingvalueHunterY = Hunter_IMG.y/(1080*2.5);
+
+    SDL_Point Peasant1_IMG {795,1250};
+    const float ScalingvaluePSNT1X = Peasant1_IMG.x/(1920*2.5);
+    const float ScalingvaluePSNT1Y = Peasant1_IMG.y/(1080*2.5);
+
+    SDL_Point PeasantCouple_IMG {795,1250};
+    const float ScalingvaluePSNTCoupleX = Peasant1_IMG.x/(1920*2.5);
+    const float ScalingvaluePSNTCoupleY = Peasant1_IMG.y/(1080*2.5);
+
+    SDL_Point Peasant2_IMG {463,1250};
+    const float ScalingvaluePSNT2X = Peasant2_IMG.x/(1920*2.5);
+    const float ScalingvaluePSNT2Y = Peasant2_IMG.y/(1080*2.5);
+
+
+    SDL_Point woman1_IMG {570,1250};
+    const float ScalingvalueWoman1X = woman1_IMG.x/(1920*2.5);
+    const float ScalingvalueWoman1Y = woman1_IMG.y/(1080*2.5);
+
+
+
 
     const SDL_Point Turn_Button = {409, 1040};
 

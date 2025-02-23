@@ -5,11 +5,19 @@
 enum class EnvironmentType
 {
     Village,
+    Village2,
+    WindmillOutskirts,
+    OakPath,
+    HunterCamp,
     VillageOutskirts,
     ForestOutskirts,
+    HermitLodge,
     MonasteryPath,
+    ForestLake,
+    ForestClearing,
     DenseForest,
-    CurseForest
+    HeartApproach,
+    ForestHeart
 };
 
 // Enumerations for various flags and phases
@@ -76,13 +84,16 @@ enum class SceneCompositionEntities
 {
     Character,
     Wolf,
-    Villager,
+    Villager1,
+    VillagerCouple,
+    Villager2,
     Healer,
     Werewolf,
+    Hunter,
     MonasteryGate,
     Monk,
     Abbot,
-    Boar,
+    Bear,
     Hermit
 };
 enum class SceneCompositionSlots

@@ -62,15 +62,38 @@ namespace JanSordid::SDL_Example {
         //NPCs
         string enemyWereWolfMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/garou_sprite.png";
         string enemyWolfSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/wolf_sprite.png";
+        string enemyBearSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/bear_sprite.png";
         string errorIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/ERROR.png";
         string monk1IMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/monk_1_sprite.png";
         string abbotIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/monk_2_sprite.png";
+
+        string anthonySpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/anthony_sprite.png";
+        string peasant1SpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/peasant_1_sprite.png";
+        string peasant1CoupleSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/peasants_market_sprite.png";
+        string peasant2SpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/peasant_2_sprite.png";
+        string hunterSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/hunter_sprite.png";
+        string peasantWomanSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/woman_1_sprite.png";
+
 
         //Backgrounds/Foregrounds
         string denseForestBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/dense_forest_test.png";
         string denseForestFGPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/dense_forest_test_fg.png";
         string monasteryPathBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/monasteryPath.png";
         string village1PathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/village_1.png";
+
+        string village2PathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/village_2.png";
+
+        string outskirtsPathPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/outskirts_path.png";
+        string windmillOutskirtsPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/windmill_outskirts.png";
+        string oakPathPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/oak_path.png";
+        string hunterCampPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/hunter_camp.png";
+
+        string forestLakeBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_lake.png";
+        string forestHermitLodgePathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_lodge_shishkin.png";
+        string forestClearingBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_clearing.png";
+        string forestPathToHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/heart_approach_bg.png";
+        string forestPathToHeartPathFG = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/heart_approach_fg.png";
+        string forestHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_heart.png";
 
         //Buttons
 
@@ -110,13 +133,35 @@ namespace JanSordid::SDL_Example {
         denseForestFG = loadFromFile(denseForestFGPath);
         monasteryPathBG = loadFromFile(monasteryPathBGPAth);
         village1 = loadFromFile(village1PathBG);
+        village2 = loadFromFile(village2PathBG);
+
+        outskirtsPath= loadFromFile(outskirtsPathPathBG);
+        windmillOutskirts= loadFromFile(windmillOutskirtsPathBG);
+        oakPath= loadFromFile(oakPathPathBG);
+        hunterCamp = loadFromFile(hunterCampPathBG);
+
+        forestLakeBG= loadFromFile(forestLakeBGPathBG);
+        forestHermitLodge = loadFromFile(forestHermitLodgePathBG);
+        forestClearingBG= loadFromFile(forestClearingBGPathBG);
+        forestPathToHeartBG= loadFromFile(forestPathToHeartBGPathBG);
+        forestPathToHeartFG= loadFromFile(forestPathToHeartPathFG);
+        forestHeartBG= loadFromFile(forestHeartBGPathBG);
 
         //NPCs
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
         enemyWolfSprite = loadFromFile(enemyWolfSpritePath);
+        enemyBearSprite= loadFromFile(enemyBearSpritePath);
+
+
         errorIMG = loadFromFile(errorIMGPath);
         monk1Sprite = loadFromFile(monk1IMGPath);
         abbotSprite= loadFromFile(abbotIMGPath);
+        anthonySprite = loadFromFile(anthonySpriteIMGPath);
+        peasant1Sprite = loadFromFile(peasant1SpriteIMGPath);
+        peasant1CoupleSprite = loadFromFile(peasant1CoupleSpriteIMGPath);
+        peasant2Sprite = loadFromFile(peasant2SpriteIMGPath);
+        hunterSprite = loadFromFile(hunterSpriteIMGPath);
+        peasantWomanSprite = loadFromFile(peasantWomanSpriteIMGPath);
 
         //Buttons
         endTurnButtonOn = loadFromFile(endTurnButtonOnPath);
@@ -501,6 +546,20 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(monasteryPathBG);
         SDL_DestroyTexture(village1);
 
+        SDL_DestroyTexture(village2);
+        SDL_DestroyTexture(outskirtsPath);
+        SDL_DestroyTexture(windmillOutskirts);
+        SDL_DestroyTexture(oakPath);
+        SDL_DestroyTexture(hunterCamp);
+        SDL_DestroyTexture(forestLakeBG);
+        SDL_DestroyTexture(forestHermitLodge);
+        SDL_DestroyTexture(forestClearingBG);
+        SDL_DestroyTexture(forestPathToHeartBG);
+        SDL_DestroyTexture(forestPathToHeartFG);
+        SDL_DestroyTexture(forestHeartBG);
+
+
+
         SDL_DestroyTexture(errorIMG);
 
         SDL_DestroyTexture(endTurnButtonOff);
@@ -529,6 +588,18 @@ namespace JanSordid::SDL_Example {
         //Enemies
         SDL_DestroyTexture(enemyWereWolfMainSprite);
         SDL_DestroyTexture(enemyWolfSprite);
+        SDL_DestroyTexture(enemyBearSprite);
+        //NPCS
+        SDL_DestroyTexture(monk1Sprite);
+        SDL_DestroyTexture(abbotSprite);
+        SDL_DestroyTexture(anthonySprite);
+        SDL_DestroyTexture(peasant1Sprite);
+        SDL_DestroyTexture(peasant1CoupleSprite);
+        SDL_DestroyTexture(peasant2Sprite);
+        SDL_DestroyTexture(hunterSprite);
+        SDL_DestroyTexture(peasantWomanSprite);
+
+
 
         for (auto e: locationTextureMap) {
             SDL_DestroyTexture(e.second.iconTexture);
@@ -542,10 +613,33 @@ namespace JanSordid::SDL_Example {
         denseForestFG = nullptr;
         monasteryPathBG = nullptr;
         village1 = nullptr;
+        village2 = nullptr;
+
+        outskirtsPath= nullptr;
+        windmillOutskirts= nullptr;
+        oakPath= nullptr;
+        hunterCamp = nullptr;
+
+        forestLakeBG= nullptr;
+        forestHermitLodge = nullptr;
+        forestClearingBG= nullptr;
+        forestPathToHeartBG= nullptr;
+        forestPathToHeartFG= nullptr;
+        forestHeartBG= nullptr;
 
         enemyWereWolfMainSprite = nullptr;
         enemyWolfSprite = nullptr;
+        enemyBearSprite= nullptr;
         errorIMG = nullptr;
+
+        monk1Sprite = nullptr;
+        abbotSprite= nullptr;
+        anthonySprite = nullptr;
+        peasant1Sprite = nullptr;
+        peasant1CoupleSprite = nullptr;
+        peasant2Sprite = nullptr;
+        hunterSprite = nullptr;
+        peasantWomanSprite = nullptr;
 
         endTurnButtonOff = nullptr;
         endTurnButtonMouseover = nullptr;
@@ -1122,7 +1216,16 @@ namespace JanSordid::SDL_Example {
             case EnvironmentType::DenseForest: perspectiveFactor = 1.0;break;
             case EnvironmentType::MonasteryPath: perspectiveFactor = 0.5;break;
             case EnvironmentType::Village: perspectiveFactor = 0.5;break;
-            case EnvironmentType::VillageOutskirts: perspectiveFactor = 0.5;break;
+            case EnvironmentType::Village2: perspectiveFactor = 0.5;break;
+            case EnvironmentType::WindmillOutskirts: perspectiveFactor = 0.5;break;
+            case EnvironmentType::HunterCamp: perspectiveFactor = 0.6;break;
+            case EnvironmentType::ForestOutskirts: perspectiveFactor = 0.3;break;
+            case EnvironmentType::ForestClearing: perspectiveFactor = 0.9;break;
+            case EnvironmentType::ForestLake: perspectiveFactor = 0.7;break;
+            case EnvironmentType::HeartApproach: perspectiveFactor = 0.6;break;
+            case EnvironmentType::HermitLodge: perspectiveFactor = 0.7;break;
+
+
             default: perspectiveFactor = 1.0;
 
         }
@@ -1161,7 +1264,70 @@ namespace JanSordid::SDL_Example {
 
                     break;
                 case SceneCompositionEntities::Abbot:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueABBTY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueABBTX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueABBTY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,abbotSprite);
                     break;
+                case SceneCompositionEntities::Hermit:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueAnthonyY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueAnthonyX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueAnthonyY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,anthonySprite);
+                    break;
+                case SceneCompositionEntities::Villager1:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvaluePSNT1Y*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvaluePSNT1X*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvaluePSNT1Y*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,peasant1Sprite);
+                    break;
+                case SceneCompositionEntities::Villager2:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvaluePSNT2Y*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvaluePSNT2X*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvaluePSNT2Y*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,peasant2Sprite);
+                    break;
+                case SceneCompositionEntities::VillagerCouple:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvaluePSNT1Y*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvaluePSNT1X*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvaluePSNT1Y*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,peasant1CoupleSprite);
+                    break;
+                case SceneCompositionEntities::Healer:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueWoman1Y*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueWoman1X*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueWoman1Y*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,peasantWomanSprite);
+                    break;
+                case SceneCompositionEntities::Hunter:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueHunterY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueHunterX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueHunterY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,hunterSprite);
+                    break;
+
+
                 case SceneCompositionEntities::Wolf:
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
                     targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueWolfY*windowSize.y*perspectiveFactor));
@@ -1171,6 +1337,15 @@ namespace JanSordid::SDL_Example {
 
                     renderFromSpritesheet(targetRect,enemyWolfSprite);
 
+                    break;
+                case SceneCompositionEntities::Bear:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueBearY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueBearX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueBearY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,enemyBearSprite);
                     break;
 
 
@@ -1706,6 +1881,57 @@ namespace JanSordid::SDL_Example {
                         renderFromSpritesheet(sceneWindow,village1);
                         break;
                     }
+                    case EnvironmentType::Village2:
+                    {
+                        renderFromSpritesheet(sceneWindow,village2);
+                        break;
+                    }
+                    case EnvironmentType::HeartApproach:
+                    {
+                        renderFromSpritesheet(sceneWindow,forestPathToHeartBG);
+                        break;
+                    }
+                    case EnvironmentType::ForestHeart:
+                    {
+                        renderFromSpritesheet(sceneWindow,forestHeartBG);
+                        break;
+                    }case EnvironmentType::ForestClearing:
+                    {
+                        renderFromSpritesheet(sceneWindow,forestClearingBG);
+                        break;
+                    }
+                    case EnvironmentType::HermitLodge:
+                    {
+                        renderFromSpritesheet(sceneWindow,forestHermitLodge);
+                        break;
+                    }
+                    case EnvironmentType::ForestLake:
+                    {
+                        renderFromSpritesheet(sceneWindow,forestLakeBG);
+                        break;
+                    }
+                    case EnvironmentType::HunterCamp:
+                    {
+                        renderFromSpritesheet(sceneWindow,hunterCamp);
+                        break;
+                    }
+                    case EnvironmentType::OakPath:
+                    {
+                        renderFromSpritesheet(sceneWindow,oakPath);
+                        break;
+                    }
+                    case EnvironmentType::WindmillOutskirts:
+                    {
+                        renderFromSpritesheet(sceneWindow,windmillOutskirts);
+                        break;
+                    }
+                    case EnvironmentType::ForestOutskirts:
+                    {
+                        renderFromSpritesheet(sceneWindow,outskirtsPath);
+                        break;
+                    }
+
+
                     default:SDL_RenderFillRect(renderer(),&sceneWindow);
                 }
 
@@ -1718,6 +1944,11 @@ namespace JanSordid::SDL_Example {
                     case EnvironmentType::DenseForest:
                     {
                         renderFromSpritesheet(sceneWindow, denseForestFG);
+                        break;
+                    }
+                    case EnvironmentType::HeartApproach:
+                    {
+                        renderFromSpritesheet(sceneWindow, forestPathToHeartFG);
                         break;
                     }
                     default: break;
@@ -2089,6 +2320,18 @@ namespace JanSordid::SDL_Example {
                                                 3,
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
+                                        },
+                                        {
+                                            "Test Scene assets",
+                                            false,
+                                            StatNames::FIGHT,
+                                            0,
+                                            {{ExecuteFlags::Wound, 3}},
+                                            {},
+                                            4,
+                                            -1,
+                                            {}, // rewardItemIDs
+                                            {}  // failureItemIDs
                                         }
                                 },
                                 {
@@ -2188,6 +2431,269 @@ namespace JanSordid::SDL_Example {
                                         {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
                                         {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront},
                                         {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
+                                }
+                        },
+                        {
+                                "Scene 4 -village 1",
+                                EnvironmentType::Village,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                5,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Villager2,SceneCompositionSlots::CharacterFront}
+
+                                }
+                        },
+                        {
+                                "Scene 5 -village 2",
+                                EnvironmentType::Village2,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                6,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::VillagerCouple,SceneCompositionSlots::EnemyMain}
+
+                                }
+                        },
+                        {
+                                "Scene Windmills",
+                                EnvironmentType::WindmillOutskirts,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                7,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Villager1,SceneCompositionSlots::Enemy_3}
+
+                                }
+                        },
+                        {
+                                "HunterCamp",
+                                EnvironmentType::HunterCamp,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                8,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Hunter,SceneCompositionSlots::EnemyMain}
+
+                                }
+                        },
+                        {
+                                "OakPAth",
+                                EnvironmentType::OakPath,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                9,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Hunter,SceneCompositionSlots::Enemy_2}
+
+                                }
+                        },
+                        {
+                                "Scene 4 -village 1",
+                                EnvironmentType::ForestOutskirts,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                10,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}
+
+                                }
+                        },
+                        {
+                                "Clearing",
+                                EnvironmentType::ForestClearing,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                11,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::EnemyMain}
+
+                                }
+                        },
+                        {
+                                "Lake",
+                                EnvironmentType::ForestLake,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                12,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterAtBottomMain},
+                                        {SceneCompositionEntities::Bear,SceneCompositionSlots::NPCAtBottomMain}
+
+                                }
+                        },
+                        {
+                                "Heart Approach",
+                                EnvironmentType::HeartApproach,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                13,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterAtBottomMain},
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::NPCAtBottomMain}
+
+                                }
+                        },
+                        {
+                                "Hermit",
+                                EnvironmentType::HermitLodge,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                14,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterFront},
+                                        {SceneCompositionEntities::Hermit,SceneCompositionSlots::EnemyMain}
+
+                                }
+                        },
+                        {
+                                "Heart of the Forest",
+                                EnvironmentType::ForestHeart,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::Wound, 1}},
+                                                {},
+                                                255,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+
                                 }
                         }
                 },
