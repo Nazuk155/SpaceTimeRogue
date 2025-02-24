@@ -35,8 +35,8 @@ struct
 
     SDL_Point InventoryIconStart{81,InventoryStart.y+2};
     SDL_Point InventoryIconScale {8,8};
-    SDL_Point JournalIconStart;//todo implement quest view
-    SDL_Point JournalIconScale {6,6};
+    SDL_Point JournalIconStart{EquippedItemsStart.x+InventoryScale.x-InventoryItemScale.x,InventoryIconStart.y};
+    SDL_Point JournalIconScale {8,8};
 
     int EndTurnbuttonHeight = 15;
 
@@ -52,6 +52,12 @@ struct
     luck;
      */
 }SidebarLayout;
+
+struct {
+    SDL_Rect QL_Layout {0,0,SidebarLayout.SidebarStart.x,100};
+    SDL_Point QL_ContentStart {5,7};
+    SDL_Point QL_ContentEnd {SidebarLayout.SidebarStart.x-5,95};
+}QuestlogLayout;
 
  struct EncounterLayout
 {

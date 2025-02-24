@@ -37,7 +37,7 @@ private:
     std::vector<Item*> inventory;      // Inventory of items
     std::pair<Item*, Item*> equipped_items; // Equipped items (left and right hand)
     ItemID LHand,RHand, displayedItemLeft,displayedItemRight;
-    std::vector<QuestID> quest_log;     // Quest log
+    //std::vector<QuestID> quest_log;     // Quest log
     LocationID current_location_id;          // ID of the current location
     SDL_Rect rect{0,0,64,64};
 
@@ -74,8 +74,8 @@ public:
     // Gameplay Methods
     void UseFocus(StatNames statToIncrease, StatNames statToDecrease);
     void RefillFatePoints();
-    void AddQuest(const QuestID quest);
-    void CompleteQuest(QuestID quest_id);
+    //void AddQuest(const QuestID quest);
+    //void CompleteQuest(QuestID quest_id);
 
     void SetRect(SDL_Rect newRect);
 

@@ -89,11 +89,13 @@ enum class AbilityID {
     DrawExtraItem,
     // Add more abilities as needed
 };
+/*
 enum class QuestID {
     SlayMonsters,
     VisitChurch
     //add more as needed
-};
+};*/
+
 
 enum class MonsterID {
     UNASSIGNED,

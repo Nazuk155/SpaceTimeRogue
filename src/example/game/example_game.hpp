@@ -321,6 +321,7 @@ namespace JanSordid::SDL_Example {
 
         InventoryScreen inventoryScreen;
         bool bInInventory = false;
+        bool bInJournal = false;
         bool bShowRightItemInfo = false;
         bool bShowLeftItemInfo = false;
 
@@ -343,6 +344,10 @@ namespace JanSordid::SDL_Example {
         Texture *bagIconOn = nullptr;
         Texture *bagIconMouseover = nullptr;
         Texture *bagIconOff = nullptr;
+
+        Texture * journalIcon = nullptr;
+        Texture * journalIconMouseover = nullptr;
+        Texture * journalIconOff = nullptr;
 
         Texture *emptyInventoryItem = nullptr;
 
@@ -581,7 +586,9 @@ namespace JanSordid::SDL_Example {
 
         void RenderInventorySelectionNoOption(int mouseX, int mouseY, int screenWidth, int screenHeight,bool left_item);
 
-        bool bOptionRequirementMet(std::tuple<RequirementFlags, int8_t> requirement);
+        bool bOptionRequirementMet(std::tuple<RequirementFlags, int> requirement);
+
+        void RenderJournal();
     };
 
 }

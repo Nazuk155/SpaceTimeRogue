@@ -15,7 +15,7 @@
 #include "item_manager.h"
 #include "item.h"
 #include "character.h"
-#include "encounter.h"
+//#include "encounter.h"
 #include "skillCheckEngine.h"
 #include "layout.h"
 
@@ -39,7 +39,7 @@ namespace JanSordid::SDL_Example {
     }SidebarIcons; //todo move somewhere
 
 
-
+    QuestLog Questlog;
     void BeasthoodState::Init() {
         using std::string;
 
@@ -51,6 +51,9 @@ namespace JanSordid::SDL_Example {
             if (!_font)
                 print(stderr, "TTF_OpenFont failed: {}\n", TTF_GetError());
         }
+
+        //Set up Intro Quest(s)
+        Questlog.addQuest(1);
 
 
         //Paths for Image Assets
@@ -105,6 +108,12 @@ namespace JanSordid::SDL_Example {
         string bagIconOnPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/bag_icon_base.png";
         string bagIconOffPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/bag_icon_off.png";
         string bagIconMouseoverPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/bag_icon_mouseover.png";
+
+        string journalIconOnPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/journal_icon_base.png";
+        string journalIconOffPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/journal_icon_off.png";
+        string journalIconMouseoverPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/journal_icon_mouseover.png";
+
+
 
 
         string dice1Path = BasePath "/src/example/game/Ressources/Image_assets/dice/Dice_1.png";
@@ -172,6 +181,10 @@ namespace JanSordid::SDL_Example {
         bagIconOn = loadFromFile(bagIconOnPath);
         bagIconMouseover = loadFromFile(bagIconMouseoverPath);
         bagIconOff = loadFromFile(bagIconOffPath);
+
+        journalIcon = loadFromFile(journalIconOnPath);
+        journalIconMouseover = loadFromFile(journalIconMouseoverPath);
+        journalIconOff = loadFromFile(journalIconOffPath);
 
         //DIce Textures
         dice1 = loadFromFile(dice1Path);
@@ -571,6 +584,12 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(bagIconMouseover);
         SDL_DestroyTexture(bagIconOff);
 
+        SDL_DestroyTexture(journalIcon);
+        SDL_DestroyTexture(journalIconMouseover);
+        SDL_DestroyTexture(journalIconOff);
+
+
+
         SDL_DestroyTexture(dice1);
         SDL_DestroyTexture(dice2);
         SDL_DestroyTexture(dice3);
@@ -648,6 +667,10 @@ namespace JanSordid::SDL_Example {
         bagIconOn = nullptr;
         bagIconOff = nullptr;
         bagIconMouseover = nullptr;
+
+        journalIcon = nullptr;
+        journalIconMouseover = nullptr;
+        journalIconOff = nullptr;
 
         emptyInventoryItem = nullptr;
         dice1= nullptr;
@@ -750,19 +773,48 @@ namespace JanSordid::SDL_Example {
                         case SDLK_i:
                         bInInventory=!bInInventory;
                         break;
-                }
+                                    }
             }
 
+        }
+        else if(bInJournal)
+        {
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                //int mouseX, mouseY;
+                SDL_GetMouseState(&mouseOverX, &mouseOverY);
+
+                //Journal Icon
+                if(IsMouseInsideRect({static_cast<int>(SidebarLayout.JournalIconStart.x*0.01*windowSize.x),
+                                      static_cast<int>(SidebarLayout.JournalIconStart.y*0.01*windowSize.y+SidebarLayout.InventoryItemScale.y*0.01*windowSize.x),
+                                      static_cast<int>(SidebarLayout.InventoryIconScale.x*0.01*windowSize.x),
+                                      static_cast<int>(SidebarLayout.InventoryIconScale.y*0.01*windowSize.x)},mouseOverX,mouseOverY))
+                {
+                    bInJournal=false;
+                }
+
+            }
+
+
+            if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_j:
+                        bInJournal = !bInJournal;
+                        break;
+                }
+            }
+            //TODO
         }
         else {
             if (Phase == GamePhases::MOVEMENT) {
                 if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
                     switch (event.key.keysym.sym) {
-                        case SDLK_SPACE:
-                            //endMovementConfirmation = true;
+                        case SDLK_j:
+                            bInJournal=!bInJournal;
                             break;
                         case SDLK_i:
                             bInInventory=!bInInventory;
+                            break;
+                            //TODO what is happening here? possible problem with the button? copied to wrong case at some point?
                             if(!locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters_or_npcs.empty()){
                             currentEncounterIsOnlyCombat = true;
                             cTracker.location = currentCharacter->GetCurrentLocationID();
@@ -784,6 +836,7 @@ namespace JanSordid::SDL_Example {
                     //int mouseX, mouseY;
                     SDL_GetMouseState(&mouseOverX, &mouseOverY);
                     if (event.type == SDL_MOUSEBUTTONDOWN) {
+                        //End Turn Button
                         if (IsMouseInsideRect(
                                 {static_cast<int>(SidebarLayout.EndTurnButtonStart.x * windowSize.x * 0.01 - 0.5 *
                                                                                                              (SidebarLayout.EndTurnbuttonHeight *
@@ -796,7 +849,27 @@ namespace JanSordid::SDL_Example {
                                                   SpriteData.Turn_Button.y * windowSize.y * 0.01),
                                  static_cast<int>(SidebarLayout.EndTurnbuttonHeight * windowSize.y * 0.01)
                                 }, mouseOverX, mouseOverY))
-                        { endMovementConfirmation = true; }
+                        { endMovementConfirmation = true;
+
+                            //TODO what is happening here? possible problem with the button? copied to wrong case at some point?
+                            if(!locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters_or_npcs.empty()) {
+                                currentEncounterIsOnlyCombat = true;
+                                cTracker.location = currentCharacter->GetCurrentLocationID();
+                                cTracker.monID = locationManager.GetItem(cTracker.location)->monsters_or_npcs.back();
+
+                                cTracker.toughness = monsterManager.getMonsterByID(cTracker.monID)->toughness;
+                                cTracker.awareness = monsterManager.getMonsterByID(cTracker.monID)->awareness;
+                                cTracker.combatDamage = monsterManager.getMonsterByID(cTracker.monID)->combatDamage;
+                                cTracker.horrorDamage = monsterManager.getMonsterByID(cTracker.monID)->horrorDamage;
+                                cTracker.combatRating = monsterManager.getMonsterByID(cTracker.monID)->combatRating;
+                                cTracker.horrorRating = monsterManager.getMonsterByID(cTracker.monID)->horrorRating;
+                                UpdateCombatEncounter();
+                                eTracker.activeEncounter = encounterManager.getEncounter(EncounterID::Combat_Encounter);
+                                eTracker.encounterID = EncounterID::Combat_Encounter;
+                            }
+
+                        }
+                        //Inventory Button
                         if(IsMouseInsideRect({static_cast<int>(SidebarLayout.InventoryIconStart.x*0.01*windowSize.x),
                                               static_cast<int>(SidebarLayout.InventoryIconStart.y*0.01*windowSize.y+SidebarLayout.InventoryItemScale.y*0.01*windowSize.x),
                                               static_cast<int>(SidebarLayout.InventoryIconScale.x*0.01*windowSize.x),
@@ -805,6 +878,14 @@ namespace JanSordid::SDL_Example {
 
                         {
                             bInInventory=true;
+                        }
+                        //Journal Button
+                        if(IsMouseInsideRect({static_cast<int>(SidebarLayout.JournalIconStart.x*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.JournalIconStart.y*0.01*windowSize.y+SidebarLayout.InventoryItemScale.y*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconScale.x*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconScale.y*0.01*windowSize.x)},mouseOverX,mouseOverY))
+                        {
+                            bInJournal=true;
                         }
                     }
 
@@ -868,14 +949,22 @@ namespace JanSordid::SDL_Example {
 
                 //Build Option Rects
                 std::vector<SDL_Rect> OptionVector = {};
-                for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
-                    OptionVector.push_back(
-                            {static_cast<int>((EncounterLayout.DialogueMainTextStart.x * 0.01 * windowSize.x)),
-                             static_cast<int>((EncounterLayout.DialogueMainTextEnd.y * 0.01 +
-                                               OptionVector.size() * EncounterLayout.DialogueOptionFieldScale.y *
-                                               0.01) * windowSize.y),
-                             static_cast<int>((EncounterLayout.DialogueMainTextEnd.x * 0.01 * windowSize.x)),
-                             static_cast<int>((EncounterLayout.DialogueOptionFieldScale.y * 0.01) * windowSize.y)});
+                if(eTracker.activeEncounter)//TODO CTD at this position - fix it
+                {
+
+                    for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
+                        OptionVector.push_back(
+                                {static_cast<int>((EncounterLayout.DialogueMainTextStart.x * 0.01 * windowSize.x)),
+                                 static_cast<int>((EncounterLayout.DialogueMainTextEnd.y * 0.01 +
+                                                   OptionVector.size() * EncounterLayout.DialogueOptionFieldScale.y *
+                                                   0.01) * windowSize.y),
+                                 static_cast<int>((EncounterLayout.DialogueMainTextEnd.x * 0.01 * windowSize.x)),
+                                 static_cast<int>((EncounterLayout.DialogueOptionFieldScale.y * 0.01) * windowSize.y)});
+                    }
+                }
+                else
+                {
+                    fmt::println("ENCOUNTER NULLPTR BUG!");
                 }
 
 
@@ -889,6 +978,15 @@ namespace JanSordid::SDL_Example {
                 if (!eTracker.chooseFateReroll && awaitingInput) {
 
                     if (event.type == SDL_MOUSEBUTTONDOWN) {
+
+                        //Journal Icon
+                        if(IsMouseInsideRect({static_cast<int>(SidebarLayout.JournalIconStart.x*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.JournalIconStart.y*0.01*windowSize.y+SidebarLayout.InventoryItemScale.y*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconScale.x*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconScale.y*0.01*windowSize.x)},mouseOverX,mouseOverY))
+                        {
+                            bInJournal= true;
+                        }
 
                         //int mouseX, mouseY;
                         SDL_Rect button;
@@ -926,6 +1024,9 @@ namespace JanSordid::SDL_Example {
                                 eTracker.selectedOption = 2;
                                 awaitingInput = false;
                                 break;
+                            case SDLK_j:
+                                bInJournal=!bInJournal;
+                                break;
 
 
                         }
@@ -942,11 +1043,23 @@ namespace JanSordid::SDL_Example {
                             case SDLK_2:
                                 eTracker.fateRerollChoice = 1;
                                 break;
+                            case SDLK_j:
+                                bInJournal=!bInJournal;
+                                break;
 
 
                         }
                     }
                     if (event.type == SDL_MOUSEBUTTONDOWN) {
+
+                        //Journal Icon
+                        if(IsMouseInsideRect({static_cast<int>(SidebarLayout.JournalIconStart.x*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.JournalIconStart.y*0.01*windowSize.y+SidebarLayout.InventoryItemScale.y*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconScale.x*0.01*windowSize.x),
+                                              static_cast<int>(SidebarLayout.InventoryIconScale.y*0.01*windowSize.x)},mouseOverX,mouseOverY))
+                        {
+                            bInJournal=true;
+                        }
 
                         //int mouseX, mouseY;
                         SDL_Rect button;
@@ -1096,7 +1209,7 @@ namespace JanSordid::SDL_Example {
                                     encounterManager.iterateOverOutcomes(
                                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
                                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
-                                            *currentCharacter);
+                                            *currentCharacter,Questlog);
                                     eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                                     eTracker.selectedOption = -1;
                                     eTracker.alreadyDisplayedText = false;
@@ -1109,7 +1222,7 @@ namespace JanSordid::SDL_Example {
                                 encounterManager.iterateOverOutcomes(
                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
-                                        *currentCharacter);
+                                        *currentCharacter,Questlog);
                                 eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                                 eTracker.selectedOption = -1;
                                 eTracker.alreadyDisplayedText = false;
@@ -1153,7 +1266,7 @@ namespace JanSordid::SDL_Example {
                         encounterManager.iterateOverOutcomes(
                                 eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
                                 eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
-                                *currentCharacter);
+                                *currentCharacter,Questlog);
                         eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                         eTracker.alreadyDisplayedText = false;
                         eTracker.chooseFateReroll = false;
@@ -1173,7 +1286,7 @@ namespace JanSordid::SDL_Example {
                     encounterManager.iterateOverOutcomes(
                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureItemIDs,
                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureOutcomes,
-                            *currentCharacter);
+                            *currentCharacter,Questlog);
                     eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetFail;
                     eTracker.alreadyDisplayedText = false;
                     eTracker.chooseFateReroll = false;
@@ -1183,6 +1296,23 @@ namespace JanSordid::SDL_Example {
                     eTracker.selectedOption = -1;
                 }
             }
+        }
+
+        //FIX ATTEMPT
+        if (eTracker.szene == 255)
+        {//if we hit a 255 jump we reset the encounterTracker and activate the next Game Phase
+            if (!currentEncounterIsOnlyCombat) {
+                Phase = GamePhases::DISASTER;
+                eTracker.szene = 0;
+                eTracker.bShowPreviousDicerolls = false;
+                awaitingInput = false;
+                eTracker.diaPhase = DialoguePhase::Scene;
+            } else {
+                Phase = GamePhases::MOVEMENT;
+                eTracker.bShowPreviousDicerolls = false;
+                currentEncounterIsOnlyCombat = false;
+            }// TODO encounter queque and track killed enemies
+
         }
 
         if(Phase == GamePhases::DISASTER){
@@ -1452,6 +1582,8 @@ namespace JanSordid::SDL_Example {
         SDL_SetRenderDrawColor(renderer(),5,5,5,0);
         SDL_RenderFillRect(renderer(),&InventoryMain);
 
+
+
         //Equipped Items //todo single them out further
 
 
@@ -1563,7 +1695,7 @@ namespace JanSordid::SDL_Example {
                 static_cast<int>(SidebarLayout.InventoryIconScale.y*0.01*windowSize.x)
 
         };
-        if (Phase == GamePhases::ENCOUNTER)
+        if (Phase == GamePhases::ENCOUNTER || bInJournal)
         {
             SDL_RenderCopy(renderer(),bagIconOff,&SpriteData.BagIconScale,&InventoryButton);
         }
@@ -1574,7 +1706,22 @@ namespace JanSordid::SDL_Example {
         else
             SDL_RenderCopy(renderer(),bagIconOn,&SpriteData.BagIconScale,&InventoryButton);
 
-
+        //Questlog Button
+        SDL_Rect JournalButton ={
+                static_cast<int>(SidebarLayout.JournalIconStart.x*0.01*windowSize.x),
+                static_cast<int>(SidebarLayout.JournalIconStart.y*0.01*windowSize.y+SidebarLayout.JournalIconScale.y*0.01*windowSize.x),
+                static_cast<int>(SidebarLayout.JournalIconScale.x*0.01*windowSize.x),
+                static_cast<int>(SidebarLayout.JournalIconScale.y*0.01*windowSize.x)};
+        if (bInInventory)
+        {
+            SDL_RenderCopy(renderer(),journalIconOff,&SpriteData.BagIconScale,&JournalButton);
+        }
+        else if(IsMouseInsideRect(JournalButton,mouseOverX,mouseOverY))
+        {
+            SDL_RenderCopy(renderer(),journalIconMouseover,&SpriteData.BagIconScale,&JournalButton);
+        }
+        else
+            SDL_RenderCopy(renderer(),journalIcon,&SpriteData.BagIconScale,&JournalButton);
 
         SDL_DestroyTexture(SidebarText);
         SidebarText = nullptr;
@@ -1782,7 +1929,7 @@ namespace JanSordid::SDL_Example {
                  static_cast<int>(SidebarLayout.EndTurnbuttonHeight*windowSize.y*0.01)
                 };
         SDL_Rect srcRect = {0,0,SpriteData.Turn_Button.x,SpriteData.Turn_Button.y};
-        if(bIsActive && !bInInventory)
+        if(bIsActive && !bInInventory && !bInJournal)
         {
             if(IsMouseInsideRect(buttonPlacement, mouseOverX,mouseOverY))
             {
@@ -2016,7 +2163,7 @@ namespace JanSordid::SDL_Example {
                             {
 
                                 //loop over all requirements and check if fulfilled
-                                for(std::tuple<RequirementFlags, int8_t> req: o.requirements)
+                                for(const std::tuple<RequirementFlags, int>& req: o.requirements)
                                 {
                                     if(!bOptionRequirementMet(req))
                                        bMeetsCriteria = false;
@@ -2179,6 +2326,10 @@ namespace JanSordid::SDL_Example {
         {
             RenderInventory();
         }
+        if(bInJournal)
+        {
+            RenderJournal();
+        }
 
     }
 
@@ -2322,7 +2473,7 @@ namespace JanSordid::SDL_Example {
                                                 {}  // failureItemIDs
                                         },
                                         {
-                                            "Test Scene assets",
+                                            "Test Scene assets- needs MSQ",
                                             false,
                                             StatNames::FIGHT,
                                             0,
@@ -2331,7 +2482,9 @@ namespace JanSordid::SDL_Example {
                                             4,
                                             -1,
                                             {}, // rewardItemIDs
-                                            {}  // failureItemIDs
+                                            {},  // failureItemIDs
+                                            {{RequirementFlags::quest,1000}},
+                                            true
                                         }
                                 },
                                 {
@@ -2658,7 +2811,7 @@ namespace JanSordid::SDL_Example {
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
-                                                {{ExecuteFlags::Wound, 1}},
+                                                {{ExecuteFlags::StartQuest, 6}},
                                                 {},
                                                 14,
                                                 255,
@@ -2682,7 +2835,7 @@ namespace JanSordid::SDL_Example {
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
-                                                {{ExecuteFlags::Wound, 1}},
+                                                {{ExecuteFlags::AdvanceQuestStage,6070}}, //set quest 6 to 70%
                                                 {},
                                                 255,
                                                 255,
@@ -3148,7 +3301,7 @@ namespace JanSordid::SDL_Example {
         encounterManager.addEncounter(EncounterID::Combat_Encounter,CombatEncounter);
     }
 
-    bool BeasthoodState::bOptionRequirementMet(std::tuple<RequirementFlags, int8_t> requirement)
+    bool BeasthoodState::bOptionRequirementMet(std::tuple<RequirementFlags, int> requirement)
     {
 
         switch (get<0>(requirement)) {
@@ -3202,10 +3355,72 @@ namespace JanSordid::SDL_Example {
                 {return true;}
                 else
                 {return false;}
+            case RequirementFlags::quest:
+
+                if(Questlog.getQuestStage(get<1>(requirement)/1000) == get<1>(requirement) % 1000)
+                {return true;}
+                else
+                {
+                    int qID = get<1>(requirement)/1000;
+                    int qStage = get<1>(requirement) % 1000;
+                    fmt::println("Quest requirement not passed: Req: {}", get<1>(requirement));
+                    fmt::println("Needed QuestID: {}, Stage: {}",qID,qStage);
+                    return false;}
+
             default:
                 return false; //TODO Item and Quest not yet implemented, may need more complex approach
 
         }
+
+    }
+    void BeasthoodState::RenderJournal()
+    {
+        SDL_Rect QL_Rect { static_cast<int>(QuestlogLayout.QL_Layout.x*0.01*windowSize.x),
+                           static_cast<int>(QuestlogLayout.QL_Layout.y*0.01*windowSize.x),
+                           static_cast<int>(QuestlogLayout.QL_Layout.w*0.01*windowSize.x),
+                           static_cast<int>(QuestlogLayout.QL_Layout.h*0.01*windowSize.x)
+        };
+        SDL_SetRenderDrawColor(renderer(),5,5,5,0);
+        SDL_RenderFillRect(renderer(),&QL_Rect);
+        Texture * QuestTitle;
+        Texture * QuestDescription;
+        Texture * QuestStage;
+        SDL_Rect TargetRect {static_cast<int>(QuestlogLayout.QL_ContentStart.x*0.01*windowSize.x),
+                             static_cast<int>(QuestlogLayout.QL_ContentStart.y*0.01*windowSize.x),
+                             static_cast<int>(5*0.01*windowSize.x),
+                             static_cast<int>(5*0.01*windowSize.x)
+                             };
+        for(Quest q: Questlog.activeQuests)
+        {
+            QuestTitle = textToTexture(q.questName.c_str());
+            renderText(TargetRect,QuestTitle);
+            TargetRect.y +=static_cast<int>(2*0.01*windowSize.x);
+            QuestDescription = textToTexture(q.description.c_str());
+            renderText(TargetRect,QuestDescription);
+            TargetRect.y +=static_cast<int>(1.5*0.01*windowSize.x);
+
+            for (std::pair<int, String> Stage : q.questStages) {
+                if(Stage.first == q.currentQuestStage)
+                    QuestStage= textToTexture(Stage.second.c_str());
+            }
+            if(!QuestStage)
+            {
+                QuestStage= textToTexture("ERROR - Undefined quest stage");
+            }
+
+
+            renderText(TargetRect,QuestStage);
+            TargetRect.y +=static_cast<int>(1.5*0.01*windowSize.x);
+
+
+        }
+
+        SDL_DestroyTexture(QuestTitle);
+        SDL_DestroyTexture(QuestStage);
+        SDL_DestroyTexture(QuestDescription);
+        QuestStage= nullptr;
+        QuestDescription= nullptr;
+        QuestTitle= nullptr;
 
     }
 }

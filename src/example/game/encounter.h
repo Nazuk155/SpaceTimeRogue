@@ -1,7 +1,7 @@
 /// Created by Prince of Brass on 20/01/2025
 #pragma once
 #include "../global.hpp"
-
+#include "quests.h"
 enum class EnvironmentType
 {
     Village,
@@ -26,7 +26,9 @@ enum class ExecuteFlags {
     SanityLoss,
     Heal,
     RegainSan,
-    GainItem
+    GainItem,
+    StartQuest,
+    AdvanceQuestStage
 };
 
 enum class RequirementFlags
@@ -68,13 +70,13 @@ struct SceneOption {
     bool isSkillCheck;
     StatNames skill;
     int difficulty;
-    std::vector<std::tuple<ExecuteFlags, int8_t>> successOutcomes;
-    std::vector<std::tuple<ExecuteFlags, int8_t>> failureOutcomes;
+    std::vector<std::tuple<ExecuteFlags, int>> successOutcomes;
+    std::vector<std::tuple<ExecuteFlags, int>> failureOutcomes;
     int jumpTargetSuccess;
     int jumpTargetFail;
     Vector<ItemID> rewardItemIDs; //TODO seems to be a redundancy
     Vector<ItemID> failureItemIDs;
-    Vector<std::tuple<RequirementFlags, int8_t>> requirements = {};
+    Vector<std::tuple<RequirementFlags, int>> requirements = {};
     bool bHasRequirements = false;
 
 };

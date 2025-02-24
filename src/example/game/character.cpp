@@ -127,11 +127,11 @@ void Character::RefillFatePoints() {
     fate_points = std::max(fate_points, 3); // Example logic
 }
 
-void Character::AddQuest(const QuestID quest) { quest_log.push_back(quest); }
-void Character::CompleteQuest(QuestID quest_id) {
-    quest_log.erase(std::remove_if(quest_log.begin(), quest_log.end(),
-                                   [quest_id](const QuestID q) { return q == quest_id; }), quest_log.end());
-}
+//void Character::AddQuest(const QuestID quest) { quest_log.push_back(quest); }
+//void Character::CompleteQuest(QuestID quest_id) {
+//    quest_log.erase(std::remove_if(quest_log.begin(), quest_log.end(),
+//                                   [quest_id](const QuestID q) { return q == quest_id; }), quest_log.end());
+//}
 
 
 

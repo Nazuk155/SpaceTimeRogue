@@ -3,6 +3,9 @@
 #include "encounter.h"
 #include "skillCheckEngine.h"
 #include "item_manager.h"
+#include "quests.h"
+#include "map.h"
+
 
 
 // EncounterManager class
@@ -157,8 +160,8 @@ public:
 */
 
 
-void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::tuple<ExecuteFlags, int8_t>> &outcomes, Character &currentCharacter) const {
-    for (std::tuple<ExecuteFlags, int8_t> outcome: outcomes) {
+void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::tuple<ExecuteFlags, int>> &outcomes, Character &currentCharacter, QuestLog& questlog) const {
+    for (std::tuple<ExecuteFlags, int> outcome: outcomes) {
 
         switch (get<0>(outcome)) {
             case ExecuteFlags::Wound:
@@ -181,6 +184,42 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
             case ExecuteFlags::RegainSan:
                 currentCharacter.AdjustSanity(get<1>(outcome));
                 break;
+            case ExecuteFlags::StartQuest:
+                if(!questlog.addQuest(get<1>(outcome)))
+                {
+                    fmt::println("Failed to add quest {}", get<1>(outcome));
+                }
+                break;
+            case ExecuteFlags::AdvanceQuestStage:
+            {
+                int questId = get<1>(outcome)/1000;
+                int stageID = get<1>(outcome)%1000;
+                for(Quest& q: questlog.activeQuests)
+                {
+                    if(q.questID == questId)
+                    {
+                        if(q.currentQuestStage != stageID)
+                        {
+
+
+                            for(std::pair<int, String>& Stage: q.questStages)
+                            {
+                                if(Stage.first==stageID)
+                                {
+                                    fmt::println("Quest {} progressed from {} to {}", questId, q.currentQuestStage,stageID);
+                                    q.currentQuestStage=stageID;
+
+
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+            }break;
+
+
 
         }
     }
