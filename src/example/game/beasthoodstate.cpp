@@ -3356,12 +3356,12 @@ namespace JanSordid::SDL_Example {
                     fmt::println("Needed QuestID: {}, Stage: {}",qID,qStage);
                     return false;}
             case RequirementFlags::notOnQuest:
-                if(Questlog.bHasQuest(get<1>(requirement) % 1000))
+                if(Questlog.bHasQuest(get<1>(requirement) / 1000))
                 {return false;}
                 else
                 { return true;}
             case RequirementFlags::hasQuest:
-                if(Questlog.bHasQuest(get<1>(requirement) % 1000))
+                if(Questlog.bHasQuest(get<1>(requirement) / 1000))
                 {return true;}
                 else
                 { return false;}
