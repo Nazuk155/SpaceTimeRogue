@@ -63,7 +63,9 @@ enum class ItemID {
     HandOfGlory,
     GUN,
     Talisman,
-    Tome};
+    Tome,
+
+    RitualSkull};
 enum class ItemType {Melee,Ranged,Magic,Unique};
 enum class LocationID {
     Forest,

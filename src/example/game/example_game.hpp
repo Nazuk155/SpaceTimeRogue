@@ -367,6 +367,8 @@ namespace JanSordid::SDL_Example {
         Texture * gunIcon = nullptr;
         Texture * torchIcon = nullptr;
 
+        Texture *ritualSkullIcon = nullptr;
+
         Texture * halberdIcon = nullptr;
         std::vector<Texture*> Icons;
 
@@ -409,6 +411,8 @@ namespace JanSordid::SDL_Example {
         Texture* forestPathToHeartFG= nullptr;
         Texture* forestHeartBG= nullptr;
 
+        //Overlay Items
+        Texture* OverlayForestClearingSkull = nullptr;
 
 
         /* refactored already but keep in case of need for testing

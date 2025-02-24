@@ -60,6 +60,15 @@ public:
         return false;
 
     }
+    bool bHasQuest(int questId)
+    {  bool bHas = false;
+        for(Quest q : activeQuests)
+        {
+            if (q.questID == questId)
+                bHas = true;
+        }
+        return bHas;
+    }
     //Returns stage of a quest, if active else -1
     int getQuestStage(int questId)
     {
