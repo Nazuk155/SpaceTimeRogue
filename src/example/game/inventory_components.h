@@ -40,6 +40,41 @@ struct
 
 } ItemDetailedView;
 
+inline void RenderItemIcon(SDL_Renderer*renderer,const Item* item,SDL_Texture* baseIcon, const std::vector<SDL_Texture*>& iconVector, const SDL_Rect iconScale, const SDL_Rect& destinationRect) {
+    switch (item->GetItemID()) {
+
+
+        case ItemID::Halberd:
+            SDL_RenderCopy(renderer, iconVector[1], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::PrayerBook:
+            SDL_RenderCopy(renderer, iconVector[2], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::Candle:
+            SDL_RenderCopy(renderer, iconVector[3], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::Torch:
+            SDL_RenderCopy(renderer, iconVector[4], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::GUN:
+            SDL_RenderCopy(renderer, iconVector[5], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::RitualSkull:
+            SDL_RenderCopy(renderer, iconVector[6], &iconScale, &destinationRect
+            );
+            break;
+        default:
+            SDL_RenderCopy(renderer, iconVector[0], &iconScale, &destinationRect
+            );
+            break;
+    }
+}
+
 
 class InventoryPage
 {
@@ -89,26 +124,30 @@ public:
 
                 if (icons[i + 8 * j].active) {
                     if (bIconsLoaded) {
-                        switch (icons[i + 8 * j].referencedItem->GetItemID()) {
 
-                            case ItemID::Halberd:
-                                SDL_RenderCopy(renderer, iconVector[1], &iconScale, &icon);
-                                break;
-                            case ItemID::PrayerBook:
-                                SDL_RenderCopy(renderer, iconVector[2], &iconScale, &icon);
-                                break;
-                            case ItemID::Candle:
-                                SDL_RenderCopy(renderer, iconVector[3], &iconScale, &icon);
-                                break;
-                            case ItemID::Torch:
-                                SDL_RenderCopy(renderer, iconVector[4], &iconScale, &icon);
-                                break;
-                            case ItemID::GUN:
-                                SDL_RenderCopy(renderer, iconVector[5], &iconScale, &icon);
-                            default:
-                                SDL_RenderCopy(renderer, iconVector[0], &iconScale, &icon);
-                                break;
-                        }
+                        RenderItemIcon(renderer,icons[i + 8 * j].referencedItem,baseIcon,iconVector,iconScale,icon);
+//                        switch (icons[i + 8 * j].referencedItem->GetItemID()) {
+//
+//                            case ItemID::Halberd:
+//                                SDL_RenderCopy(renderer, iconVector[1], &iconScale, &icon);
+//                                break;
+//                            case ItemID::PrayerBook:
+//                                SDL_RenderCopy(renderer, iconVector[2], &iconScale, &icon);
+//                                break;
+//                            case ItemID::Candle:
+//                                SDL_RenderCopy(renderer, iconVector[3], &iconScale, &icon);
+//                                break;
+//                            case ItemID::Torch:
+//                                SDL_RenderCopy(renderer, iconVector[4], &iconScale, &icon);
+//                                break;
+//                            case ItemID::GUN:
+//                                SDL_RenderCopy(renderer, iconVector[5], &iconScale, &icon);
+//                            case ItemID::RitualSkull:
+//                                SDL_RenderCopy(renderer, iconVector[6], &iconScale, &icon);
+//                            default:
+//                                SDL_RenderCopy(renderer, iconVector[0], &iconScale, &icon);
+//                                break;
+//                        }
 
                     } else {
                         SDL_SetRenderDrawColor(renderer, 10, 10, 10, 0);
@@ -245,7 +284,7 @@ class InventoryScreen
     void Click(int mouseX, int mouseY, int screenWidth, int screenHeight)
     {
 
-        if(currentPage.bIconSelected )
+        if(currentPage.bIconSelected && currentPage.MouseOverIcon->referencedItem->GetHandsNeeded()!=0)
         {
             //fmt::println("Clicked while selection locked");
 

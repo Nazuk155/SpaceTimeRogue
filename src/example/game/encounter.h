@@ -74,7 +74,7 @@ struct SceneOption {
     std::vector<std::tuple<ExecuteFlags, int>> failureOutcomes;
     int jumpTargetSuccess;
     int jumpTargetFail;
-    Vector<ItemID> rewardItemIDs; //TODO seems to be a redundancy
+    Vector<ItemID> rewardItemIDs;
     Vector<ItemID> failureItemIDs;
     Vector<std::tuple<RequirementFlags, int>> requirements = {};
     bool bHasRequirements = false;
@@ -96,10 +96,14 @@ enum class SceneCompositionEntities
     Monk,
     Abbot,
     Bear,
-    Hermit
+    Hermit,
+
+    //Overlays
+    RitualSkullOverlay
 };
 enum class SceneCompositionSlots
 {
+    OverlayMainPoint,
     CharacterMain,
     CharacterAtBottomMain,
     CharacterFront,

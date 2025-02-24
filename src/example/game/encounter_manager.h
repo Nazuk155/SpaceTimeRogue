@@ -171,6 +171,7 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
                 break;
             case ExecuteFlags::GainItem:
                 for(auto e : rewards) {
+                    fmt::println("Adding item");
                     currentCharacter.AddToInventory(iManager->GetItem(e));
                 }
                 //TODO Ressources

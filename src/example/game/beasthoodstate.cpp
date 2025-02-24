@@ -98,6 +98,10 @@ namespace JanSordid::SDL_Example {
         string forestPathToHeartPathFG = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/heart_approach_fg.png";
         string forestHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_heart.png";
 
+        //Overlay Items
+
+        string OverlayForestClearingSkullPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/forest_clearing_overlay_skull.png";
+
         //Buttons
 
         string endTurnButtonOnPath = BasePath "/src/example/game/Ressources/Image_assets/buttons/clock_button_PLACEHOLDER.png";
@@ -131,6 +135,7 @@ namespace JanSordid::SDL_Example {
         String prayerbookIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/prayerbook_icon.png";
         String torchIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/torch_icon.png";
         String gunIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_icon.png";
+        String ritualSkullIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/ritual_skull_icon.png";
 
 
 
@@ -155,6 +160,9 @@ namespace JanSordid::SDL_Example {
         forestPathToHeartBG= loadFromFile(forestPathToHeartBGPathBG);
         forestPathToHeartFG= loadFromFile(forestPathToHeartPathFG);
         forestHeartBG= loadFromFile(forestHeartBGPathBG);
+
+        //Overlay Items
+        OverlayForestClearingSkull = loadFromFile(OverlayForestClearingSkullPath);
 
         //NPCs
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
@@ -203,6 +211,7 @@ namespace JanSordid::SDL_Example {
         prayerbookIcon = loadFromFile(prayerbookIconPath);
         gunIcon= loadFromFile(gunIconPath);
         torchIcon= loadFromFile(torchIconPath);
+        ritualSkullIcon = loadFromFile(ritualSkullIconPath);
 
 
         //Icons index!!!
@@ -211,6 +220,8 @@ namespace JanSordid::SDL_Example {
         Icons.push_back(prayerbookIcon);//Prayerbook=2
         Icons.push_back(candleIcon);//Candle=3
         Icons.push_back(torchIcon); //Torch = 4
+        Icons.push_back(gunIcon);//Gun = 5
+        Icons.push_back(ritualSkullIcon);//Skull=6
 
 
 
@@ -484,6 +495,10 @@ namespace JanSordid::SDL_Example {
         talisman->SetStats({2, 5, 2, 0, 2, 0});
         itemManager.AddItem(std::move(talisman));
 
+        auto ritual_skull = std::make_unique<Item>(ItemID::RitualSkull, ItemType::Unique,"Ritual Skull",0);
+        ritual_skull->SetStats({0, 0, 0, 0, 1, -2});
+        itemManager.AddItem(std::move(ritual_skull));
+
         // Access and use an item
         Item *item = itemManager.GetItem(ItemID::Halberd);
         if (item) {
@@ -541,6 +556,8 @@ namespace JanSordid::SDL_Example {
         //currentCharacter->EquipItem(currentCharacter->GetInventory().back());
         currentCharacter->UpdateCurrentStats();
 
+        encounterManager.iManager=&itemManager;//Was missing ctd by add item outcome
+
         PopulateMonsterManager();
         PopulateEventManager();
         PopulateLocationEvents();
@@ -570,6 +587,8 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(forestPathToHeartBG);
         SDL_DestroyTexture(forestPathToHeartFG);
         SDL_DestroyTexture(forestHeartBG);
+
+        SDL_DestroyTexture(OverlayForestClearingSkull);
 
 
 
@@ -645,6 +664,8 @@ namespace JanSordid::SDL_Example {
         forestPathToHeartBG= nullptr;
         forestPathToHeartFG= nullptr;
         forestHeartBG= nullptr;
+
+        OverlayForestClearingSkull = nullptr;
 
         enemyWereWolfMainSprite = nullptr;
         enemyWolfSprite = nullptr;
@@ -1210,6 +1231,7 @@ namespace JanSordid::SDL_Example {
                                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
                                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
                                             *currentCharacter,Questlog);
+                                    inventoryScreen.RebuildInventory();
                                     eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                                     eTracker.selectedOption = -1;
                                     eTracker.alreadyDisplayedText = false;
@@ -1223,6 +1245,7 @@ namespace JanSordid::SDL_Example {
                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
                                         *currentCharacter,Questlog);
+                                inventoryScreen.RebuildInventory();
                                 eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                                 eTracker.selectedOption = -1;
                                 eTracker.alreadyDisplayedText = false;
@@ -1267,6 +1290,7 @@ namespace JanSordid::SDL_Example {
                                 eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
                                 eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
                                 *currentCharacter,Questlog);
+                        inventoryScreen.RebuildInventory();
                         eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetSuccess;
                         eTracker.alreadyDisplayedText = false;
                         eTracker.chooseFateReroll = false;
@@ -1287,6 +1311,7 @@ namespace JanSordid::SDL_Example {
                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureItemIDs,
                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].failureOutcomes,
                             *currentCharacter,Questlog);
+                    inventoryScreen.RebuildInventory();
                     eTracker.szene = eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].jumpTargetFail;
                     eTracker.alreadyDisplayedText = false;
                     eTracker.chooseFateReroll = false;
@@ -1336,7 +1361,8 @@ namespace JanSordid::SDL_Example {
                     {SceneCompositionSlots::NPCAtBottomMain,EncounterLayout.npcBottomPoint},
                     {SceneCompositionSlots::Enemy_2,{EncounterLayout.enemyMainPoint.x+6,EncounterLayout.enemyMainPoint.y+10}},
                     {SceneCompositionSlots::Enemy_3,{EncounterLayout.enemyMainPoint.x+2,EncounterLayout.enemyMainPoint.y-5}},
-                    {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint}
+                    {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint},
+                    {SceneCompositionSlots::OverlayMainPoint,EncounterLayout.overlayMainPoint}
             };
     void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector, const EnvironmentType environment)
     {
@@ -1479,6 +1505,12 @@ namespace JanSordid::SDL_Example {
                     break;
 
 
+                    //Overlays
+                case SceneCompositionEntities::RitualSkullOverlay:
+                    renderFromSpritesheet({0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)},OverlayForestClearingSkull);
+                    //SDL_Rect sceneWindow = {0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)};
+                    break;
+
                 default:
                     targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
                     targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor));
@@ -1602,32 +1634,8 @@ namespace JanSordid::SDL_Example {
             //if sth equipped in 0, render icon,
 
 
-                switch (get<1>(currentEquipment)->GetItemID()) { //TODO fix redundancy
+            RenderItemIcon(renderer(),get<1>(currentEquipment),Icons[0],Icons,SpriteData.BagIconScale,EquipR);
 
-                    case ItemID::Halberd:
-                        SDL_RenderCopy(renderer(), Icons[1], &SpriteData.BagIconScale, &EquipR);
-                        break;
-                    case ItemID::PrayerBook:
-                        SDL_RenderCopy(renderer(), Icons[2], &SpriteData.BagIconScale, &EquipR);
-                        break;
-                    case ItemID::Candle:
-                        SDL_RenderCopy(renderer(), Icons[3], &SpriteData.BagIconScale, &EquipR);
-                        break;
-                    case ItemID::Torch:
-                        SDL_RenderCopy(renderer(), Icons[4], &SpriteData.BagIconScale, &EquipR);
-                        break;
-                    case ItemID::GUN:
-                        SDL_RenderCopy(renderer(), Icons[5], &SpriteData.BagIconScale, &EquipR);
-                        break;
-                    default:
-                        SDL_RenderCopy(renderer(), Icons[0], &SpriteData.BagIconScale, &EquipR);
-                        break;
-                }
-
-
-
-
-            //if mouse over icon render mouseover
         }
         else
         {
@@ -1648,27 +1656,8 @@ namespace JanSordid::SDL_Example {
 
         if(get<0>(currentEquipment)!= nullptr || (get<1>(currentEquipment)!= nullptr && get<1>(currentEquipment)->GetHandsNeeded()==2))
         {
-            switch (get<0>(currentEquipment)->GetItemID()) {
+            RenderItemIcon(renderer(),get<0>(currentEquipment),Icons[0],Icons,SpriteData.BagIconScale,EquipL);
 
-                case ItemID::Halberd:
-                    SDL_RenderCopy(renderer(), Icons[1], &SpriteData.BagIconScale, &EquipL);
-                    break;
-                case ItemID::PrayerBook:
-                    SDL_RenderCopy(renderer(), Icons[2], &SpriteData.BagIconScale, &EquipL);
-                    break;
-                case ItemID::Candle:
-                    SDL_RenderCopy(renderer(), Icons[3], &SpriteData.BagIconScale, &EquipL);
-                    break;
-                case ItemID::Torch:
-                    SDL_RenderCopy(renderer(), Icons[4], &SpriteData.BagIconScale, &EquipR);
-                    break;
-                case ItemID::GUN:
-                    SDL_RenderCopy(renderer(), Icons[5], &SpriteData.BagIconScale, &EquipR);
-                    break;
-                default:
-                    SDL_RenderCopy(renderer(), Icons[0], &SpriteData.BagIconScale, &EquipL);
-                    break;
-            }
         }
         else
         {
@@ -2707,7 +2696,7 @@ namespace JanSordid::SDL_Example {
                                 }
                         },
                         {
-                                "Scene 4 -village 1",
+                                "Forest Outskirts",
                                 EnvironmentType::ForestOutskirts,
                                 {
 
@@ -2735,21 +2724,21 @@ namespace JanSordid::SDL_Example {
                                 {
 
                                         {
-                                                "Continue",
+                                                "Pick up the skull - later a will/occult check?",
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
-                                                {{ExecuteFlags::Wound, 1}},
+                                                {{ExecuteFlags::GainItem,1}},
                                                 {},
                                                 11,
                                                 255,
-                                                {}, // rewardItemIDs
+                                                {ItemID::RitualSkull}, // rewardItemIDs
                                                 {}  // failureItemIDs
                                         }
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::EnemyMain}
+                                        {SceneCompositionEntities::RitualSkullOverlay,SceneCompositionSlots::OverlayMainPoint}
 
                                 }
                         },

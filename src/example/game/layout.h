@@ -68,6 +68,7 @@ struct {
 
     int HorizonLine = 65; //todo figure this out, add img scaling
 
+    SDL_Point overlayMainPoint = {0,0}; //used to avoid difficult manual placement of items in BG -> things on trees, flowers etc
     SDL_Point characterMainPoint = {15,HorizonLine};
     SDL_Point characterBottomPoint = {15,70};
     SDL_Point enemyMainPoint = {45,HorizonLine};
