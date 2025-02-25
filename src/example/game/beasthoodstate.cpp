@@ -21,6 +21,8 @@
 
 
 
+
+
 // TODO item class as well as character ability and fate refill then do events and event manager
 
 namespace JanSordid::SDL_Example {
@@ -46,7 +48,10 @@ namespace JanSordid::SDL_Example {
         Base::Init();
 
         if (!_font) {
-            _font = TTF_OpenFont(BasePath "asset/font/RobotoSlab-Bold.ttf", (int) (10.0f * _game.scalingFactor()));
+            //_font = TTF_OpenFont(BasePath "asset/font/RobotoSlab-Bold.ttf", (int) (12.0f * _game.scalingFactor()));
+            //_font = TTF_OpenFont(BasePath "/src/example/game/Ressources/fonts/KJV1611.otf", (int) (12.0f * _game.scalingFactor()));
+            _font = TTF_OpenFont(BasePath "/src/example/game/Ressources/fonts/IMFeENrm29P.ttf", (int) (15.0f * _game.scalingFactor()));
+
             TTF_SetFontHinting(_font, TTF_HINTING_LIGHT);
             if (!_font)
                 print(stderr, "TTF_OpenFont failed: {}\n", TTF_GetError());
@@ -136,6 +141,11 @@ namespace JanSordid::SDL_Example {
         String torchIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/torch_icon.png";
         String gunIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_icon.png";
         String ritualSkullIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/ritual_skull_icon.png";
+
+
+
+
+
 
 
 
@@ -563,6 +573,11 @@ namespace JanSordid::SDL_Example {
         PopulateLocationEvents();
 
 
+        //Load Music system
+
+        musicManager.init();
+
+
 
 
     }
@@ -793,6 +808,29 @@ namespace JanSordid::SDL_Example {
 
                         case SDLK_i:
                         bInInventory=!bInInventory;
+                        break;
+                        case SDLK_m:
+                        fmt::println("VillageMusic");
+                        musicManager.changeMusic(bgm::village1);
+                        Mix_Volume(-1,0);
+                        break;
+                    case SDLK_f:
+                        fmt::println("Forest_quiet Music");
+                        musicManager.changeMusic(bgm::forest_quiet);
+                        Mix_Volume(-1,0);
+                        break;
+                    case SDLK_c:
+                        fmt::println("Monastery Music");
+                        musicManager.changeMusic(bgm::monastery);
+                        Mix_Volume(-1,0);
+                        break;
+                        case SDLK_PLUS:
+                            fmt::println("The silence offends Slaanesh!");
+
+                            musicManager.changeMusic(bgm::main_theme);
+
+                            Mix_Volume(-1,MIX_MAX_VOLUME);
+
                         break;
                                     }
             }
@@ -1138,6 +1176,12 @@ namespace JanSordid::SDL_Example {
 
     void BeasthoodState::Update(const u64 frame, const u64 totalMSec, const f32 deltaT) {
 
+//        if( Mix_PlayingMusic() == 0 )
+//        {
+//            //Play the music
+//            Mix_PlayMusic( villageTheme, -1 );
+//        }
+
         if (Phase == GamePhases::UPKEEP) {
 
             //place character somewhere if not placed
@@ -1152,6 +1196,7 @@ namespace JanSordid::SDL_Example {
 
 
         if (Phase == GamePhases::MOVEMENT) {
+            musicManager.changeMusic(bgm::main_theme);
 
             if (movementPoints > 0) {
                 if (playerMoved) {
@@ -1341,6 +1386,7 @@ namespace JanSordid::SDL_Example {
         }
 
         if(Phase == GamePhases::DISASTER){
+            musicManager.changeMusic(bgm::main_theme);
             std::cout << "DISASTER PHASE REACHED \n";
             std::cout.flush();
             Phase = GamePhases::UPKEEP;
@@ -1366,13 +1412,34 @@ namespace JanSordid::SDL_Example {
             };
     void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector, const EnvironmentType environment)
     {
+        switch (environment) {
+            case EnvironmentType::DenseForest: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::MonasteryPath: musicManager.changeMusic(bgm::main_theme);break;
+            case EnvironmentType::Village: musicManager.changeMusic(bgm::village1);break;
+            case EnvironmentType::Village2: musicManager.changeMusic(bgm::village1);break;
+            case EnvironmentType::WindmillOutskirts: musicManager.changeMusic(bgm::main_theme);break;
+            case EnvironmentType::HunterCamp: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::ForestOutskirts: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::ForestClearing: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::ForestLake: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::HeartApproach: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::HermitLodge: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::ForestHeart: musicManager.changeMusic(bgm::battle);break;
+            default:musicManager.changeMusic(bgm::main_theme);break;
+
+
+
+
+        }
+
+
         SDL_Rect targetRect;
         float perspectiveFactor = 1.0;//multiply with h und w to adjust to background
         switch (environment) {
             case EnvironmentType::DenseForest: perspectiveFactor = 1.0;break;
             case EnvironmentType::MonasteryPath: perspectiveFactor = 0.5;break;
-            case EnvironmentType::Village: perspectiveFactor = 0.5;break;
-            case EnvironmentType::Village2: perspectiveFactor = 0.5;break;
+            case EnvironmentType::Village: perspectiveFactor = 0.4;break;
+            case EnvironmentType::Village2: perspectiveFactor = 0.4;break;
             case EnvironmentType::WindmillOutskirts: perspectiveFactor = 0.5;break;
             case EnvironmentType::HunterCamp: perspectiveFactor = 0.6;break;
             case EnvironmentType::ForestOutskirts: perspectiveFactor = 0.3;break;
@@ -1528,6 +1595,7 @@ namespace JanSordid::SDL_Example {
 
     void BeasthoodState::RenderSidebar()
     {
+
         SDL_Rect SidebarMain {static_cast<int>(SidebarLayout.SidebarStart.x*windowSize.x*0.01),
                               static_cast<int>(SidebarLayout.SidebarStart.y*windowSize.y*0.01),
                               static_cast<int>(SidebarLayout.SidebarSize.x*0.01*windowSize.x),
@@ -2643,7 +2711,7 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Villager1,SceneCompositionSlots::Enemy_3}
+                                        {SceneCompositionEntities::Villager1,SceneCompositionSlots::Enemy_2}
 
                                 }
                         },
@@ -3030,20 +3098,6 @@ namespace JanSordid::SDL_Example {
                                                 1,
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
-                                        },
-                                        {
-                                                "REQUIREMENTCHECK - faith 5",
-                                                false,
-                                                StatNames::FIGHT,
-                                                0,
-                                                {},
-                                                {},
-                                                9,
-                                                1,
-                                                {}, // rewardItemIDs
-                                                {},  // failureItemIDs
-                                                {{RequirementFlags::faith,5}},
-                                                true
                                         }
                                 },
                                 {
@@ -3261,28 +3315,7 @@ namespace JanSordid::SDL_Example {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
                                         {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
                                 }
-                        },
-                        {"Sprite Test Monk",
-                         EnvironmentType::MonasteryPath,
-                         {
-
-                                 {
-                                         "Gather your Courage and continue",
-                                         false,
-                                         StatNames::WILLPOWER,
-                                         0,
-                                         {},
-                                         {},
-                                         2,
-                                         2,
-                                         {}, // rewardItemIDs
-                                         {}  // failureItemIDs
-                                 }
-                         },
-                         {
-                                 {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                 {SceneCompositionEntities::Monk,SceneCompositionSlots::EnemyMain}
-                         }}
+                        }
 
                 },
                 DialoguePhase::Scene // Starting dialogue phase

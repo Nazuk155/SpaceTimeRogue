@@ -173,6 +173,8 @@ add_executable( sor-example
         src/example/game/layout.h
         src/example/game/inventory_components.h
         src/example/game/quests.h
+        src/example/game/music.h
+        src/example/game/music.cpp
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC

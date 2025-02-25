@@ -19,6 +19,7 @@
 #include "monster_manager.h"
 
 #include "inventory_components.h"
+#include "music.h"
 
 namespace JanSordid::SDL_Example {
     using namespace JanSordid;
@@ -316,6 +317,7 @@ namespace JanSordid::SDL_Example {
         BlueprintManager blueprintManager;
         LocationManager locationManager;
         MonsterManager monsterManager;
+        MusicManager musicManager;
 
         Character *character1;
 
