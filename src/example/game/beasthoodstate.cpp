@@ -87,6 +87,10 @@ namespace JanSordid::SDL_Example {
         string denseForestBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/dense_forest_test.png";
         string denseForestFGPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/dense_forest_test_fg.png";
         string monasteryPathBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/monasteryPath.png";
+        string monasteryApproachBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/monastery_approach.png";
+        string monasteryGateBGPath= BasePath "/src/example/game/Ressources/Image_assets/backgrounds/monastery_gate.png";
+        string monasteryInteriorBGPath = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/monastery_interior.png";
+
         string village1PathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/village_1.png";
 
         string village2PathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/village_2.png";
@@ -156,6 +160,10 @@ namespace JanSordid::SDL_Example {
         denseForestBG = loadFromFile(denseForestBGPath);
         denseForestFG = loadFromFile(denseForestFGPath);
         monasteryPathBG = loadFromFile(monasteryPathBGPAth);
+        monasteryApproachBG= loadFromFile(monasteryApproachBGPath);
+        monasteryGateBG= loadFromFile(monasteryGateBGPath);
+        monasteryInteriorBG= loadFromFile(monasteryInteriorBGPath);
+
         village1 = loadFromFile(village1PathBG);
         village2 = loadFromFile(village2PathBG);
 
@@ -589,6 +597,9 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(denseForestBG);
         SDL_DestroyTexture(denseForestFG);
         SDL_DestroyTexture(monasteryPathBG);
+        SDL_DestroyTexture(monasteryApproachBG);
+        SDL_DestroyTexture(monasteryGateBG);
+        SDL_DestroyTexture(monasteryInteriorBG);
         SDL_DestroyTexture(village1);
 
         SDL_DestroyTexture(village2);
@@ -665,6 +676,9 @@ namespace JanSordid::SDL_Example {
         denseForestBG = nullptr;
         denseForestFG = nullptr;
         monasteryPathBG = nullptr;
+        monasteryApproachBG= nullptr;
+        monasteryGateBG= nullptr;
+        monasteryInteriorBG = nullptr;
         village1 = nullptr;
         village2 = nullptr;
 
@@ -825,17 +839,22 @@ namespace JanSordid::SDL_Example {
                         Mix_Volume(-1,0);
                         break;
                     case SDLK_PLUS:
-                        fmt::println("The silence offends Slaanesh! Volume to {}",MIX_MAX_VOLUME);
-
-                        musicManager.changeMusic(bgm::main_theme);
-                        Mix_VolumeMusic(MIX_MAX_VOLUME);
 
 
+
+                        if(Mix_VolumeMusic(-1)< (MIX_MAX_VOLUME-2))
+                        {
+                            Mix_VolumeMusic(Mix_VolumeMusic(-1)+2);
+                        }
+                        else
+                        {
+                            fmt::println("The silence offends Slaanesh! Volume to {}",MIX_MAX_VOLUME);
+                            Mix_VolumeMusic(MIX_MAX_VOLUME);
+                        }
                         break;
                     case SDLK_MINUS:
                         fmt::println("quiet");
 
-                        musicManager.changeMusic(bgm::main_theme);
                         if(Mix_VolumeMusic(-1)>2)
                         {
                             Mix_VolumeMusic(Mix_VolumeMusic(-1)-2);
@@ -1018,18 +1037,48 @@ namespace JanSordid::SDL_Example {
             if (Phase == GamePhases::ENCOUNTER) {
 
                 //Build Option Rects
-                std::vector<SDL_Rect> OptionVector = {};
+                std::vector<std::pair<SDL_Rect,bool>> OptionVector = {};
+                int validCount = -1;
                 if(eTracker.activeEncounter)//TODO CTD at this position - fix it
                 {
 
                     for (const SceneOption &o: eTracker.activeEncounter->scenes[eTracker.szene].options) {
-                        OptionVector.push_back(
-                                {static_cast<int>((EncounterLayout.DialogueMainTextStart.x * 0.01 * windowSize.x)),
-                                 static_cast<int>((EncounterLayout.DialogueMainTextEnd.y * 0.01 +
-                                                   OptionVector.size() * EncounterLayout.DialogueOptionFieldScale.y *
-                                                   0.01) * windowSize.y),
-                                 static_cast<int>((EncounterLayout.DialogueMainTextEnd.x * 0.01 * windowSize.x)),
-                                 static_cast<int>((EncounterLayout.DialogueOptionFieldScale.y * 0.01) * windowSize.y)});
+
+                        bool bMeetsCriteria = true;
+
+                        if (o.bHasRequirements) {
+
+                            //loop over all requirements and check if fulfilled
+                            for (const std::tuple<RequirementFlags, int> &req: o.requirements) {
+                                if (!bOptionRequirementMet(req))
+                                    bMeetsCriteria = false;
+                            }
+
+                        }
+
+                        if (bMeetsCriteria) {
+                            validCount++;
+
+                            OptionVector.push_back(
+                                    {{static_cast<int>((EncounterLayout.DialogueMainTextStart.x * 0.01 * windowSize.x)),
+                                      static_cast<int>((EncounterLayout.DialogueMainTextEnd.y * 0.01 +
+                                                        validCount *
+                                                        EncounterLayout.DialogueOptionFieldScale.y *
+                                                        0.01) * windowSize.y),
+                                      static_cast<int>((EncounterLayout.DialogueMainTextEnd.x * 0.01 * windowSize.x)),
+                                      static_cast<int>((EncounterLayout.DialogueOptionFieldScale.y * 0.01) *
+                                                       windowSize.y)},true});
+                        }
+                        else
+                        {
+                            OptionVector.push_back( //Dummy Button
+                                    {{
+                                             windowSize.x,
+                                             windowSize.y,
+                                             0, 0
+                                     }, false}
+                                    );
+                        }
                     }
                 }
                 else
@@ -1063,15 +1112,18 @@ namespace JanSordid::SDL_Example {
                         SDL_GetMouseState(&mouseOverX, &mouseOverY);
                         fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
                         for (int i = 0; i < OptionVector.size(); i++) {
-                            button = OptionVector[i];
-                            fmt::println("Checking button {}", i);
-                            fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}", button.x, button.y, button.w, button.h);
+                            if(OptionVector[i].second){
+                                button = OptionVector[i].first;
+                                fmt::println("Checking button {}", i);
+                                fmt::println("x1 = {}, y1 = {}, x2 = {}, y2 = {}", button.x, button.y, button.w,
+                                             button.h);
 
 
-                            if (IsMouseInsideRect(button, mouseOverX, mouseOverY)) {
-                                fmt::println("Clicked option {}", i);
-                                eTracker.selectedOption = i;
-                                awaitingInput = false;
+                                if (IsMouseInsideRect(button, mouseOverX, mouseOverY)) {
+                                    fmt::println("Clicked option {}", i);
+                                    eTracker.selectedOption = i;
+                                    awaitingInput = false;
+                                }
                             }
                         }
 
@@ -1136,7 +1188,7 @@ namespace JanSordid::SDL_Example {
                         SDL_GetMouseState(&mouseOverX, &mouseOverY);
                         fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
                         for (int i = 0; i < 2; i++) {
-                            button = OptionVector[0];
+                            button = OptionVector[0].first;
                         if(i == 1){
                             button.y = button.y+button.h;
                         }
@@ -1436,6 +1488,7 @@ namespace JanSordid::SDL_Example {
             case EnvironmentType::HeartApproach: musicManager.changeMusic(bgm::forest_quiet);break;
             case EnvironmentType::HermitLodge: musicManager.changeMusic(bgm::forest_quiet);break;
             case EnvironmentType::ForestHeart: musicManager.changeMusic(bgm::battle);break;
+            case EnvironmentType::MonasteryInterior: musicManager.changeMusic(bgm::monastery);break;
             default:musicManager.changeMusic(bgm::main_theme);break;
 
 
@@ -1458,6 +1511,7 @@ namespace JanSordid::SDL_Example {
             case EnvironmentType::ForestLake: perspectiveFactor = 0.7;break;
             case EnvironmentType::HeartApproach: perspectiveFactor = 0.6;break;
             case EnvironmentType::HermitLodge: perspectiveFactor = 0.7;break;
+            case EnvironmentType::MonasteryOutside:perspectiveFactor=0.7;break;
 
 
             default: perspectiveFactor = 1.0;
@@ -2145,6 +2199,15 @@ namespace JanSordid::SDL_Example {
                         renderFromSpritesheet(sceneWindow,outskirtsPath);
                         break;
                     }
+                    case EnvironmentType::MonasteryOutside:
+                        renderFromSpritesheet(sceneWindow,monasteryApproachBG);
+                        break;
+                    case EnvironmentType::MonasteryGate:
+                        renderFromSpritesheet(sceneWindow,monasteryGateBG);
+                        break;
+                    case EnvironmentType::MonasteryInterior:
+                        renderFromSpritesheet(sceneWindow,monasteryInteriorBG);
+                        break;
 
 
                     default:SDL_RenderFillRect(renderer(),&sceneWindow);
@@ -2551,7 +2614,7 @@ namespace JanSordid::SDL_Example {
                                             -1,
                                             {}, // rewardItemIDs
                                             {},  // failureItemIDs
-                                            {{RequirementFlags::hasQuest,1000}},
+                                            {{RequirementFlags::hasQuest,1}},
                                             true
                                         }
                                 },
@@ -2921,6 +2984,7 @@ namespace JanSordid::SDL_Example {
                 DialoguePhase::Scene // Starting dialogue phase
         };
         encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
+        encounterManager.addEncounter(monasteryMain.id,monasteryMain);
 
         //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
@@ -2962,6 +3026,7 @@ namespace JanSordid::SDL_Example {
         /// TODO add more events
         // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
         locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
+        locationManager.GetItem(LocationID::Monastery)->related_events.push_back(EncounterID::MonasteryMain); //TODO TESTING ENCOUNTERS
 
     }
 
@@ -3400,12 +3465,12 @@ namespace JanSordid::SDL_Example {
                     fmt::println("Needed QuestID: {}, Stage: {}",qID,qStage);
                     return false;}
             case RequirementFlags::notOnQuest:
-                if(Questlog.bHasQuest(get<1>(requirement) / 1000))
+                if(Questlog.bHasQuest(get<1>(requirement) ))
                 {return false;}
                 else
                 { return true;}
             case RequirementFlags::hasQuest:
-                if(Questlog.bHasQuest(get<1>(requirement) / 1000))
+                if(Questlog.bHasQuest(get<1>(requirement) ))
                 {return true;}
                 else
                 { return false;}

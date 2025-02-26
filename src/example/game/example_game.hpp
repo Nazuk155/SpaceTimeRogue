@@ -398,6 +398,9 @@ namespace JanSordid::SDL_Example {
         Texture *denseForestBG = nullptr;
         Texture *denseForestFG = nullptr;
         Texture* monasteryPathBG = nullptr;
+        Texture *monasteryApproachBG = nullptr;
+        Texture *monasteryGateBG= nullptr;
+        Texture *monasteryInteriorBG= nullptr;
         Texture* village1 = nullptr;
         Texture * village2 = nullptr;
 
@@ -412,6 +415,7 @@ namespace JanSordid::SDL_Example {
         Texture* forestPathToHeartBG= nullptr;
         Texture* forestPathToHeartFG= nullptr;
         Texture* forestHeartBG= nullptr;
+
 
         //Overlay Items
         Texture* OverlayForestClearingSkull = nullptr;

@@ -38,8 +38,9 @@ enum class EncounterID{
     Combat_Encounter,
     Forest_Thievery,
     Generic_FindSurvivor,
-    Church_HolyWaterConversation
+    Church_HolyWaterConversation,
     //use recognizable names
+    MonasteryMain
 };
 enum class EncounterTypeID{
     Tutorial,

@@ -28,7 +28,9 @@ inline std::vector<Quest> availableQuests
           },
           0},
     {"Test-Start New Quest", "Added through an option",6,
-            {{0,"The start"},{70,"The Middle"},{100,"Complete"}},0}
+            {{0,"The start"},{70,"The Middle"},{100,"Complete"}},0},
+    {"The Monastery of St. Lykon", "An old and respected Dominican monastery",3,
+            {{0,"You are known to the Monks of the convent."},{10,"The Middle"},{100,"Complete"}},0},
 };
 
 

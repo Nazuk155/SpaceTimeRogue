@@ -189,6 +189,9 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
                 if(!questlog.addQuest(get<1>(outcome)))
                 {
                     fmt::println("Failed to add quest {}", get<1>(outcome));
+                }else
+                {
+                    fmt::println("started quest:",get<1>(outcome));
                 }
                 break;
             case ExecuteFlags::AdvanceQuestStage:
