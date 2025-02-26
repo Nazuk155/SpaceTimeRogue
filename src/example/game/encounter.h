@@ -342,7 +342,7 @@ inline Encounter monasteryMain
                                         }
                                 },
 
-                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
                                  {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}}
 
 
@@ -366,7 +366,7 @@ inline Encounter monasteryMain
 
                                 },
 
-                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
                                  {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}
                                 }
                         },
@@ -400,7 +400,7 @@ inline Encounter monasteryMain
                                         }
                                 },
 
-                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
                                  {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}}
 
                         },

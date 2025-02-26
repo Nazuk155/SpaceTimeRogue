@@ -823,20 +823,23 @@ namespace JanSordid::SDL_Example {
                         case SDLK_i:
                         bInInventory=!bInInventory;
                         break;
-                        case SDLK_m:
+                        case SDLK_v:
                         fmt::println("VillageMusic");
                         musicManager.changeMusic(bgm::village1);
-                        Mix_Volume(-1,0);
+
                         break;
                     case SDLK_f:
                         fmt::println("Forest_quiet Music");
                         musicManager.changeMusic(bgm::forest_quiet);
-                        Mix_Volume(-1,0);
+
                         break;
                     case SDLK_c:
                         fmt::println("Monastery Music");
                         musicManager.changeMusic(bgm::monastery);
-                        Mix_Volume(-1,0);
+
+                        break;
+                    case SDLK_m:
+                        Mix_VolumeMusic(0);
                         break;
                     case SDLK_PLUS:
 
@@ -1511,7 +1514,7 @@ namespace JanSordid::SDL_Example {
             case EnvironmentType::ForestLake: perspectiveFactor = 0.7;break;
             case EnvironmentType::HeartApproach: perspectiveFactor = 0.6;break;
             case EnvironmentType::HermitLodge: perspectiveFactor = 0.7;break;
-            case EnvironmentType::MonasteryOutside:perspectiveFactor=0.7;break;
+            case EnvironmentType::MonasteryOutside:perspectiveFactor=0.6;break;
 
 
             default: perspectiveFactor = 1.0;
