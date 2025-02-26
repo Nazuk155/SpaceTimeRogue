@@ -824,14 +824,25 @@ namespace JanSordid::SDL_Example {
                         musicManager.changeMusic(bgm::monastery);
                         Mix_Volume(-1,0);
                         break;
-                        case SDLK_PLUS:
-                            fmt::println("The silence offends Slaanesh!");
+                    case SDLK_PLUS:
+                        fmt::println("The silence offends Slaanesh! Volume to {}",MIX_MAX_VOLUME);
 
-                            musicManager.changeMusic(bgm::main_theme);
-
-                            Mix_Volume(-1,MIX_MAX_VOLUME);
+                        musicManager.changeMusic(bgm::main_theme);
+                        Mix_VolumeMusic(MIX_MAX_VOLUME);
+                            //Mix_Volume(-1,); //todo not working
 
                         break;
+                    case SDLK_MINUS:
+                        fmt::println("quiet");
+
+                        musicManager.changeMusic(bgm::main_theme);
+                        if(Mix_VolumeMusic(-1)>2)
+                        {
+                            Mix_VolumeMusic(Mix_VolumeMusic(-1)-2);
+                        }
+                        else
+                            Mix_VolumeMusic(0); //mute
+
                                     }
             }
 
