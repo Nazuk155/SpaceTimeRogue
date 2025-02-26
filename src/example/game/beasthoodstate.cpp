@@ -548,8 +548,8 @@ namespace JanSordid::SDL_Example {
 
 
         locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
-        locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
-        locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
+        //locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
+        //locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
         // CurrentEncounter = e;
 
 
@@ -1512,7 +1512,7 @@ namespace JanSordid::SDL_Example {
             case EnvironmentType::ForestOutskirts: perspectiveFactor = 0.3;break;
             case EnvironmentType::ForestClearing: perspectiveFactor = 0.9;break;
             case EnvironmentType::ForestLake: perspectiveFactor = 0.7;break;
-            case EnvironmentType::HeartApproach: perspectiveFactor = 0.6;break;
+            case EnvironmentType::HeartApproach: perspectiveFactor = 0.75;break;
             case EnvironmentType::HermitLodge: perspectiveFactor = 0.7;break;
             case EnvironmentType::MonasteryOutside:perspectiveFactor=0.6;break;
 
@@ -3181,7 +3181,7 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::EnemyMain}
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::EnemyMain}
 
                                 }
                         },
@@ -3205,7 +3205,7 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::CharacterFront}
                                 }
                         },
                         {
@@ -3228,7 +3228,7 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::CharacterFront}
                                 }
                         },
                         {
@@ -3263,7 +3263,7 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::CharacterFront}
                                 }
                         },
                         {
@@ -3286,8 +3286,8 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
-                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
+                                      //  {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
+                                        //{SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
                                 }
                         },
                         {
@@ -3344,9 +3344,7 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront},
-                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::CharacterFront},
                                 }
                         },
                         {
@@ -3369,7 +3367,7 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::CharacterFront}
                                 }
                         },
                         {
@@ -3392,7 +3390,7 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
+                                        {SceneCompositionEntities::Wolf,SceneCompositionSlots::CharacterFront}
                                 }
                         }
 
