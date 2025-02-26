@@ -829,7 +829,7 @@ namespace JanSordid::SDL_Example {
 
                         musicManager.changeMusic(bgm::main_theme);
                         Mix_VolumeMusic(MIX_MAX_VOLUME);
-                            //Mix_Volume(-1,); //todo not working
+
 
                         break;
                     case SDLK_MINUS:
