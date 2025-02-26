@@ -84,6 +84,7 @@ void Character::EquipItem(Item* item) {
 
         }
     }
+    UpdateCurrentStats();
 }
 void Character::UnequipItem(ItemID id) {
     if (LHand != ItemID::NONE || RHand != ItemID::NONE) {
@@ -105,6 +106,7 @@ void Character::UnequipItem(ItemID id) {
             }
         }
     }
+    UpdateCurrentStats();
 }
 
 // Gameplay Methods
