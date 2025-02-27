@@ -1560,7 +1560,7 @@ namespace JanSordid::SDL_Example {
                     }
                     break;
                 case ExecuteFlags::SpawnMonster:
-                   //TODO
+                   //TODO implement spawns in general too
                    break;
                 default:eTracker.exFlag = ExecuteFlags::NONE; break;
 
