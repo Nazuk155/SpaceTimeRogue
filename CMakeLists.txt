@@ -136,11 +136,7 @@ target_link_libraries(      sor-mini PUBLIC
 add_executable( sor-example
         src/example/game/example_game.cpp
 
-        src/example/game/introstate.cpp
-        src/example/game/plasmastate.cpp
-        src/example/game/sortstate.cpp
-        src/example/game/camerastate.cpp
-        src/example/game/shooterstate.cpp
+
 
         src/sor/core.cpp
         src/sor/sdl_core.cpp

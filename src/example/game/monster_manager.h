@@ -4,7 +4,6 @@
 
 #pragma once
 #include <unordered_map>
-#include "example/global.hpp"
 #include "monster.h"
 
 class MonsterManager {
@@ -24,6 +23,13 @@ public:
             return &(it->second); // Return a pointer to the monster
         }
         return nullptr; // Return nullptr if the monster doesn't exist
+    }
+    Monster GetMonster(MonsterID id) const {
+        auto it = monsterMap.find(id);
+        if (it != monsterMap.end()) {
+            return it->second;  // Return a copy of the Monster
+        }
+        throw std::runtime_error("Monster ID not found!");
     }
 
     // Check if a monster exists

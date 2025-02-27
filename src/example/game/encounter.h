@@ -27,15 +27,7 @@ enum class EnvironmentType {
 };
 
 // Enumerations for various flags and phases
-enum class ExecuteFlags {
-    Wound,
-    SanityLoss,
-    Heal,
-    RegainSan,
-    GainItem,
-    StartQuest,
-    AdvanceQuestStage
-};
+
 
 enum class RequirementFlags {
     speed,
@@ -141,6 +133,12 @@ struct Encounter {
     std::vector<Scene> scenes;
     DialoguePhase currentDialoguePhase;
 
+    ///The Combat relevant attributes below can simply be ignored for encounters that do not contain a StartCombat ExecuteFlag
+    std::vector<MonsterID> monsterIDs; // for encounters that can start a combat with up to 3 monsters
+    int fightVictorySzene,fightDefeatSzene;
+    //jump back szenes that eTrackerSaver copys before eTracker gets overwritten with the combat event. Simply set these to win/loss result scenes
+    // these are used in the ExecuteFlags FinishedCombatWIN/LOSS to go to the correct scene of the encounter that got paused for combat.
+
     bool validate() const {
         for (const auto &scene: scenes) {
             if (!scene.validate()) {
@@ -151,6 +149,296 @@ struct Encounter {
     }
 };
 
+///test encounter for triggering& resolving a fight while jumping back into the encounter at the correct scenes. Set to Smith node.
+inline Encounter testingCombat
+        {
+                EncounterID::Testing_Combat,
+                EncounterTypeID::Unique,
+                {
+                        {"The old monastery of Saint Lykon stands before you. You approach its gates.",
+                         EnvironmentType::MonasteryOutside,
+                         {
+                                 {
+                                         "Fight a wolf",
+                                         false,
+                                         StatNames::FAITH,
+                                         0,
+                                         {{ExecuteFlags::StartCombat, 0}},
+                                         {},
+                                         1, 255,
+                                         {},
+                                         {},
+                                         {}, //If not on Quest 3, start quest 3
+                                         false
+
+
+                                 }
+                         },
+                         {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain}}
+                        }, {"Choose",
+                            EnvironmentType::MonasteryGate,
+                            {
+                                    {
+                                            "Back to Szene 0",
+                                            false,
+                                            StatNames::FIGHT,
+                                            0,
+                                            {},
+                                            {},
+                                            0, 0,
+                                            {},
+                                            {},
+                                            {}, //If not on Quest 3, start quest 3
+                                            false
+
+                                    },  //Require healing
+                                    {
+
+                                            "I need a place to rest. [Regain San]",
+                                            false,
+                                            StatNames::FIGHT,
+                                            0,
+                                            {},
+                                            {},
+                                            6, 255,
+                                            {},
+                                            {},
+                                            {}, //If not on Quest 3, start quest 3
+                                            false
+
+
+                                    },  //Regain San/Rest
+                                    // {} // I found this skull in the forest? TODO Expand MSQ, Sidequests etc
+
+
+                            },
+                            {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
+                             {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}}
+                        },
+                        {"A monk opens the gate. \"Welcome, I am Brother Albert of the Order of Preachers. What brings you here? \"",
+                         EnvironmentType::MonasteryGate,
+                         {
+                                 {
+                                         "I am Franz Todbringer, a mercenary hired to hunt down the beasts plaguing the forest",
+                                         false,
+                                         StatNames::FIGHT,
+                                         0,
+                                         {},
+                                         {},
+                                         3, 255,
+                                         {},
+                                         {},
+                                         {}, //If not on Quest 3, start quest 3
+                                         false
+                                 },//todo choose a name for intro? based on class?,
+                                 {
+                                         "I am in need of healing. I was hunting the beasts plaguing the forest and got wounded. My name is Franz Todbringer",
+                                         false,
+                                         StatNames::FIGHT,
+                                         0,
+                                         {},
+                                         {},
+                                         4, 255,
+                                         {},
+                                         {},
+                                         {{RequirementFlags::isPhysicallyWounded,
+                                           3}}, //If not on Quest 3, start quest 3
+                                         false
+
+                                 }
+                         },
+                         {
+                                 {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}
+                         }
+
+                        },
+                        {  //Scene 3 - Basic Intro Answer
+                                "FIGHT WIN",
+                                EnvironmentType::MonasteryGate,
+                                {
+                                        {
+                                                "BACK TO 0",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                0, 255,
+                                                {},
+                                                {},
+                                                {}, //If not on Quest 3, start quest 3
+                                                false
+
+                                        },
+                                        {
+                                                "Finish Event",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                255, 255,
+                                                {},
+                                                {},
+                                                {}, //If not on Quest 3, start quest 3
+                                                false
+
+                                        }
+                                        // {} // I found this skull in the forest? TODO Expand MSQ, Sidequests etc
+                                },
+                                {
+                                        {SceneCompositionEntities::Character,
+                                         SceneCompositionSlots::CharacterAtBottomMain},
+                                        {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}
+
+                                }},
+                        { //Scene 4 - Basic Healing Answer
+
+                                "FIGHTLOSS",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {"Back to 0",
+                                         false,
+                                         StatNames::FAITH,
+                                         0,
+                                         {},
+                                         {},
+                                         0,
+                                         255,
+                                         {},
+                                         {},
+                                         {},
+                                         false
+                                        },
+                                        {
+                                                "Finish Event",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                255, 255,
+                                                {},
+                                                {},
+                                                {}, //If not on Quest 3, start quest 3
+                                                false
+
+                                        }
+                                },
+
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}}
+
+
+                        },
+                        { //Scene 5 - Healing Description
+                                //{{ExecuteFlags::Heal, 3}}
+                                "The monks are adept keepers of natural magic. Your wounds are cleaned and treated.",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {"The poultices do their work. It is time to move on. [+4 Stamina]",
+                                         false,
+                                         StatNames::FAITH,
+                                         0,
+                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::Heal, 4}},
+                                         {},
+                                         255,
+                                         255,
+                                         {},
+                                         {}
+                                        }
+
+                                },
+
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}
+                                }
+                        },
+                        { //Scene 6 - Rest/Prayer Answer
+                                "Of course. We gladly offer you sanctuary",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {"Rest and recover. [Regain San]",
+                                         false,
+                                         StatNames::FAITH,
+                                         0,
+                                         {},
+                                         {},
+                                         7,
+                                         255,
+                                         {},
+                                         {}
+                                        },
+                                        {"[Faith 6] Spend your time in prayer and meditation. [Chance to recover more.]",
+                                         true,
+                                         StatNames::FAITH,
+                                         3,
+                                         {},
+                                         {},
+                                         8,
+                                         7,
+                                         {},
+                                         {},
+                                         {{RequirementFlags::faith, 6}},
+                                         true
+                                        }
+                                },
+
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}}
+
+                        },
+                        {
+                                //Scene 7 Rest Description.
+                                //{ExecuteFlags::Heal,1},{ExecuteFlags::RegainSan,3}
+                                "You spend some time in the monastery. The nightmares and exhaustion fade.",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {"It is time to move on. [+1 Stamina +3 San]",
+                                         false,
+                                         StatNames::FAITH,
+                                         0,
+                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 3}},
+                                         {},
+                                         255,
+                                         255,
+                                         {},
+                                         {}
+                                        },
+
+                                },
+
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::InteractionMain}
+                                }
+
+
+                        },
+                        {
+                                //Scene 8 - Prayer Success description
+                                "You spend time in deep prayer. Your soul recovers from its ordeals.",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {"It is time to move on. [+1 Stamina +6 San]",
+                                         false,
+                                         StatNames::FAITH,
+                                         0,
+                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 6}},
+                                         {},
+                                         255,
+                                         255,
+                                         {},
+                                         {}
+                                        },
+
+                                },
+
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::InteractionMain}
+                                }
+                        }
+
+                }, DialoguePhase::Scene,{MonsterID::Wolf,MonsterID::Wolf},3,4 // Starting dialogue phase
+        };
 inline Encounter monasteryMain
         {
                 EncounterID::MonasteryMain,

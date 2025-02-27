@@ -17,11 +17,13 @@ class SkillChallengeEngine
     //todo add character into init + CONSTRUCTOR
 
     DiceRoller diceRoller;
-    StatNames currentSkill = StatNames::NONE;//todo
+    StatNames currentSkill = StatNames::NONE;
 
 
 
     uint8_t currentDifficulty =0;
+
+    //Modifier is Combat/Horror Rating of the currently fought monster. It reduces or increases the dicepool.
     int8_t currentModifier = 0;
 
     uint8_t currentSuccesses = 0;
@@ -55,6 +57,9 @@ public:
         currentSkill = skill;
     }
 
+    StatNames getCurrentSkill(){
+        return currentSkill;
+    }
     int currentSkillValue()
     {
 

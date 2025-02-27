@@ -159,8 +159,9 @@ public:
     }
 */
 
-
-void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::tuple<ExecuteFlags, int>> &outcomes, Character &currentCharacter, QuestLog& questlog) const {
+///refactored this so it returns a ExecuteFlag which we use in a switch to resolve the outcome in beasthoodstate
+///handle all future added outcomes outside for easier access to functionality - Max
+ExecuteFlags iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::tuple<ExecuteFlags, int>> &outcomes, Character &currentCharacter, QuestLog& questlog) const {
     for (std::tuple<ExecuteFlags, int> outcome: outcomes) {
 
         switch (get<0>(outcome)) {
@@ -168,6 +169,7 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
 
                 fmt::print("Debug- Injury");
                 currentCharacter.AdjustStamina(-get<1>(outcome));
+                return ExecuteFlags::Wound;
                 break;
             case ExecuteFlags::GainItem:
                 for(auto e : rewards) {
@@ -175,15 +177,19 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
                     currentCharacter.AddToInventory(iManager->GetItem(e));
                 }
                 //TODO Ressources
+                return ExecuteFlags::GainItem;
                 break;
             case ExecuteFlags::Heal:
                 currentCharacter.AdjustStamina(get<1>(outcome));
+                return ExecuteFlags::Heal;
                 break;
             case ExecuteFlags::SanityLoss:
                 currentCharacter.AdjustSanity(-get<1>(outcome)); //todo fix this mess/warning
+                return ExecuteFlags::SanityLoss;
                 break;
             case ExecuteFlags::RegainSan:
                 currentCharacter.AdjustSanity(get<1>(outcome));
+                return ExecuteFlags::RegainSan;
                 break;
             case ExecuteFlags::StartQuest:
                 if(!questlog.addQuest(get<1>(outcome)))
@@ -193,6 +199,7 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
                 {
                     fmt::println("started quest:",get<1>(outcome));
                 }
+                return ExecuteFlags::StartQuest;
                 break;
             case ExecuteFlags::AdvanceQuestStage:
             {
@@ -221,13 +228,21 @@ void iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::t
                     }
                 }
 
-            }break;
+            } return ExecuteFlags::AdvanceQuestStage;break;
+            case ExecuteFlags::StartCombat:
+                return ExecuteFlags::StartCombat;break;
 
+            case ExecuteFlags::FinishedCombatWIN:
+                return ExecuteFlags::FinishedCombatWIN;break;
+            case ExecuteFlags::FinishedCombatLOSS:
+                return ExecuteFlags::FinishedCombatLOSS;break;
+            case ExecuteFlags::SpawnMonster:
 
-
+                return ExecuteFlags::SpawnMonster;
         }
     }
-}
+        return ExecuteFlags::Heal;
+    }
 
 
 

@@ -11,6 +11,21 @@
 
 using namespace JanSordid::Core;
 
+enum class ExecuteFlags {
+    NONE,
+    Wound,
+    SanityLoss,
+    Heal,
+    RegainSan,
+    GainItem,
+    StartQuest,
+    AdvanceQuestStage,
+    StartCombat,
+    FinishedCombatWIN,
+    FinishedCombatLOSS,
+    SpawnMonster
+};
+
 enum class GamePhases
         {
     UPKEEP,
@@ -37,6 +52,7 @@ enum class EncounterID{
     NO_ENCOUNTER_ASSIGNED, // never assign this to a event. Only output when a location has no events in vector
     Combat_Encounter,
     Forest_Thievery,
+    Testing_Combat,
     Generic_FindSurvivor,
     Church_HolyWaterConversation,
     //use recognizable names
@@ -71,7 +87,9 @@ enum class ItemID {
     BulletSilver,
     LoadedGunLead,
     LoadedGunSilver};
+
 enum class ItemType {Melee,Ranged,Magic,Unique};
+
 enum class LocationID {
     Forest,
     Church,
@@ -107,6 +125,7 @@ enum class QuestID {
 enum class MonsterID {
     UNASSIGNED,
     Wolf,
+    Bear,
     Ghoul,
     Werewolf,
     Vampire,
@@ -127,6 +146,7 @@ enum class MovementType {
     Flying,
     // Add other movement types here
 };
+
 
 
 

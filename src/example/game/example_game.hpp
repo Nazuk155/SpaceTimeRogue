@@ -466,6 +466,9 @@ namespace JanSordid::SDL_Example {
         //easy lookup for location rendering on map
         std::unordered_map<LocationID, LocationTextures> locationTextureMap;
 
+        std::unordered_map<MonsterID,SDL_Texture*> monsterIDtoTextureMap;
+       // std::unordered_map<MonsterID,SDL_Texture*> monsterIDtoIconMap;
+
         //skillengine
         SkillChallengeEngine ske;
         Character *currentCharacter;
@@ -493,15 +496,36 @@ namespace JanSordid::SDL_Example {
             bool alreadyDisplayedText = false;
             int lastSzeneTextDisplayed = 0;
             bool bShowPreviousDicerolls=false;
+            Vector<MonsterID> monsterIDs = {};
+            ExecuteFlags exFlag = ExecuteFlags::NONE;
+            int szeneWin,szeneLoss;
+
+            void Reset(){
+                activeEncounter = nullptr;
+                szene = 0;
+                chooseFateReroll = false;
+                fateRerollChoice = -1;
+                encounterID = EncounterID::NO_ENCOUNTER_ASSIGNED;
+                selectedOption = -1;
+                diaPhase = DialoguePhase::Scene;
+                alreadyDisplayedText = false;
+                bShowPreviousDicerolls = false;
+                monsterIDs.clear();
+                szeneWin = 0;
+                szeneLoss = 0;
+                exFlag = ExecuteFlags::NONE;
+            }
         };
         EncounterTracker eTracker;
+        EncounterTracker eTrackerSaver;
+
         bool awaitingInput = false;
 
 
         //sets up the combat encounters values when triggered
         struct CombatTracker{
-            LocationID location = LocationID::Forest;
-            LocationID alreadyDodged;
+            LocationID location = LocationID::UNASSIGNED;
+            LocationID alreadyDodged = LocationID::UNASSIGNED;
             MonsterID monID = MonsterID::UNASSIGNED;
             int awareness = 0; // monsterManager.getMonsterByID(locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters_or_npcs.back())->awareness etc.
             int toughness = 0;
@@ -510,7 +534,50 @@ namespace JanSordid::SDL_Example {
             int horrorRating = 0;
             int combatRating = 0;
 
-            Vector<MonsterID> monsterIdVector;
+            int monstersInFight;
+            bool encounterTriggeredThis = false;
+
+            Vector<Monster> monsters;
+            void updateCurrentMonster(){
+                if(!monsters.empty()) {
+                    monID = monsters.back().id;
+                    awareness = monsters.back().awareness;
+                    toughness = monsters.back().toughness;
+                    horrorDamage = monsters.back().horrorDamage;
+                    combatDamage = monsters.back().combatDamage;
+                    horrorRating = monsters.back().horrorRating;
+                    combatRating = monsters.back().combatRating;
+                }else{
+                     monID = MonsterID::UNASSIGNED;
+                     awareness = 0;
+                     toughness = 0;
+                     horrorDamage = 0;
+                     combatDamage = 0;
+                     horrorRating = 0;
+                     combatRating = 0;
+                }
+
+            }
+            void RemoveMonster(MonsterID id) {
+                auto it = std::find_if(monsters.begin(), monsters.end(),
+                                       [id](const Monster &m) { return m.id == id; });
+                if (it != monsters.end()) {
+                    monsters.erase(it);  // Only removes the first matching monster
+                }
+            }
+            void Reset(){
+                location = LocationID::UNASSIGNED;
+                awareness = 0;
+                toughness = 0;
+                horrorDamage = 0;
+                combatDamage = 0;
+                horrorRating = 0;
+                combatRating = 0;
+                monID = MonsterID::UNASSIGNED;
+                alreadyDodged = LocationID::UNASSIGNED;
+                monsters.clear();
+
+            }
         };
         CombatTracker cTracker;
 
@@ -553,6 +620,8 @@ namespace JanSordid::SDL_Example {
         void Render(u64 frame, u64 totalMSec, f32 deltaT) override;
 
         //added functions for our game
+
+        void CleanupMonsterTextures();
 
 
         void PopulateBlueprints();

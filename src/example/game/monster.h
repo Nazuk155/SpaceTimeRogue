@@ -4,7 +4,6 @@
 
 #pragma once
 #include "../global.hpp"
-#include "ability.h"
 class Monster {
 public:
     const char* name = "";
