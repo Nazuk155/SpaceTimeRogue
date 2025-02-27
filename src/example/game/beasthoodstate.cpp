@@ -21,7 +21,8 @@
 
 
 
-
+//TODO HP/Sanity 0 conditions in Encounter einbauen sowie Monster mit HP und inkrementalen verletzungen anstatt toughness überbieten or bust
+//TODO monster spawn und bewegung per Disaster Phase regeln.
 namespace JanSordid::SDL_Example {
     struct {
 
