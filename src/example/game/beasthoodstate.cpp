@@ -89,6 +89,7 @@ namespace JanSordid::SDL_Example {
         string peasantWomanSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/woman_1_sprite.png";
         string mercenarySpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/mercenary_sprite.png";
         string enemySkeletonSpearSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/skeleton_spear_sprite.png";
+        string veteranSpritePath =  BasePath "/src/example/game/Ressources/Image_assets/entities/veteran_sprite.png";
 
 
         //Backgrounds/Foregrounds
@@ -204,6 +205,7 @@ namespace JanSordid::SDL_Example {
         monsterIDtoTextureMap[MonsterID::Werewolf] = loadFromFile(enemyWereWolfMainSpritePath);
         monsterIDtoTextureMap[MonsterID::Bear] = loadFromFile(enemyBearSpritePath);
 
+
         //map MonsterID to corresponding MAP ICON texture
         // monsterIDtoIconMap[MonsterID::Wolf] = loadFromFile(enemyWolfIconPath);
 
@@ -225,6 +227,7 @@ namespace JanSordid::SDL_Example {
         hunterSprite = loadFromFile(hunterSpriteIMGPath);
         peasantWomanSprite = loadFromFile(peasantWomanSpriteIMGPath);
         mercenarySprite= loadFromFile(mercenarySpriteIMGPath);
+        veteranSprite= loadFromFile(veteranSpritePath);
 
         //Buttons
         endTurnButtonOn = loadFromFile(endTurnButtonOnPath);
@@ -738,6 +741,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(hunterSprite);
         SDL_DestroyTexture(peasantWomanSprite);
         SDL_DestroyTexture(mercenarySprite);
+        SDL_DestroyTexture(veteranSprite);
 
 
 
@@ -794,6 +798,7 @@ namespace JanSordid::SDL_Example {
         hunterSprite = nullptr;
         peasantWomanSprite = nullptr;
         mercenarySprite = nullptr;
+        veteranSprite= nullptr;
 
         endTurnButtonOff = nullptr;
         endTurnButtonMouseover = nullptr;
@@ -1933,6 +1938,15 @@ namespace JanSordid::SDL_Example {
                     targetRect.h = static_cast<int>(SpriteData.ScalingvalueSkeletonSpearY*windowSize.y*perspectiveFactor);
 
                     renderFromSpritesheet(targetRect,enemySkeletonSpearSprite);
+                    break;
+                case SceneCompositionEntities::Veteran:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueVeteranY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueVeteranX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueVeteranY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,veteranSprite);
                     break;
 
 
@@ -3347,9 +3361,9 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,
-                                         SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Mercenary,
-                                         SceneCompositionSlots::EnemyMain}
+                                         SceneCompositionSlots::CharacterAtBottomMain},
+                                        {SceneCompositionEntities::Veteran,
+                                         SceneCompositionSlots::NPCAtBottomMain}
                                 }
 
                         }

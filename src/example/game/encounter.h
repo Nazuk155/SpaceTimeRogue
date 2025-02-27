@@ -90,7 +90,7 @@ enum class SceneCompositionEntities {
     Healer,
     Werewolf,
     Hunter,
-    MonasteryGate,
+    Veteran,
     Monk,
     Abbot,
     Bear,

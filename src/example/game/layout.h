@@ -156,7 +156,9 @@ struct  //TODO PLACEHOLDER for better system, encounter data etc
     SDL_Point mercenary_IMG {660,1799};
     const float ScalingvalueMercX = mercenary_IMG.x/(1920*2.7);
     const float ScalingvalueMercY = mercenary_IMG.y/(1080*2.7);
-
+    SDL_Point veteran_IMG {462,1250};
+    const float ScalingvalueVeteranX = veteran_IMG.x/(1920*2.7);
+    const float ScalingvalueVeteranY = veteran_IMG.y/(1080*2.7);
 
 
     const SDL_Point Turn_Button = {409, 1040};

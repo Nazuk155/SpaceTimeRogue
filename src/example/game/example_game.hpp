@@ -401,6 +401,7 @@ namespace JanSordid::SDL_Example {
         Texture* hunterSprite = nullptr;
         Texture* peasantWomanSprite = nullptr;
         Texture *mercenarySprite= nullptr;
+        Texture * veteranSprite = nullptr;
 
 
         Texture *enemyWereWolfMainSprite = nullptr;
