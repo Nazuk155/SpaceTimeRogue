@@ -68,7 +68,9 @@ enum class ItemID {
 
     RitualSkull,
     BulletLead,
-    BulletSilver};
+    BulletSilver,
+    LoadedGunLead,
+    LoadedGunSilver};
 enum class ItemType {Melee,Ranged,Magic,Unique};
 enum class LocationID {
     Forest,

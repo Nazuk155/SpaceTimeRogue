@@ -5,8 +5,8 @@
 
 class Item {
 public:
-    Item(ItemID itemName, ItemType itemType, const std::string& name, uint8_t handsNeeded, bool isEquipped = false,bool isLoaded = false,bool hasStats = true)
-            : itemName(itemName), itemType(itemType), name(name), handsNeeded(handsNeeded), isEquipped(isEquipped),isLoaded(isLoaded),hasStats(hasStats),
+    Item(ItemID itemName, ItemType itemType, const std::string& name, uint8_t handsNeeded, bool isEquipped = false,bool isLoaded = false,bool hasStats = true,bool bIsBullet = false)
+            : itemName(itemName), itemType(itemType), name(name), handsNeeded(handsNeeded), isEquipped(isEquipped),isLoaded(isLoaded),hasStats(hasStats), isBullet(bIsBullet),
               stats(0,0,0,0,0,0) {}
 
     // Accessors
@@ -32,6 +32,7 @@ public:
 
     bool hasStats;
     bool isLoaded;
+    bool isBullet;
 
 private:
     ItemID itemName;
@@ -43,5 +44,6 @@ private:
 
     Stats stats;
     Ability* ability = nullptr; // Pointer to an associated ability
+
 
 };

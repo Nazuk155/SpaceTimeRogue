@@ -374,15 +374,20 @@ namespace JanSordid::SDL_Example {
         Texture * missingIcon = nullptr;
         Texture * candleIcon = nullptr;
         Texture * prayerbookIcon = nullptr;
-        Texture * gunIcon = nullptr;
+
         Texture * torchIcon = nullptr;
 
         Texture *ritualSkullIcon = nullptr;
 
         Texture * halberdIcon = nullptr;
 
+        Texture * gunIcon = nullptr;
         Texture * bulletSilver = nullptr;
         Texture * bulletLead = nullptr;
+        Texture * gunSilverIcon = nullptr;
+        Texture * gunLeadIcon = nullptr;
+
+
         std::vector<Texture*> Icons;
 
         //NPCs

@@ -157,6 +157,8 @@ namespace JanSordid::SDL_Example {
         String prayerbookIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/prayerbook_icon.png";
         String torchIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/torch_icon.png";
         String gunIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_icon.png";
+        String gunSilverIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_silver_icon.png";
+        String gunLeadIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_lead_icon.png";
         String ritualSkullIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/ritual_skull_icon.png";
         String bulletLeadPath = BasePath "/src/example/game/Ressources/Image_assets/items/bullet_lead.png";
         String bulletSilverPath = BasePath "/src/example/game/Ressources/Image_assets/items/bullet_silver.png";
@@ -251,6 +253,8 @@ namespace JanSordid::SDL_Example {
         candleIcon = loadFromFile(candleIconPath);
         prayerbookIcon = loadFromFile(prayerbookIconPath);
         gunIcon= loadFromFile(gunIconPath);
+        gunLeadIcon= loadFromFile(gunLeadIconPath);
+        gunSilverIcon = loadFromFile(gunSilverIconPath);
         torchIcon= loadFromFile(torchIconPath);
         ritualSkullIcon = loadFromFile(ritualSkullIconPath);
 
@@ -268,6 +272,8 @@ namespace JanSordid::SDL_Example {
         Icons.push_back(ritualSkullIcon);//Skull=6
         Icons.push_back(bulletLead);//Lead = 7
         Icons.push_back(bulletSilver); //Silver = 8
+        Icons.push_back(gunLeadIcon); //Lead loaded gun = 9
+        Icons.push_back(gunSilverIcon); //Silver loaded gun = 10
 
 
 
@@ -525,13 +531,26 @@ namespace JanSordid::SDL_Example {
 
         // Create and add items
         auto sword = std::make_unique<Item>(ItemID::Halberd, ItemType::Melee, "Halberd of Valor", 2);
-        sword->SetStats({0, 0, 5, 0, 0, 0}); // Attack 10
+        sword->SetStats({0, 0, 5, 0, 0, 0});
         sword->SetAbility(staminaAbilityPtr); // Associate ability with item
         itemManager.AddItem(std::move(sword));
 
         auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Not so Common Torch",1);
-        torch->SetStats({0, 0, 1, 1, 0, 5}); // Attack 10
+        torch->SetStats({0, 0, 1, 1, 0, 5});
         itemManager.AddItem(std::move(torch));
+
+        auto gun = std::make_unique<Item>(ItemID::GUN, ItemType::Unique,"Unloaded Gun",1);
+        gun->SetStats({0, 0, 1, 0, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(gun));
+
+        auto gunLoadedSilver = std::make_unique<Item>(ItemID::LoadedGunSilver, ItemType::Unique,"Gun - Silver Bullet",1);
+        gunLoadedSilver->SetStats({0, 0, 1, 2, 3, 3}); // Attack 1
+        itemManager.AddItem(std::move(gunLoadedSilver));
+
+        auto gunLoadedLead = std::make_unique<Item>(ItemID::LoadedGunLead, ItemType::Unique,"Gun - Lead Bullet",1);
+        gunLoadedLead->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(gunLoadedLead));
+
 
 
         auto prayerBook = std::make_unique<Item>(ItemID::PrayerBook, ItemType::Unique,"Prayer Book of St. Lycon",1);
@@ -546,11 +565,13 @@ namespace JanSordid::SDL_Example {
         ritual_skull->SetStats({0, 0, 0, 0, 1, -2});
         itemManager.AddItem(std::move(ritual_skull));
 
-        auto bullet_silver = std::make_unique<Item>(ItemID::BulletSilver,ItemType::Magic,"Silver Bullet",1);
-        bullet_silver->SetStats({0, 0, 1, 2, 2, 2});
+        auto bullet_silver = std::make_unique<Item>(ItemID::BulletSilver,ItemType::Magic,"Silver Bullet",0);
+        bullet_silver->isBullet = true;
+        bullet_silver->SetStats({0, 0, 0, 0, 2, 2});
         itemManager.AddItem(std::move(bullet_silver));
-        auto bullet_lead = std::make_unique<Item>(ItemID::BulletLead,ItemType::Ranged,"Lead Bullet",1);
-        bullet_lead->SetStats({0, 0, 1, 0, 0, 0});
+        auto bullet_lead = std::make_unique<Item>(ItemID::BulletLead,ItemType::Ranged,"Lead Bullet",0);
+        bullet_lead->isBullet = true;
+        bullet_lead->SetStats({0, 0, 0, 0, 0, 0});
         itemManager.AddItem(std::move(bullet_lead));
 
         // Access and use an item
@@ -599,6 +620,7 @@ namespace JanSordid::SDL_Example {
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
 
         inventoryScreen = InventoryScreen(currentCharacter);
 
@@ -855,7 +877,7 @@ namespace JanSordid::SDL_Example {
                 //int mouseX, mouseY;
                 SDL_GetMouseState(&mouseOverX, &mouseOverY);
 
-                    inventoryScreen.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y);
+                    inventoryScreen.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y,&itemManager);
                     fmt::println("equip handled?");
                     //inventoryScreen.BuildInventory(); //CTD RIP
 
