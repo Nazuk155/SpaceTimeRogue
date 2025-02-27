@@ -3,7 +3,7 @@
 
 // Constructor for Map_Slot
 Map_Slot::Map_Slot(int id, SDL_Point pos)
-        : id(id), position(pos), locationRect({pos.x, pos.y, 128, 128}), location_id(LocationID::UNASSIGNED) {initializeRects();}
+        : id(id), position(pos),  location_id(LocationID::UNASSIGNED) {initializeRects();}
 
 // Adds a connection to another slot
 void Map_Slot::AddConnection(int other_slot_id, bool is_active) {

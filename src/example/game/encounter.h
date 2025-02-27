@@ -49,7 +49,9 @@ enum class RequirementFlags {
     hasQuestOnStage,
     hasQuest,
     notOnQuest,
-    notOnStage
+    notOnStage,
+    SilverBulletLoaded,
+    LeadBulletLoaded
 
 
 };

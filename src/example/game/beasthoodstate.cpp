@@ -1640,6 +1640,36 @@ namespace JanSordid::SDL_Example {
                 case ExecuteFlags::SpawnMonster:
                    //TODO implement spawns in general too
                    break;
+                case ExecuteFlags::UnloadLeadBullet:
+                    if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunLead)
+                    {
+                        currentCharacter->UnequipItem(ItemID::LoadedGunLead);//unload gun in first
+                        currentCharacter->RemoveFromInventory(ItemID::LoadedGunLead);
+                        currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+
+                    }
+                    else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunLead)//tbh redundant - you need the gun to get here
+                    {
+                        currentCharacter->UnequipItem(ItemID::LoadedGunLead);//unload gun in first
+                        currentCharacter->RemoveFromInventory(ItemID::LoadedGunLead);
+                        currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+                    }
+                    break;
+                case ExecuteFlags::UnloadSilverBullet:
+                    if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunSilver)
+                    {
+                        currentCharacter->UnequipItem(ItemID::LoadedGunSilver);//unload gun in first
+                        currentCharacter->RemoveFromInventory(ItemID::LoadedGunSilver);
+                        currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+
+                    }
+                    else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunSilver)//tbh redundant - you need the gun to get here
+                    {
+                        currentCharacter->UnequipItem(ItemID::LoadedGunSilver);//unload gun in first
+                        currentCharacter->RemoveFromInventory(ItemID::LoadedGunSilver);
+                        currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+                    }
+                    break;
                 default:eTracker.exFlag = ExecuteFlags::NONE; break;
 
             }
@@ -3597,6 +3627,20 @@ namespace JanSordid::SDL_Example {
                                                 3,
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
+                                        },
+                                        {
+                                                "Shoot that sucker.",
+                                                false,
+                                                StatNames::FIGHT,
+                                                cTracker.toughness,
+                                                {{ExecuteFlags::UnloadLeadBullet,1}},
+                                                {},
+                                                4,
+                                                3,
+                                                {}, // rewardItemIDs
+                                                {},  // failureItemIDs
+                                                {{RequirementFlags::LeadBulletLoaded,1}},
+                                                true
                                         }
                                 },
                                 {
@@ -3857,7 +3901,13 @@ namespace JanSordid::SDL_Example {
                     int qID = get<1>(requirement)/1000;
                     int qStage = get<1>(requirement) % 1000;
                     return true;}
+            case RequirementFlags::SilverBulletLoaded:
+                return ((currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunSilver) ||
+                (currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunSilver));
 
+            case RequirementFlags::LeadBulletLoaded:
+                return ((currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunLead) ||
+                        (currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunLead));
 
             default:
                 return false; //TODO Item and Quest not yet implemented, may need more complex approach

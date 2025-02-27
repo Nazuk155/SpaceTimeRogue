@@ -179,6 +179,10 @@ ExecuteFlags iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vecto
                 //TODO Ressources
                 return ExecuteFlags::GainItem;
                 break;
+            case ExecuteFlags::UnloadSilverBullet:
+                return ExecuteFlags::UnloadSilverBullet;
+            case ExecuteFlags::UnloadLeadBullet:
+                return ExecuteFlags::UnloadLeadBullet;
             case ExecuteFlags::Heal:
                 currentCharacter.AdjustStamina(get<1>(outcome));
                 return ExecuteFlags::Heal;
@@ -241,7 +245,7 @@ ExecuteFlags iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vecto
                 return ExecuteFlags::SpawnMonster;
         }
     }
-        return ExecuteFlags::Heal;
+        return ExecuteFlags::Heal; //TODO why is this here?
     }
 
 

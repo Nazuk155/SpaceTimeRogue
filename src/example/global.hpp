@@ -23,7 +23,9 @@ enum class ExecuteFlags {
     StartCombat,
     FinishedCombatWIN,
     FinishedCombatLOSS,
-    SpawnMonster
+    SpawnMonster,
+    UnloadSilverBullet,
+    UnloadLeadBullet //todo one unload function may be enough? the requirement splits the outcmes in the scene
 };
 
 enum class GamePhases
