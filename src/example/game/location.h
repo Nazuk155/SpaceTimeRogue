@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global.hpp"
+#include "monster.h"
 
 class Map_Slot;
 
@@ -15,7 +16,7 @@ public:
     bool fog_of_war;
     int unique_event_id;
     std::vector<EncounterID> related_events;
-    std::vector<MonsterID> monsters_or_npcs;
+    std::vector<Monster> monsters;
     int reward_icon_1, reward_icon_2;
     bool quest_marker;
 
@@ -30,5 +31,7 @@ public:
     [[nodiscard]] std::string GetLocationString() const;
 
     Map_Slot* GetMapSlot();
+    void AddMonster(const Monster& monster);
+    void RemoveMonster(MonsterID id);
 
 };

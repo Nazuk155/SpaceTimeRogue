@@ -50,3 +50,16 @@ Map_Slot* Location::GetMapSlot() {
 void Location::SetName(std::string newname) {
     name = std::move(newname);
 }
+
+void Location::AddMonster(const Monster& monster) {
+    monsters.push_back(monster);  // Copy the Monster into the location
+}
+void Location::RemoveMonster(MonsterID id) {
+    auto it = std::find_if(monsters.begin(), monsters.end(),
+                           [id](const Monster& m) { return m.id == id; });
+    if (it != monsters.end()) {
+        monsters.erase(it);  // Only removes the first matching monster
+    }
+}
+
+

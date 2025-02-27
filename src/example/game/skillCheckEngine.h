@@ -17,7 +17,7 @@ class SkillChallengeEngine
     //todo add character into init + CONSTRUCTOR
 
     DiceRoller diceRoller;
-    StatNames currentSkill = StatNames::NONE;//todo
+    StatNames currentSkill = StatNames::NONE;
 
 
 
@@ -55,6 +55,9 @@ public:
         currentSkill = skill;
     }
 
+    StatNames getCurrentSkill(){
+        return currentSkill;
+    }
     int currentSkillValue()
     {
 
