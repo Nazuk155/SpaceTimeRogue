@@ -128,8 +128,12 @@ struct Encounter {
     EncounterTypeID type; // enum for encounter types in global
     std::vector<Scene> scenes;
     DialoguePhase currentDialoguePhase;
-    std::vector<MonsterID> monsterIDs; // for combat encounter outcome
+
+    ///The Combat relevant attributes below can simply be ignored for encounters that do not contain a StartCombat ExecuteFlag
+    std::vector<MonsterID> monsterIDs; // for encounters that can start a combat with up to 3 monsters
     int fightVictorySzene,fightDefeatSzene;
+    //jump back szenes that eTrackerSaver copys before eTracker gets overwritten with the combat event. Simply set these to win/loss result scenes
+    // these are used in the ExecuteFlags FinishedCombatWIN/LOSS to go to the correct scene of the encounter that got paused for combat.
 
     bool validate() const {
         for (const auto &scene: scenes) {
@@ -141,6 +145,7 @@ struct Encounter {
     }
 };
 
+///test encounter for triggering& resolving a fight while jumping back into the encounter at the correct scenes. Set to Smith node.
 inline Encounter testingCombat
         {
                 EncounterID::Testing_Combat,
@@ -234,7 +239,7 @@ inline Encounter testingCombat
                                          {},
                                          {{RequirementFlags::isPhysicallyWounded,
                                            3}}, //If not on Quest 3, start quest 3
-                                         true
+                                         false
 
                                  }
                          },
@@ -298,7 +303,9 @@ inline Encounter testingCombat
                                          0,
                                          255,
                                          {},
-                                         {}
+                                         {},
+                                         {},
+                                         false
                                         },
                                         {
                                                 "Finish Event",
@@ -336,7 +343,7 @@ inline Encounter testingCombat
                                          255,
                                          {},
                                          {}
-                                        },
+                                        }
 
                                 },
 

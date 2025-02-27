@@ -1387,7 +1387,6 @@ namespace JanSordid::SDL_Example {
 
                                 }
                             } else {
-                                ///TODO add alternative to skillchecks in encounter. Check for item or quest progresss for example
                                 eTracker.exFlag = encounterManager.iterateOverOutcomes(
                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
                                         eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
@@ -1557,6 +1556,7 @@ namespace JanSordid::SDL_Example {
                         awaitingInput = true;
                         eTracker.exFlag = ExecuteFlags::NONE;
                         cTracker.Reset();
+
                     }
                     break;
                 case ExecuteFlags::SpawnMonster:
@@ -1567,7 +1567,9 @@ namespace JanSordid::SDL_Example {
             }
         }
 
-        //FIX ATTEMPT
+        ///Removing this has had no adverse effects so far. However, im keeping it around just in case. -Max
+        /// Nevermind, this fixes a edge case. FIX ATTEMPT stays until i refactor this whole mess. -Max
+        ///FIX ATTEMPT:
         if (eTracker.szene == 255)
         {//if we hit a 255 jump we reset the encounterTracker and activate the next Game Phase
             if (!currentEncounterIsOnlyCombat) {
@@ -1607,6 +1609,7 @@ namespace JanSordid::SDL_Example {
             }
 
         }
+
 
         if(Phase == GamePhases::DISASTER){
             musicManager.changeMusic(bgm::main_theme);
