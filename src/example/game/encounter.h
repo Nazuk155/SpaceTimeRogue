@@ -12,12 +12,14 @@ enum class EnvironmentType {
     HunterCamp,
     VillageOutskirts,
     ForestOutskirts,
+    SheepTree,
     HermitLodge,
     MonasteryPath,
     MonasteryOutside,
     MonasteryGate,
     MonasteryInterior,
     ForestLake,
+    Ravine,
     ForestClearing,
     DenseForest,
     HeartApproach,
@@ -99,6 +101,8 @@ enum class SceneCompositionEntities {
     Abbot,
     Bear,
     Hermit,
+    SpearSkeleton,
+    Mercenary,
 
     //Overlays
     RitualSkullOverlay

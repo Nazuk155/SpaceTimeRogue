@@ -327,6 +327,14 @@ namespace JanSordid::SDL_Example {
         bool bShowRightItemInfo = false;
         bool bShowLeftItemInfo = false;
 
+        //Healtbar components
+        Texture * healtbarBG = nullptr;
+        Texture * healtbarRed = nullptr;
+        Texture * healthbarEdge = nullptr;
+        //TODO TEMP REMOVE
+        float tempHealth = 1.0;
+
+
         //   std::vector<Location> locations;
         Font *font = nullptr;
         Owned<Font> _font = nullptr;
@@ -372,6 +380,9 @@ namespace JanSordid::SDL_Example {
         Texture *ritualSkullIcon = nullptr;
 
         Texture * halberdIcon = nullptr;
+
+        Texture * bulletSilver = nullptr;
+        Texture * bulletLead = nullptr;
         std::vector<Texture*> Icons;
 
         //NPCs
@@ -384,11 +395,13 @@ namespace JanSordid::SDL_Example {
         Texture* peasant2Sprite = nullptr;
         Texture* hunterSprite = nullptr;
         Texture* peasantWomanSprite = nullptr;
+        Texture *mercenarySprite= nullptr;
 
 
         Texture *enemyWereWolfMainSprite = nullptr;
         Texture *enemyWolfSprite = nullptr;
         Texture* enemyBearSprite=nullptr;
+        Texture* enemySkeletonSpearSprite = nullptr;
 
 
 
@@ -415,6 +428,8 @@ namespace JanSordid::SDL_Example {
         Texture* forestPathToHeartBG= nullptr;
         Texture* forestPathToHeartFG= nullptr;
         Texture* forestHeartBG= nullptr;
+        Texture * ravineBG = nullptr;
+        Texture * sheep_treeBG = nullptr;
 
 
         //Overlay Items
@@ -599,6 +614,8 @@ namespace JanSordid::SDL_Example {
         bool bOptionRequirementMet(std::tuple<RequirementFlags, int> requirement);
 
         void RenderJournal();
+
+        void RenderHealthbar(float currentHealth);
     };
 
 }

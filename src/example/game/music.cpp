@@ -34,7 +34,7 @@ void MusicManager::init()
     }
     bIsInitialized=bDone;
     currentBGM= bgm::main_theme;
-    Mix_VolumeMusic(MIX_MAX_VOLUME/2);
+    Mix_VolumeMusic(5);
     Mix_PlayMusic(mainMusic, -1 );
 
 

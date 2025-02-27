@@ -7,6 +7,7 @@ struct Map_Slot {
     int id;                                      // Unique identifier
     SDL_Point position; // X, Y position
     SDL_Rect locationRect = {position.x, position.y, 128, 128};
+    //SDL_Rect locationRect = {position.x, position.y, static_cast<int>(221*4), static_cast<int>(164*4)}; //TODO this does nothing???
     LocationID location_id;                             // ID of the location assigned UNASSIGNED
     //maybe change vector to unordered_map for better lookup
     std::vector<std::pair<int, bool>> connections; // Connections with status (active/inactive)

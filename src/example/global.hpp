@@ -66,7 +66,9 @@ enum class ItemID {
     Talisman,
     Tome,
 
-    RitualSkull};
+    RitualSkull,
+    BulletLead,
+    BulletSilver};
 enum class ItemType {Melee,Ranged,Magic,Unique};
 enum class LocationID {
     Forest,

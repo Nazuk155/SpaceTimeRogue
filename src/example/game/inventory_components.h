@@ -68,6 +68,14 @@ inline void RenderItemIcon(SDL_Renderer*renderer,const Item* item,SDL_Texture* b
             SDL_RenderCopy(renderer, iconVector[6], &iconScale, &destinationRect
             );
             break;
+        case ItemID::BulletLead:
+            SDL_RenderCopy(renderer, iconVector[7], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::BulletSilver:
+            SDL_RenderCopy(renderer, iconVector[8], &iconScale, &destinationRect
+            );
+            break;
         default:
             SDL_RenderCopy(renderer, iconVector[0], &iconScale, &destinationRect
             );
@@ -109,6 +117,7 @@ public:
         {
             if (!icon)
             {
+                fmt::println("Failed to load icon");
                 bIconsLoaded= false;
             }
 

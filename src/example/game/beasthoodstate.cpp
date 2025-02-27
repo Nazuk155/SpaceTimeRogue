@@ -67,6 +67,14 @@ namespace JanSordid::SDL_Example {
 
         string playerMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/lk_sprite.png";
 
+        //Map icon
+        string monasteryLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/monastery_icon.png";
+        //Healthbar
+        string healtbarBGPath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_bg.png";
+        string healthbarRedPath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_red.png";
+        string healthbarEdgePath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_edge.png";
+
+
         //NPCs
         string enemyWereWolfMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/garou_sprite.png";
         string enemyWolfSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/wolf_sprite.png";
@@ -81,6 +89,8 @@ namespace JanSordid::SDL_Example {
         string peasant2SpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/peasant_2_sprite.png";
         string hunterSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/hunter_sprite.png";
         string peasantWomanSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/woman_1_sprite.png";
+        string mercenarySpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/mercenary_sprite.png";
+        string enemySkeletonSpearSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/skeleton_spear_sprite.png";
 
 
         //Backgrounds/Foregrounds
@@ -95,6 +105,8 @@ namespace JanSordid::SDL_Example {
 
         string village2PathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/village_2.png";
 
+        string sheepTreePathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/sheep_tree.png";
+
         string outskirtsPathPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/outskirts_path.png";
         string windmillOutskirtsPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/windmill_outskirts.png";
         string oakPathPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/oak_path.png";
@@ -106,6 +118,7 @@ namespace JanSordid::SDL_Example {
         string forestPathToHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/heart_approach_bg.png";
         string forestPathToHeartPathFG = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/heart_approach_fg.png";
         string forestHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_heart.png";
+        string ravinePathBG= BasePath "/src/example/game/Ressources/Image_assets/backgrounds/ravine_bg.png";
 
         //Overlay Items
 
@@ -145,8 +158,8 @@ namespace JanSordid::SDL_Example {
         String torchIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/torch_icon.png";
         String gunIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_icon.png";
         String ritualSkullIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/ritual_skull_icon.png";
-
-
+        String bulletLeadPath = BasePath "/src/example/game/Ressources/Image_assets/items/bullet_lead.png";
+        String bulletSilverPath = BasePath "/src/example/game/Ressources/Image_assets/items/bullet_silver.png";
 
 
 
@@ -166,6 +179,7 @@ namespace JanSordid::SDL_Example {
 
         village1 = loadFromFile(village1PathBG);
         village2 = loadFromFile(village2PathBG);
+        sheep_treeBG= loadFromFile(sheepTreePathBG);
 
         outskirtsPath= loadFromFile(outskirtsPathPathBG);
         windmillOutskirts= loadFromFile(windmillOutskirtsPathBG);
@@ -178,6 +192,7 @@ namespace JanSordid::SDL_Example {
         forestPathToHeartBG= loadFromFile(forestPathToHeartBGPathBG);
         forestPathToHeartFG= loadFromFile(forestPathToHeartPathFG);
         forestHeartBG= loadFromFile(forestHeartBGPathBG);
+        ravineBG = loadFromFile(ravinePathBG);
 
         //Overlay Items
         OverlayForestClearingSkull = loadFromFile(OverlayForestClearingSkullPath);
@@ -186,6 +201,7 @@ namespace JanSordid::SDL_Example {
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
         enemyWolfSprite = loadFromFile(enemyWolfSpritePath);
         enemyBearSprite= loadFromFile(enemyBearSpritePath);
+        enemySkeletonSpearSprite = loadFromFile(enemySkeletonSpearSpriteIMGPath);
 
 
         errorIMG = loadFromFile(errorIMGPath);
@@ -197,6 +213,7 @@ namespace JanSordid::SDL_Example {
         peasant2Sprite = loadFromFile(peasant2SpriteIMGPath);
         hunterSprite = loadFromFile(hunterSpriteIMGPath);
         peasantWomanSprite = loadFromFile(peasantWomanSpriteIMGPath);
+        mercenarySprite= loadFromFile(mercenarySpriteIMGPath);
 
         //Buttons
         endTurnButtonOn = loadFromFile(endTurnButtonOnPath);
@@ -211,6 +228,12 @@ namespace JanSordid::SDL_Example {
         journalIcon = loadFromFile(journalIconOnPath);
         journalIconMouseover = loadFromFile(journalIconMouseoverPath);
         journalIconOff = loadFromFile(journalIconOffPath);
+
+        //Healthbar
+        healtbarBG = loadFromFile(healtbarBGPath);
+        healtbarRed = loadFromFile(healthbarRedPath);
+        healthbarEdge = loadFromFile(healthbarEdgePath);
+
 
         //DIce Textures
         dice1 = loadFromFile(dice1Path);
@@ -231,6 +254,9 @@ namespace JanSordid::SDL_Example {
         torchIcon= loadFromFile(torchIconPath);
         ritualSkullIcon = loadFromFile(ritualSkullIconPath);
 
+        bulletLead= loadFromFile(bulletLeadPath);
+        bulletSilver= loadFromFile(bulletSilverPath);
+
 
         //Icons index!!!
         Icons.push_back(missingIcon); //Missing = 0
@@ -240,6 +266,9 @@ namespace JanSordid::SDL_Example {
         Icons.push_back(torchIcon); //Torch = 4
         Icons.push_back(gunIcon);//Gun = 5
         Icons.push_back(ritualSkullIcon);//Skull=6
+        Icons.push_back(bulletLead);//Lead = 7
+        Icons.push_back(bulletSilver); //Silver = 8
+
 
 
 
@@ -272,7 +301,7 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Cave].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Cave].nameTexture = textToTexture("Cave");
 
-        locationTextureMap[LocationID::Monastery].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Monastery].iconTexture = loadFromFile(monasteryLocationIconPath);
         locationTextureMap[LocationID::Monastery].nameTexture = textToTexture("Monastery");
 
         locationTextureMap[LocationID::Farm].iconTexture = loadFromFile(forestLocationIconPath);
@@ -517,6 +546,13 @@ namespace JanSordid::SDL_Example {
         ritual_skull->SetStats({0, 0, 0, 0, 1, -2});
         itemManager.AddItem(std::move(ritual_skull));
 
+        auto bullet_silver = std::make_unique<Item>(ItemID::BulletSilver,ItemType::Magic,"Silver Bullet",1);
+        bullet_silver->SetStats({0, 0, 1, 2, 2, 2});
+        itemManager.AddItem(std::move(bullet_silver));
+        auto bullet_lead = std::make_unique<Item>(ItemID::BulletLead,ItemType::Ranged,"Lead Bullet",1);
+        bullet_lead->SetStats({0, 0, 1, 0, 0, 0});
+        itemManager.AddItem(std::move(bullet_lead));
+
         // Access and use an item
         Item *item = itemManager.GetItem(ItemID::Halberd);
         if (item) {
@@ -561,6 +597,8 @@ namespace JanSordid::SDL_Example {
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
 
         inventoryScreen = InventoryScreen(currentCharacter);
 
@@ -603,6 +641,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(village1);
 
         SDL_DestroyTexture(village2);
+        SDL_DestroyTexture(sheep_treeBG);
         SDL_DestroyTexture(outskirtsPath);
         SDL_DestroyTexture(windmillOutskirts);
         SDL_DestroyTexture(oakPath);
@@ -613,6 +652,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(forestPathToHeartBG);
         SDL_DestroyTexture(forestPathToHeartFG);
         SDL_DestroyTexture(forestHeartBG);
+        SDL_DestroyTexture(ravineBG);
 
         SDL_DestroyTexture(OverlayForestClearingSkull);
 
@@ -632,6 +672,10 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(journalIcon);
         SDL_DestroyTexture(journalIconMouseover);
         SDL_DestroyTexture(journalIconOff);
+
+        SDL_DestroyTexture(healtbarBG);
+        SDL_DestroyTexture(healtbarRed);
+        SDL_DestroyTexture(healthbarEdge);
 
 
 
@@ -653,6 +697,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(enemyWereWolfMainSprite);
         SDL_DestroyTexture(enemyWolfSprite);
         SDL_DestroyTexture(enemyBearSprite);
+        SDL_DestroyTexture(enemySkeletonSpearSprite);
         //NPCS
         SDL_DestroyTexture(monk1Sprite);
         SDL_DestroyTexture(abbotSprite);
@@ -662,6 +707,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(peasant2Sprite);
         SDL_DestroyTexture(hunterSprite);
         SDL_DestroyTexture(peasantWomanSprite);
+        SDL_DestroyTexture(mercenarySprite);
 
 
 
@@ -681,6 +727,7 @@ namespace JanSordid::SDL_Example {
         monasteryInteriorBG = nullptr;
         village1 = nullptr;
         village2 = nullptr;
+        sheep_treeBG= nullptr;
 
         outskirtsPath= nullptr;
         windmillOutskirts= nullptr;
@@ -693,13 +740,20 @@ namespace JanSordid::SDL_Example {
         forestPathToHeartBG= nullptr;
         forestPathToHeartFG= nullptr;
         forestHeartBG= nullptr;
+        ravineBG= nullptr;
 
         OverlayForestClearingSkull = nullptr;
 
         enemyWereWolfMainSprite = nullptr;
         enemyWolfSprite = nullptr;
         enemyBearSprite= nullptr;
+        enemySkeletonSpearSprite = nullptr;
         errorIMG = nullptr;
+
+        healtbarBG = nullptr;
+        healthbarEdge = nullptr;
+        healtbarRed = nullptr;
+
 
         monk1Sprite = nullptr;
         abbotSprite= nullptr;
@@ -709,6 +763,7 @@ namespace JanSordid::SDL_Example {
         peasant2Sprite = nullptr;
         hunterSprite = nullptr;
         peasantWomanSprite = nullptr;
+        mercenarySprite = nullptr;
 
         endTurnButtonOff = nullptr;
         endTurnButtonMouseover = nullptr;
@@ -1476,7 +1531,8 @@ namespace JanSordid::SDL_Example {
                     {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint},
                     {SceneCompositionSlots::OverlayMainPoint,EncounterLayout.overlayMainPoint}
             };
-    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector, const EnvironmentType environment)
+    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector,
+                                                const EnvironmentType environment)
     {
         switch (environment) {
             case EnvironmentType::DenseForest: musicManager.changeMusic(bgm::forest_quiet);break;
@@ -1490,6 +1546,7 @@ namespace JanSordid::SDL_Example {
             case EnvironmentType::ForestLake: musicManager.changeMusic(bgm::forest_quiet);break;
             case EnvironmentType::HeartApproach: musicManager.changeMusic(bgm::forest_quiet);break;
             case EnvironmentType::HermitLodge: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::Ravine: musicManager.changeMusic(bgm::forest_quiet);break;
             case EnvironmentType::ForestHeart: musicManager.changeMusic(bgm::battle);break;
             case EnvironmentType::MonasteryInterior: musicManager.changeMusic(bgm::monastery);break;
             default:musicManager.changeMusic(bgm::main_theme);break;
@@ -1638,6 +1695,24 @@ namespace JanSordid::SDL_Example {
 
                     renderFromSpritesheet(targetRect,enemyBearSprite);
                     break;
+                case SceneCompositionEntities::Mercenary:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueMercY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueMercX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueMercY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,mercenarySprite);
+                    break;
+                case SceneCompositionEntities::SpearSkeleton:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueSkeletonSpearY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueSkeletonSpearX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueSkeletonSpearY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,enemySkeletonSpearSprite);
+                    break;
 
 
                     //Overlays
@@ -1658,6 +1733,8 @@ namespace JanSordid::SDL_Example {
             }
 
         }
+
+
     }
 
 
@@ -2073,6 +2150,11 @@ namespace JanSordid::SDL_Example {
     }
 
     void BeasthoodState::Render(const u64 frame, const u64 totalMSec, const f32 deltaT) {
+        if(tempHealth>=1.)
+        {
+            tempHealth=0.;
+        }
+        tempHealth += deltaT*0.05;
 
 
         SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);//TODO WINDOWSIZE HERE - fix redundancy
@@ -2211,10 +2293,17 @@ namespace JanSordid::SDL_Example {
                     case EnvironmentType::MonasteryInterior:
                         renderFromSpritesheet(sceneWindow,monasteryInteriorBG);
                         break;
+                    case EnvironmentType::Ravine:
+                        renderFromSpritesheet(sceneWindow,ravineBG);
+                        break;
+                    case EnvironmentType::SheepTree:
+                        renderFromSpritesheet(sceneWindow,sheep_treeBG);
+                        break;
 
 
                     default:SDL_RenderFillRect(renderer(),&sceneWindow);
                 }
+
 
                 RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector,eTracker.activeEncounter->scenes[eTracker.szene].background);
 
@@ -2233,6 +2322,13 @@ namespace JanSordid::SDL_Example {
                         break;
                     }
                     default: break;
+                }
+
+                //Render Healthbar
+
+                if(eTracker.activeEncounter->id == EncounterID::Combat_Encounter)
+                {
+                    RenderHealthbar(tempHealth);
                 }
 
 
@@ -2969,7 +3065,57 @@ namespace JanSordid::SDL_Example {
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
-                                                {{ExecuteFlags::AdvanceQuestStage,6070}}, //set quest 6 to 70%
+                                                {{ExecuteFlags::AdvanceQuestStage, 6070}}, //set quest 6 to 70%
+                                                {},
+                                                15,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf, SceneCompositionSlots::CharacterFront}
+
+                                }
+                        },
+                        {
+                            "Ravine",
+                            EnvironmentType::Ravine,
+                            {
+
+                                {
+                                                        "Continue",
+                                                        false,
+                                                        StatNames::FIGHT,
+                                                        0,
+                                                        {{ExecuteFlags::AdvanceQuestStage, 6070}}, //set quest 6 to 70%
+                                                        {},
+                                                        16,
+                                                        255,
+                                                        {}, // rewardItemIDs
+                                                        {}  // failureItemIDs
+                                }
+                                },
+                                {
+                                                {SceneCompositionEntities::Character,
+                                                 SceneCompositionSlots::CharacterMain},
+                                                {SceneCompositionEntities::SpearSkeleton,
+                                                 SceneCompositionSlots::CharacterFront}
+                                        }
+
+                        },
+                        {
+                                "Shepherd and Bandit",
+                                EnvironmentType::SheepTree,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::AdvanceQuestStage, 6070}}, //set quest 6 to 70%
                                                 {},
                                                 255,
                                                 255,
@@ -2978,10 +3124,12 @@ namespace JanSordid::SDL_Example {
                                         }
                                 },
                                 {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
-
+                                        {SceneCompositionEntities::Character,
+                                         SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Mercenary,
+                                         SceneCompositionSlots::EnemyMain}
                                 }
+
                         }
                 },
                 DialoguePhase::Scene // Starting dialogue phase
@@ -3540,6 +3688,62 @@ namespace JanSordid::SDL_Example {
         QuestStage= nullptr;
         QuestDescription= nullptr;
         QuestTitle= nullptr;
+
+    }
+    void BeasthoodState::RenderHealthbar(float currentHealth)
+    {
+        //Render Combat Encounter specifics
+        SDL_Rect HealthBG{
+                static_cast<int>(EncounterLayout.HealthbarBorderStart.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthbarBorderStart.y*0.01*windowSize.y),
+                static_cast<int>(EncounterLayout.HealthbarBorderScale.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthbarBorderScale.y*0.01*windowSize.y),
+
+        };
+        renderFromSpritesheet(HealthBG,healtbarBG);
+
+
+        //SDL_SetRenderDrawColor(renderer(),200,10,10,0);
+        SDL_Rect HealthBarVariablePart = {static_cast<int>(EncounterLayout.HealthBarStart.x*0.01*windowSize.x),
+                                          static_cast<int>(EncounterLayout.HealthBarStart.y*0.01*windowSize.y),
+                                          static_cast<int>(EncounterLayout.HealthBarScale.x*0.01*windowSize.x*currentHealth),
+                                          static_cast<int>(EncounterLayout.HealthBarScale.y*0.01*windowSize.y)
+        };
+        SDL_Rect HealthbarRedPart {
+            0,0,
+            static_cast<int>(1152*currentHealth),
+            8
+        };
+        SDL_RenderCopy(renderer(),healtbarRed,&HealthbarRedPart,&HealthBarVariablePart);
+        //SDL_RenderFillRect(renderer(),&HealthBarVariablePart);
+        SDL_Rect HealthbarEdge {
+                static_cast<int>(EncounterLayout.HealthbarBorderStart.x*0.01*windowSize.x + EncounterLayout.HealthBarScale.x*0.01*windowSize.x*currentHealth),
+                static_cast<int>(EncounterLayout.HealthbarBorderStart.y*0.01*windowSize.y),
+                static_cast<int>(0.01*windowSize.x*1),
+                static_cast<int>(EncounterLayout.HealthbarBorderScale.y*0.01*windowSize.y)
+
+        };
+        if (currentHealth<1.)
+        {
+//            SDL_SetRenderDrawColor(renderer(),0,0,0,0);
+//            SDL_RenderFillRect(renderer(),&HealthbarEdge);
+            renderFromSpritesheet(HealthbarEdge,healthbarEdge);
+        }
+
+        TTF_SetFontSize(_font,static_cast<int>(20*windowSize.y/1080));
+
+        Texture * enemyName = textToTexture("Wolf"); //Todo find good way to pass name of enemy
+        SDL_Rect TextTarget {
+            static_cast<int>(EncounterLayout.HealthBarTitleStart.x*0.01*windowSize.x),
+            static_cast<int>(EncounterLayout.HealthBarTitleStart.y*0.01*windowSize.y),
+            static_cast<int>(EncounterLayout.HealthbarTitleScale.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthbarTitleScale.y*0.01*windowSize.y)
+
+
+        };
+        renderText(TextTarget,enemyName);
+        TTF_SetFontSize(_font,static_cast<int>(15*windowSize.y/1080));
+
 
     }
 }
