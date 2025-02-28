@@ -307,6 +307,7 @@ namespace JanSordid::SDL_Example {
         GamePhases Phase = GamePhases::UPKEEP;
 
         Point windowSize;
+        int fontsize = 18;
 
 
         //generate one manager object per relevant class
@@ -320,6 +321,8 @@ namespace JanSordid::SDL_Example {
         MusicManager musicManager;
 
         Character *character1;
+        bool itemInUse = false;
+        ItemID activeItem = ItemID::NONE;
 
         InventoryScreen inventoryScreen;
         bool bInInventory = false;
@@ -421,23 +424,6 @@ namespace JanSordid::SDL_Example {
         Texture* OverlayForestClearingSkull = nullptr;
 
 
-        /* refactored already but keep in case of need for testing
-        Texture *forestNameTexture = nullptr;
-        Texture *churchNameTexture = nullptr;
-        Texture *riverNameTexture = nullptr;
-        Texture *smithNameTexture = nullptr;
-        Texture *windmillNameTexture = nullptr;
-        Texture *crossroadsNameTexture = nullptr;
-        Texture *caveNameTexture = nullptr;
-        Texture *monasteryNameTexture = nullptr;
-        Texture *farmNameTexture = nullptr;
-        Texture *clearingNameTexture = nullptr;
-        Texture *townhallNameTexture = nullptr;
-        Texture *thicketNameTexture = nullptr;
-        Texture *unassignedNameTexture = nullptr;
-*/
-
-
         struct LocationTextures {
             SDL_Texture *iconTexture = nullptr;
             SDL_Texture *nameTexture = nullptr;
@@ -465,7 +451,7 @@ namespace JanSordid::SDL_Example {
         //encounter Phase related variables
 
         struct EncounterTracker{
-          const Encounter *activeEncounter = nullptr;
+           Encounter *activeEncounter = nullptr;
             int szene = 0;
             bool inputIsViable = false;
             bool chooseFateReroll = false;
@@ -477,7 +463,7 @@ namespace JanSordid::SDL_Example {
             int lastSzeneTextDisplayed = 0;
             bool bShowPreviousDicerolls=false;
             Vector<MonsterID> monsterIDs = {};
-            ExecuteFlags exFlag = ExecuteFlags::NONE;
+            Vector<ExecuteFlags> exFlag = {};
             int szeneWin,szeneLoss;
 
             void Reset(){
@@ -493,7 +479,7 @@ namespace JanSordid::SDL_Example {
                 monsterIDs.clear();
                 szeneWin = 0;
                 szeneLoss = 0;
-                exFlag = ExecuteFlags::NONE;
+                exFlag.clear();
             }
         };
         EncounterTracker eTracker;
@@ -507,6 +493,11 @@ namespace JanSordid::SDL_Example {
             LocationID location = LocationID::UNASSIGNED;
             LocationID alreadyDodged = LocationID::UNASSIGNED;
             MonsterID monID = MonsterID::UNASSIGNED;
+            int hpVisual = 0; /// USE THIS FOR THE HP BAR
+            /// logical hp gets calculated after FATE REROLL, Visual HP does not.
+            /// Example: We reduce a 4 toughness monster to 2 HP by having 2 successes. -> not dead -> spend FATE?
+            /// ske keeps the successes we rolled so it sees 2 success > 2hp which kills the monster without going to 0 hp
+            int hp = 0; //logical hp for calculations. DO NOT USE FOR HPBAR
             int awareness = 0; // monsterManager.getMonsterByID(locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters_or_npcs.back())->awareness etc.
             int toughness = 0;
             int horrorDamage = 0;
@@ -521,6 +512,8 @@ namespace JanSordid::SDL_Example {
             void updateCurrentMonster(){
                 if(!monsters.empty()) {
                     monID = monsters.back().id;
+                    hpVisual = monsters.back().hp;
+                    hp = monsters.back().hp;
                     awareness = monsters.back().awareness;
                     toughness = monsters.back().toughness;
                     horrorDamage = monsters.back().horrorDamage;
@@ -529,6 +522,8 @@ namespace JanSordid::SDL_Example {
                     combatRating = monsters.back().combatRating;
                 }else{
                      monID = MonsterID::UNASSIGNED;
+                     hpVisual = 0;
+                     hp = 0;
                      awareness = 0;
                      toughness = 0;
                      horrorDamage = 0;
@@ -547,6 +542,8 @@ namespace JanSordid::SDL_Example {
             }
             void Reset(){
                 location = LocationID::UNASSIGNED;
+                hpVisual = 0;
+                hp = 0;
                 awareness = 0;
                 toughness = 0;
                 horrorDamage = 0;
@@ -640,7 +637,7 @@ namespace JanSordid::SDL_Example {
 
         void renderFateDieAnimation(const SkillChallengeEngine &ske);
 
-        std::string StatToString(StatNames stat);
+        static std::string StatToString(StatNames stat);
 
         void PopulateEventManager();
 
@@ -668,6 +665,10 @@ namespace JanSordid::SDL_Example {
         bool bOptionRequirementMet(std::tuple<RequirementFlags, int> requirement);
 
         void RenderJournal();
+
+        SceneCompositionEntities MatchMonsterIDtoSceneComp(MonsterID target);
+
+        void ResolveItemUsage(ItemID id);
     };
 
 }

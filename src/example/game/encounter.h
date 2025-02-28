@@ -132,6 +132,7 @@ struct Encounter {
     ///The Combat relevant attributes below can simply be ignored for encounters that do not contain a StartCombat ExecuteFlag
     std::vector<MonsterID> monsterIDs; // for encounters that can start a combat with up to 3 monsters
     int fightVictorySzene,fightDefeatSzene;
+    int hp;
     //jump back szenes that eTrackerSaver copys before eTracker gets overwritten with the combat event. Simply set these to win/loss result scenes
     // these are used in the ExecuteFlags FinishedCombatWIN/LOSS to go to the correct scene of the encounter that got paused for combat.
 
@@ -143,6 +144,7 @@ struct Encounter {
         }
         return true;
     }
+    void setHP(int newHP){hp = newHP;}
 };
 
 ///test encounter for triggering& resolving a fight while jumping back into the encounter at the correct scenes. Set to Smith node.

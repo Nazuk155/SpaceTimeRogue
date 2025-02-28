@@ -14,7 +14,7 @@ struct
     SDL_Point SidebarEnd {100,100};
     SDL_Point SidebarSize {20,100};
 
-    SDL_Point SidebarContentStart {81,4};
+    SDL_Point SidebarContentStart {81,0};
     SDL_Point SidebarContentEnd {98,100};
 
     SDL_Point ClassTextBox {16,4};

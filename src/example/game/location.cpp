@@ -61,5 +61,3 @@ void Location::RemoveMonster(MonsterID id) {
         monsters.erase(it);  // Only removes the first matching monster
     }
 }
-
-

@@ -74,20 +74,14 @@ public:
     // Gameplay Methods
     void UseFocus(StatNames statToIncrease, StatNames statToDecrease);
     void RefillFatePoints();
-    //void AddQuest(const QuestID quest);
-    //void CompleteQuest(QuestID quest_id);
-
     void SetRect(SDL_Rect newRect);
-
     void SetPos(SDL_Rect newRect);
-
-
-
     void SpendFate();
-
     void UpdateCurrentStats();
-
     void ResetToBaseStats();
-
     void UnequipItem(ItemID id);
+    ItemID UseItem(ItemID id);
+
+
+    Item *FindItem(ItemID id);
 };

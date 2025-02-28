@@ -11,6 +11,7 @@ public:
     MonsterID id = MonsterID::UNASSIGNED; // Add an UNASSIGNED enum value
     MonsterType type = MonsterType::None;
     MovementType moveType = MovementType::Stalking;
+    int hp = 0;
     int toughness = 0;
     int awareness = 0;
     int horrorRating = 0;
@@ -29,6 +30,7 @@ public:
             MonsterID id,
             MonsterType type,
             MovementType moveType,
+            int hp,
             int toughness,
             int awareness,
             int horrorRating,
@@ -42,6 +44,7 @@ public:
               id(id),
               type(type),
               moveType(moveType),
+              hp(hp),
               toughness(toughness),
               awareness(awareness),
               horrorRating(horrorRating),
