@@ -33,7 +33,7 @@ inline std::vector<Quest> availableQuests
                   {83,"It seems you will have to rob a grave. Go to the ravine."},
                   {85,"You have what you need. The veteran should be able to make the bullet."},
                   {90, "You have your bullet. It is time."},
-           {100,"Complete"}
+           {100,"It is done."}
           },
           0},
 

@@ -2401,7 +2401,7 @@ inline Encounter ForestHeartFinal
     {
         //Approach
             {
-                "You approach the heart of the forest. You know instinctively - a battle awaits. Are you acually ready?",
+                "You approach the heart of the forest. You know instinctively - a battle awaits. Are you actually ready?",
                 EnvironmentType::HeartApproach,
                 {//Start Werewolf fight?  //TODO FIGHT
                         {
@@ -2413,12 +2413,64 @@ inline Encounter ForestHeartFinal
                                 {},
                                 255,
                                 255
-                        }//NOPE
-                }
-            }
+                        },//NOPE
+                        {
+                            "It is time.",
+                            false,
+                            StatNames::FAITH,
+                            0,
+                            {{ExecuteFlags::StartCombat,1}},
+                            {},
+                            2,
+                            255
+                        }
+                },
+
+                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}}
+            },
+            {
+                    "It is done. ",
+                    EnvironmentType::HeartApproach,
+                    {//Start Werewolf fight?  //TODO FIGHT
+                            {
+                                    "The End",
+                                    false,
+                                    StatNames::FAITH,
+                                    0,
+                                    {{ExecuteFlags::AdvanceQuestStage,1100}},
+                                    {},
+                                    1,
+                                    255
+                            }
+                    },
+
+                    {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}}
+            },
+            {
+                    "You were a fool.",
+                    EnvironmentType::ForestHeart,
+                    {//Start Werewolf fight?  //TODO FIGHT
+                            {
+                                    "Try to escape - futile.",
+                                    false,
+                                    StatNames::FAITH,
+                                    0,
+                                    {{ExecuteFlags::Wound,666}},
+                                    {},
+                                    255,
+                                    255
+                            },//NOPE
+
+                    },
+
+                    {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                     {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}}
+            },
+
 
     }
-                ,DialoguePhase::Scene // Starting dialogue phase
+                ,DialoguePhase::Scene, // Starting dialogue phase,
+            {MonsterID::Werewolf},1,2
 
 
         };

@@ -656,7 +656,7 @@ namespace JanSordid::SDL_Example {
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Sword));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
         //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
-        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
         currentCharacter->leadBulletCount++;
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
@@ -3515,6 +3515,8 @@ if(itemInUse){
         encounterManager.addEncounter(EncounterID::CorpseDiscovery,CorpseDiscovery);
         encounterManager.addEncounter(EncounterID::RavineMain,RavineMain);
 
+        encounterManager.addEncounter(EncounterID::ForestHeartFinal,ForestHeartFinal);
+
         //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
 
@@ -3524,8 +3526,8 @@ if(itemInUse){
                      MonsterID::Werewolf,
                      MonsterType::Beast,
                      MovementType::Wandering,
-                     10,
-                     10,
+                     666,
+                     666,
                      4,
                      -3,
                      2,
@@ -3593,8 +3595,8 @@ if(itemInUse){
         locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::HunterCamp);
         locationManager.GetItem(LocationID::Hermit)->related_events.push_back(EncounterID::HermitMain);
         locationManager.GetItem(LocationID::Clearing)->related_events.push_back(EncounterID::CorpseDiscovery);
-       // locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::RavineMain);
-        locationManager.GetItem(LocationID::River)->related_events.push_back(EncounterID::RavineMain);
+       // locationManager.GetItem(LocationID::River)->related_events.push_back(EncounterID::RavineMain);
+        locationManager.GetItem(LocationID::River)->related_events.push_back(EncounterID::ForestHeartFinal);
 
     }
 
@@ -3743,271 +3745,544 @@ if(itemInUse){
         if(cTracker.monsters.size() >= 2){additionalEnemy1 = MatchMonsterIDtoSceneComp(cTracker.monsters[1].id);}
         if(cTracker.monsters.size() >= 3){additionalEnemy2 = MatchMonsterIDtoSceneComp(cTracker.monsters[2].id);}
 
-        Encounter CombatEncounter{
-                EncounterID::Combat_Encounter,
-                EncounterTypeID::Tutorial,  // Replace
-                {
-                        {
-                                "You are confronted by a Monster. Its presence chills you to the bone. Do you try to evade it or stand your ground?",
-                                background,
-                                {
-                                        {
-                                                "Evade the monster (SNEAK)" ,
-                                                true,
-                                                StatNames::SNEAK,
-                                                cTracker.awareness,
-                                                {},
-                                                {},
-                                                5,
-                                                7,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        },
-                                        {
-                                                "Face the monster head-on. (FIGHT)",
-                                                false,
-                                                StatNames::FIGHT,
-                                                0,
-                                                {},
-                                                {},
-                                                1,
-                                                1,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {currentEnemy,SceneCompositionSlots::EnemyMain}
+        Encounter CombatEncounter;
+        if(background != EnvironmentType::ForestHeart) {
+            CombatEncounter = {
+                    EncounterID::Combat_Encounter,
+                    EncounterTypeID::Tutorial,  // Replace
+                    {
+                            {
+                                    "You are confronted by a Monster. Its presence chills you to the bone. Do you try to evade it or stand your ground?",
+                                    background,
+                                    {
+                                            {
+                                                    "Evade the monster (SNEAK)",
+                                                    true,
+                                                    StatNames::SNEAK,
+                                                    cTracker.awareness,
+                                                    {},
+                                                    {},
+                                                    5,
+                                                    7,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            },
+                                            {
+                                                    "Face the monster head-on. (FIGHT)",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    0,
+                                                    {},
+                                                    {},
+                                                    1,
+                                                    1,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::EnemyMain}
 
-                                }
-                        },
-                        {
-                                "The Monsters nightmarish visage fills your mind with dread. You must summon your will to avoid breaking down.",
-                                background,
-                                {
+                                    }
+                            },
+                            {
+                                    "The Monsters nightmarish visage fills your mind with dread. You must summon your will to avoid breaking down.",
+                                    background,
+                                    {
 
-                                        {
-                                                "Make a Willpower check",
-                                                true,
-                                                StatNames::WILLPOWER,
-                                                1,
-                                                {},
-                                                {{ExecuteFlags::SanityLoss,cTracker.horrorDamage}},
-                                                2,
-                                                8,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {currentEnemy,SceneCompositionSlots::CharacterFront}
-                                }
-                        },
-                        {
-                                "With a surge of courage, you attempt to slay the Monster. Can you overpower the beast?",
-                                background,
-                                {
+                                            {
+                                                    "Make a Willpower check",
+                                                    true,
+                                                    StatNames::WILLPOWER,
+                                                    1,
+                                                    {},
+                                                    {{ExecuteFlags::SanityLoss, cTracker.horrorDamage}},
+                                                    2,
+                                                    8,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            },
+                            {
+                                    "With a surge of courage, you attempt to slay the Monster. Can you overpower the beast?",
+                                    background,
+                                    {
 
-                                        {
-                                                "Make a Fight check",
-                                                true,
-                                                StatNames::FIGHT,
-                                                cTracker.hp,
-                                                {},
-                                                {{ExecuteFlags::Wound,cTracker.combatDamage}},
-                                                4,
-                                                3,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        },
-                                        {
-                                                "Shoot that sucker.",
-                                                false,
-                                                StatNames::FIGHT,
-                                                cTracker.toughness,
-                                                {{ExecuteFlags::UnloadLeadBullet,1}},
-                                                {},
-                                                4,
-                                                3,
-                                                {}, // rewardItemIDs
-                                                {},  // failureItemIDs
-                                                {{RequirementFlags::LeadBulletLoaded,1}},
-                                                true
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {currentEnemy,SceneCompositionSlots::CharacterFront}
-                                }
-                        },
-                        {
-                                "<failed check> Having failed your attempt the Monster takes advantage and strikes you with brutal ferocity.",
-                                background,
-                                {
+                                            {
+                                                    "Make a Fight check",
+                                                    true,
+                                                    StatNames::FIGHT,
+                                                    cTracker.hp,
+                                                    {},
+                                                    {{ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    4,
+                                                    3,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            },
+                                            {
+                                                    "Shoot that sucker.",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    cTracker.toughness,
+                                                    {{ExecuteFlags::UnloadLeadBullet, 1}},
+                                                    {},
+                                                    4,
+                                                    3,
+                                                    {}, // rewardItemIDs
+                                                    {},  // failureItemIDs
+                                                    {{RequirementFlags::LeadBulletLoaded, 1}},
+                                                    true
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            },
+                            {
+                                    "<failed check> Having failed your attempt the Monster takes advantage and strikes you with brutal ferocity.",
+                                    background,
+                                    {
 
-                                        {
-                                                "Continue fighting (Retry Combat Check)",
-                                                false,
-                                                StatNames::FIGHT,
-                                                0,
-                                                {},
-                                                {},
-                                                2,
-                                                2,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        },
-                                        {
-                                                "Attempt to Escape (SNEAK)",
-                                                true,
-                                                StatNames::SNEAK,
-                                                cTracker.awareness,
-                                                {},
-                                                {{ExecuteFlags::Wound,cTracker.combatDamage}},
-                                                5,
-                                                3,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {currentEnemy,SceneCompositionSlots::CharacterFront}
-                                }
-                        },
-                        {
-                                "You defeat the Monster, its body crumpling to the ground. The threat has been eliminated, but at what cost?",
-                                background,
-                                {
+                                            {
+                                                    "Continue fighting (Retry Combat Check)",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    0,
+                                                    {},
+                                                    {},
+                                                    2,
+                                                    2,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            },
+                                            {
+                                                    "Attempt to Escape (SNEAK)",
+                                                    true,
+                                                    StatNames::SNEAK,
+                                                    cTracker.awareness,
+                                                    {},
+                                                    {{ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    5,
+                                                    3,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            },
+                            {
+                                    "You defeat the Monster, its body crumpling to the ground. The threat has been eliminated, but at what cost?",
+                                    background,
+                                    {
 
-                                        {
-                                                "Move on. (If additional Monsters lurk here you must fight or dodge them too)",
-                                                false,
-                                                StatNames::FIGHT,
-                                                0,
-                                                {{ExecuteFlags::FinishedCombatWIN,0}},
-                                                {},
-                                                255,
-                                                255,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {additionalEnemy1,SceneCompositionSlots::Enemy_2},
-                                        {additionalEnemy2,SceneCompositionSlots::Enemy_3}
-                                }
-                        },
-                        {
-                                "<STEALTH check success> You manage to get away from the Monster, either through cunning or sheer luck. For now, you are safe.",
-                                background,
-                                {
+                                            {
+                                                    "Move on. (If additional Monsters lurk here you must fight or dodge them too)",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    0,
+                                                    {{ExecuteFlags::FinishedCombatWIN, 0}},
+                                                    {},
+                                                    255,
+                                                    255,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {additionalEnemy1, SceneCompositionSlots::Enemy_2},
+                                            {additionalEnemy2, SceneCompositionSlots::Enemy_3}
+                                    }
+                            },
+                            {
+                                    "<STEALTH check success> You manage to get away from the Monster, either through cunning or sheer luck. For now, you are safe.",
+                                    background,
+                                    {
 
-                                        {
-                                                "Move on.",
-                                                false,
-                                                StatNames::NONE,
-                                                0,
-                                                {{ExecuteFlags::FinishedCombatLOSS,0}},
-                                                {},
-                                                255,
-                                                255,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}
-                                }
-                        },
-                        {
-                                "<WILLPOWER check failed> Both mind and body are ravaged as the Monster spots you in your attempted cowardice!",
-                                background,
-                                {
+                                            {
+                                                    "Move on.",
+                                                    false,
+                                                    StatNames::NONE,
+                                                    0,
+                                                    {{ExecuteFlags::FinishedCombatLOSS, 0}},
+                                                    {},
+                                                    255,
+                                                    255,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}
+                                    }
+                            },
+                            {
+                                    "<WILLPOWER check failed> Both mind and body are ravaged as the Monster spots you in your attempted cowardice!",
+                                    background,
+                                    {
 
-                                        {
-                                                "Steel yourself and fight (FIGHT)",
-                                                false,
-                                                StatNames::FIGHT,
-                                                0,
-                                                {},
-                                                {},
-                                                2,
-                                                2,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        },
-                                        {
-                                                "Attempt to Escape again (SNEAK)",
-                                                true,
-                                                StatNames::SNEAK,
-                                                cTracker.awareness,
-                                                {},
-                                                {{ExecuteFlags::Wound,cTracker.combatDamage}},
-                                                5,
-                                                3,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {currentEnemy,SceneCompositionSlots::CharacterFront},
-                                }
-                        },
-                        {
-                                "<STEALTH check failed> Failing to evade its gaze, you attempt to guard your mind from slipping into panic as the creatures horrifying form ravages your body!",
-                                background,
-                                {
+                                            {
+                                                    "Steel yourself and fight (FIGHT)",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    0,
+                                                    {},
+                                                    {},
+                                                    2,
+                                                    2,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            },
+                                            {
+                                                    "Attempt to Escape again (SNEAK)",
+                                                    true,
+                                                    StatNames::SNEAK,
+                                                    cTracker.awareness,
+                                                    {},
+                                                    {{ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    5,
+                                                    3,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront},
+                                    }
+                            },
+                            {
+                                    "<STEALTH check failed> Failing to evade its gaze, you attempt to guard your mind from slipping into panic as the creatures horrifying form ravages your body!",
+                                    background,
+                                    {
 
-                                        {
-                                                "Steel yourself (Willpower Check)",
-                                                true,
-                                                StatNames::WILLPOWER,
-                                                1,
-                                                {{ExecuteFlags::Wound,cTracker.combatDamage}},
-                                                {{ExecuteFlags::SanityLoss,cTracker.horrorDamage},{ExecuteFlags::Wound,cTracker.combatDamage}},
-                                                3,
-                                                6,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {currentEnemy,SceneCompositionSlots::CharacterFront}
-                                }
-                        },
-                        {
-                                "<WILLPOWER check failed> Your mind writhes in abject horror as the creatures visage meets your gaze.",
-                                background,
-                                {
+                                            {
+                                                    "Steel yourself (Willpower Check)",
+                                                    true,
+                                                    StatNames::WILLPOWER,
+                                                    1,
+                                                    {{ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    {{ExecuteFlags::SanityLoss, cTracker.horrorDamage},
+                                                     {ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    3,
+                                                    6,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            },
+                            {
+                                    "<WILLPOWER check failed> Your mind writhes in abject horror as the creatures visage meets your gaze.",
+                                    background,
+                                    {
 
-                                        {
-                                                "Gather your Courage and continue",
-                                                false,
-                                                StatNames::WILLPOWER,
-                                                0,
-                                                {},
-                                                {},
-                                                2,
-                                                2,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        }
-                                },
-                                {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {currentEnemy,SceneCompositionSlots::CharacterFront}
-                                }
-                        }
+                                            {
+                                                    "Gather your Courage and continue",
+                                                    false,
+                                                    StatNames::WILLPOWER,
+                                                    0,
+                                                    {},
+                                                    {},
+                                                    2,
+                                                    2,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            }
 
-                },
-                DialoguePhase::Scene,// Starting dialogue phase
-        };
+                    },
+                    DialoguePhase::Scene,// Starting dialogue phase
+            };
+        } else{
+            CombatEncounter = {
+                    EncounterID::Combat_Encounter,
+                    EncounterTypeID::Tutorial,  // Replace
+                    {
+                            {
+                                    "You are confronted by a Monster. Its presence chills you to the bone. Do you try to evade it or stand your ground?",
+                                    background,
+                                    {
+                                            {
+                                                    "Evade the monster (SNEAK)",
+                                                    true,
+                                                    StatNames::SNEAK,
+                                                    cTracker.awareness,
+                                                    {},
+                                                    {},
+                                                    5,
+                                                    7,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            },
+                                            {
+                                                    "Face the monster head-on. (FIGHT)",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    0,
+                                                    {},
+                                                    {},
+                                                    1,
+                                                    1,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::EnemyMain}
+
+                                    }
+                            },
+                            {
+                                    "The Monsters nightmarish visage fills your mind with dread. You must summon your will to avoid breaking down.",
+                                    background,
+                                    {
+
+                                            {
+                                                    "Make a Willpower check",
+                                                    true,
+                                                    StatNames::WILLPOWER,
+                                                    1,
+                                                    {},
+                                                    {{ExecuteFlags::SanityLoss, cTracker.horrorDamage}},
+                                                    2,
+                                                    8,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            },
+                            {
+                                    "With a surge of courage, you attempt to slay the Monster. Can you overpower the beast?",
+                                    background,
+                                    {
+
+                                            {
+                                                    "Make a Fight check",
+                                                    true,
+                                                    StatNames::FIGHT,
+                                                    cTracker.hp,
+                                                    {},
+                                                    {{ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    4,
+                                                    3,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            },
+                                            {
+                                                    "It is time - You have one shot [Use the silver Bullet].",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    cTracker.toughness,
+                                                    {{ExecuteFlags::UnloadSilverBullet, 1}},
+                                                    {},
+                                                    4,
+                                                    3,
+                                                    {}, // rewardItemIDs
+                                                    {},  // failureItemIDs
+                                                    {{RequirementFlags::SilverBulletLoaded, 1}},
+                                                    true
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            },
+                            {
+                                    "<failed check> Having failed your attempt the Monster takes advantage and strikes you with brutal ferocity.",
+                                    background,
+                                    {
+
+                                            {
+                                                    "Continue fighting (Retry Combat Check)",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    0,
+                                                    {},
+                                                    {},
+                                                    2,
+                                                    2,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            },
+                                            {
+                                                    "Attempt to Escape (SNEAK)",
+                                                    true,
+                                                    StatNames::SNEAK,
+                                                    cTracker.awareness,
+                                                    {},
+                                                    {{ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    5,
+                                                    3,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            },
+                            {
+                                    "The Werewolf dies in an instant. As what demonic strength that once suffused it fades, so does its life.",
+                                    background,
+                                    {
+
+                                            {
+                                                    "Move on. (If additional Monsters lurk here you must fight or dodge them too)",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    0,
+                                                    {{ExecuteFlags::FinishedCombatWIN, 0}},
+                                                    {},
+                                                    255,
+                                                    255,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}
+                                    }
+                            },
+                            {
+                                    "<STEALTH check success> You manage to get away from the Monster, you foolishly believe. You are not safe.",
+                                    background,
+                                    {
+
+                                            {
+                                                    "Move on.",
+                                                    false,
+                                                    StatNames::NONE,
+                                                    0,
+                                                    {{ExecuteFlags::FinishedCombatLOSS, 0}},
+                                                    {},
+                                                    255,
+                                                    255,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}
+                                    }
+                            },
+                            {
+                                    "<WILLPOWER check failed> Both mind and body are ravaged as the Monster spots you in your attempted cowardice!",
+                                    background,
+                                    {
+
+                                            {
+                                                    "Steel yourself and fight (FIGHT)",
+                                                    false,
+                                                    StatNames::FIGHT,
+                                                    0,
+                                                    {},
+                                                    {},
+                                                    2,
+                                                    2,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            },
+                                            {
+                                                    "Attempt to Escape again (SNEAK)",
+                                                    true,
+                                                    StatNames::SNEAK,
+                                                    cTracker.awareness,
+                                                    {},
+                                                    {{ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    5,
+                                                    3,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront},
+                                    }
+                            },
+                            {
+                                    "<STEALTH check failed> Failing to evade its gaze, you attempt to guard your mind from slipping into panic as the creatures horrifying form ravages your body!",
+                                    background,
+                                    {
+
+                                            {
+                                                    "Steel yourself (Willpower Check)",
+                                                    true,
+                                                    StatNames::WILLPOWER,
+                                                    1,
+                                                    {{ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    {{ExecuteFlags::SanityLoss, cTracker.horrorDamage},
+                                                     {ExecuteFlags::Wound, cTracker.combatDamage}},
+                                                    3,
+                                                    6,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            },
+                            {
+                                    "<WILLPOWER check failed> Your mind writhes in abject horror as the creatures visage meets your gaze.",
+                                    background,
+                                    {
+
+                                            {
+                                                    "Gather your Courage and continue",
+                                                    false,
+                                                    StatNames::WILLPOWER,
+                                                    0,
+                                                    {},
+                                                    {},
+                                                    2,
+                                                    2,
+                                                    {}, // rewardItemIDs
+                                                    {}  // failureItemIDs
+                                            }
+                                    },
+                                    {
+                                            {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                            {currentEnemy, SceneCompositionSlots::CharacterFront}
+                                    }
+                            }
+
+                    },
+                    DialoguePhase::Scene,// Starting dialogue phase
+            };
+
+
+
+
+        }
         encounterManager.addEncounter(EncounterID::Combat_Encounter,CombatEncounter);
     }
 
@@ -4463,13 +4738,16 @@ if(itemInUse){
 //        enum LocationID;
 
 
-        if (locID == LocationID::UNASSIGNED_LOCATION || eID !=EncounterID::NO_ENCOUNTER_ASSIGNED || eID ==EncounterID::RavineMain) {
+        if (locID == LocationID::UNASSIGNED_LOCATION || eID !=EncounterID::NO_ENCOUNTER_ASSIGNED || eID ==EncounterID::RavineMain || eID == EncounterID::ForestHeartFinal) {
             switch (eID) {
                 case EncounterID::Testing_Combat:
                     UpdateCombatEncounter(EnvironmentType::HunterCamp);
                     break;
                 case EncounterID::RavineMain:
                     UpdateCombatEncounter(EnvironmentType::Elsewhere);
+                    break;
+                case EncounterID::ForestHeartFinal:
+                    UpdateCombatEncounter(EnvironmentType::ForestHeart);
                     break;
                 default:
 
