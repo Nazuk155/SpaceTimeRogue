@@ -5,12 +5,12 @@
 
 class Item {
 public:
-    Item(ItemID itemName, ItemType itemType, const std::string& name, uint8_t handsNeeded, bool isEquipped = false,bool isLoaded = false,bool hasStats = true,bool bIsBullet = false)
-            : itemName(itemName), itemType(itemType), name(name), handsNeeded(handsNeeded), isEquipped(isEquipped),isLoaded(isLoaded),hasStats(hasStats), isBullet(bIsBullet),
+    Item(ItemID id, ItemType itemType, const std::string& name, uint8_t handsNeeded, bool isEquipped = false, bool isLoaded = false, bool hasStats = true,bool bIsBullet = false)
+            : id(id), itemType(itemType), name(name), handsNeeded(handsNeeded), isEquipped(isEquipped), isLoaded(isLoaded), hasStats(hasStats), isBullet(bIsBullet),
               stats(0,0,0,0,0,0) {}
 
     // Accessors
-    ItemID GetItemID() const { return itemName; }
+    ItemID GetItemID() const { return id; }
     ItemType GetItemType() const { return itemType; }
     const std::string& GetName() const { return name; }
     uint8_t GetHandsNeeded() const { return handsNeeded; }
@@ -28,6 +28,9 @@ public:
 
     Ability* GetAbility() const { return ability; }
     void SetAbility(Ability* newAbility) { ability = newAbility; }
+    ItemID UseItem(){
+        return id;
+    }
 
 
     bool hasStats;
@@ -35,7 +38,7 @@ public:
     bool isBullet;
 
 private:
-    ItemID itemName;
+    ItemID id;
     ItemType itemType;
     std::string name;
     uint8_t handsNeeded;

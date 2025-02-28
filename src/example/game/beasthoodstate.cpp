@@ -5,7 +5,6 @@
 #include <hsnr64/offset.hpp>
 #include "../global.hpp"
 #include "map.h"
-
 #include <hsnr64/palette.hpp>
 #include <iostream>
 #include <map>
@@ -15,14 +14,14 @@
 #include "item_manager.h"
 #include "item.h"
 #include "character.h"
+#include <queue>
 //#include "encounter.h"
 #include "skillCheckEngine.h"
 #include "layout.h"
 
 
 
-//TODO HP/Sanity 0 conditions in Encounter einbauen sowie Monster mit HP und inkrementalen verletzungen anstatt toughness überbieten or bust
-//TODO monster spawn und bewegung per Disaster Phase regeln.
+
 namespace JanSordid::SDL_Example {
     struct {
 
@@ -48,7 +47,9 @@ namespace JanSordid::SDL_Example {
         if (!_font) {
             //_font = TTF_OpenFont(BasePath "asset/font/RobotoSlab-Bold.ttf", (int) (12.0f * _game.scalingFactor()));
             //_font = TTF_OpenFont(BasePath "/src/example/game/Ressources/fonts/KJV1611.otf", (int) (12.0f * _game.scalingFactor()));
-            _font = TTF_OpenFont(BasePath "/src/example/game/Ressources/fonts/IMFeENrm29P.ttf", (int) (15.0f * _game.scalingFactor()));
+            _font = TTF_OpenFont(BasePath "/src/example/game/Ressources/fonts/IMFeENrm29P.ttf", (int) (fontsize ));
+            /// fontsize is used for all text in the game so far
+            ///maybe use another _fontBIG for bigger text where needed instead of changing fontsize locally
 
             TTF_SetFontHinting(_font, TTF_HINTING_LIGHT);
             if (!_font)
@@ -67,6 +68,10 @@ namespace JanSordid::SDL_Example {
 
         //Map icon
         string monasteryLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/monastery_icon.png";
+        string villageMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/village_mapicon.png";
+        string hermitIconPath  = BasePath "/src/example/game/Ressources/Image_assets/map_icons/hermit_icon.png";
+        string huntersIconPath  = BasePath "/src/example/game/Ressources/Image_assets/map_icons/hunters_mapicon.png";
+
         //Healthbar
         string healtbarBGPath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_bg.png";
         string healthbarRedPath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_red.png";
@@ -90,6 +95,7 @@ namespace JanSordid::SDL_Example {
         string mercenarySpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/mercenary_sprite.png";
         string enemySkeletonSpearSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/skeleton_spear_sprite.png";
         string veteranSpritePath =  BasePath "/src/example/game/Ressources/Image_assets/entities/veteran_sprite.png";
+        string priestSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/priest_sprite.png";
 
 
         //Backgrounds/Foregrounds
@@ -118,6 +124,7 @@ namespace JanSordid::SDL_Example {
         string forestPathToHeartPathFG = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/heart_approach_fg.png";
         string forestHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_heart.png";
         string ravinePathBG= BasePath "/src/example/game/Ressources/Image_assets/backgrounds/ravine_bg.png";
+        string churchBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/church_bg.png";
 
         //Overlay Items
 
@@ -194,6 +201,7 @@ namespace JanSordid::SDL_Example {
         forestPathToHeartFG= loadFromFile(forestPathToHeartPathFG);
         forestHeartBG= loadFromFile(forestHeartBGPathBG);
         ravineBG = loadFromFile(ravinePathBG);
+        churchBG = loadFromFile(churchBGPAth);
 
         //Overlay Items
         OverlayForestClearingSkull = loadFromFile(OverlayForestClearingSkullPath);
@@ -209,7 +217,7 @@ namespace JanSordid::SDL_Example {
         //map MonsterID to corresponding MAP ICON texture
         // monsterIDtoIconMap[MonsterID::Wolf] = loadFromFile(enemyWolfIconPath);
 
-        //old version
+        //old version so i dont need to change anything - Max
 
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
         enemyWolfSprite = loadFromFile(enemyWolfSpritePath);
@@ -228,6 +236,7 @@ namespace JanSordid::SDL_Example {
         peasantWomanSprite = loadFromFile(peasantWomanSpriteIMGPath);
         mercenarySprite= loadFromFile(mercenarySpriteIMGPath);
         veteranSprite= loadFromFile(veteranSpritePath);
+        priestSprite= loadFromFile(priestSpritePath);
 
         //Buttons
         endTurnButtonOn = loadFromFile(endTurnButtonOnPath);
@@ -307,8 +316,8 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::River].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::River].nameTexture = textToTexture("River");
 
-        locationTextureMap[LocationID::Smith].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Smith].nameTexture = textToTexture("Smith");
+        locationTextureMap[LocationID::Smith].iconTexture = loadFromFile(huntersIconPath);
+        locationTextureMap[LocationID::Smith].nameTexture = textToTexture("HunteeCamp");
 
         locationTextureMap[LocationID::Windmill].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Windmill].nameTexture = textToTexture("Windmill");
@@ -316,8 +325,8 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Crossroads].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Crossroads].nameTexture = textToTexture("Crossroads");
 
-        locationTextureMap[LocationID::Cave].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Cave].nameTexture = textToTexture("Cave");
+        locationTextureMap[LocationID::Hermit].iconTexture = loadFromFile(hermitIconPath);
+        locationTextureMap[LocationID::Hermit].nameTexture = textToTexture("Hermit");
 
         locationTextureMap[LocationID::Monastery].iconTexture = loadFromFile(monasteryLocationIconPath);
         locationTextureMap[LocationID::Monastery].nameTexture = textToTexture("Monastery");
@@ -328,14 +337,14 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Clearing].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Clearing].nameTexture = textToTexture("Clearing");
 
-        locationTextureMap[LocationID::Townhall].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Townhall].nameTexture = textToTexture("Townhall");
+        locationTextureMap[LocationID::Village].iconTexture = loadFromFile(villageMapIconPath);
+        locationTextureMap[LocationID::Village].nameTexture = textToTexture("Village");
 
         locationTextureMap[LocationID::Thicket].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Thicket].nameTexture = textToTexture("Thicket");
 
         locationTextureMap[LocationID::UNASSIGNED].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::UNASSIGNED].nameTexture = textToTexture("UNASSIGNED");
+        locationTextureMap[LocationID::UNASSIGNED].nameTexture = textToTexture("UNASSIGNED_MONSTERID");
 
 
         font = TTF_OpenFont(BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16);
@@ -346,21 +355,7 @@ namespace JanSordid::SDL_Example {
 
         const Point resolution = windowSize / Scale;
 
-        /*
-        forestNameTexture = textToTexture("Forest");
-        churchNameTexture = textToTexture("Church");
-        riverNameTexture = textToTexture("River");
-        smithNameTexture = textToTexture("Smith");
-        windmillNameTexture = textToTexture("Windmill");
-        crossroadsNameTexture = textToTexture("Crossroads");
-        caveNameTexture = textToTexture("Cave");
-        monasteryNameTexture = textToTexture("Monastery");
-        farmNameTexture = textToTexture("Farm");
-        clearingNameTexture = textToTexture("Clearing");
-        townhallNameTexture = textToTexture("Townhall");
-        thicketNameTexture = textToTexture("Thicket");
-        unassignedNameTexture = textToTexture("UNASSIGNED");
-        */
+
 
         /*
             Map map;
@@ -573,7 +568,7 @@ namespace JanSordid::SDL_Example {
         talisman->SetStats({2, 5, 2, 0, 2, 0});
         itemManager.AddItem(std::move(talisman));
 
-        auto ritual_skull = std::make_unique<Item>(ItemID::RitualSkull, ItemType::Unique,"Ritual Skull",0);
+        auto ritual_skull = std::make_unique<Item>(ItemID::RitualSkullCursed, ItemType::Unique,"Ritual Skull",0);
         ritual_skull->SetStats({0, 0, 0, 0, 1, -2});
         itemManager.AddItem(std::move(ritual_skull));
 
@@ -585,6 +580,7 @@ namespace JanSordid::SDL_Example {
         bullet_lead->isBullet = true;
         bullet_lead->SetStats({0, 0, 0, 0, 0, 0});
         itemManager.AddItem(std::move(bullet_lead));
+
 
         // Access and use an item
         Item *item = itemManager.GetItem(ItemID::Halberd);
@@ -611,27 +607,24 @@ namespace JanSordid::SDL_Example {
         std::cout << "Stats: " << Landsknecht.GetCurrentStats().GetStat(FIGHT);
         std::cout.flush();
 
-        character1 = new Character(*landsknechtBlueprint);
-
-        character1->RefillFatePoints();
-        currentCharacter = character1;
+        currentCharacter = new Character(*landsknechtBlueprint);
+        currentCharacter->RefillFatePoints();
 
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
+        currentCharacter->leadBulletCount++;
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
 
         inventoryScreen = InventoryScreen(currentCharacter);
 
         // get character into SKE
         ske.changeCharacter(currentCharacter);
-        fmt::println("Fate available: {}",
-                     character1->GetFatePoints()); //todo 0 fate dialogue makes no sense, prints options that should not be printed
-        std::cout.flush();
 
-        currentCharacter->SetCurrentLocation(LocationID::Forest);
+
+        currentCharacter->SetCurrentLocation(LocationID::Village);
         //currentCharacter->EquipItem(currentCharacter->GetInventory().back());
         currentCharacter->UpdateCurrentStats();
 
@@ -640,15 +633,14 @@ namespace JanSordid::SDL_Example {
         PopulateMonsterManager();
         PopulateEventManager();
         PopulateLocationEvents();
+    using enum LocationID;
+    using enum MonsterID;
 
-
-
-        locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf));
-       // locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf));
-       // locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Bear));
-
-        //locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
-        //locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
+        SpawnMonster(Forest,Wolf);
+        SpawnMonster(Thicket,Bear);
+        SpawnMonster(Hermit,Bear);
+        //old version
+        //map.increaseMonsterCounter(locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf)));
 
         //Load Music system
 
@@ -996,20 +988,12 @@ namespace JanSordid::SDL_Example {
                         case SDLK_i:
                             bInInventory=!bInInventory;
                             break;
-                            //TODO what is happening here? possible problem with the button? copied to wrong case at some point?
-                            /*
-                            if(!locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters.empty()){
-                            currentEncounterIsOnlyCombat = true;
-                            cTracker.location = currentCharacter->GetCurrentLocationID();
-                            cTracker.monsters = locationManager.GetItem(cTracker.location)->monsters;
-                            cTracker.monID = locationManager.GetItem(cTracker.location)->monsters.back().id;
+                        case SDLK_u:
+                            ///Testing item usage. TODO implement usage via inventory UI
+                            activeItem = currentCharacter->UseItem(ItemID::PrayerBook);
+                            itemInUse = true;
+                            break;
 
-                           cTracker.updateCurrentMonster();
-                            UpdateCombatEncounter();
-                            eTracker.activeEncounter = encounterManager.getEncounter(EncounterID::Combat_Encounter);
-                            eTracker.encounterID = EncounterID::Combat_Encounter;
-                        }break;
-                            */
                     }
                 }
                 if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
@@ -1031,7 +1015,7 @@ namespace JanSordid::SDL_Example {
                                 }, mouseOverX, mouseOverY))
                         { endMovementConfirmation = true;
 
-                            //TODO what is happening here? possible problem with the button? copied to wrong case at some point?
+                            //TODO what is happening here? possible problem with the button? copied to wrong case at some point? FIXED? -Max
                             //check if we already avoided the fight
                             if(cTracker.alreadyDodged != currentCharacter->GetCurrentLocationID()) {
                                 if (!locationManager.GetItem(
@@ -1043,7 +1027,7 @@ namespace JanSordid::SDL_Example {
 
                                     cTracker.updateCurrentMonster();
                                     UpdateCombatEncounter();
-                                    eTracker.activeEncounter = encounterManager.getEncounter(
+                                    eTracker.activeEncounter = encounterManager.GetEncounter(
                                             EncounterID::Combat_Encounter);
                                     eTracker.encounterID = EncounterID::Combat_Encounter;
                                 }
@@ -1082,7 +1066,7 @@ namespace JanSordid::SDL_Example {
                                     //mausklick reagiert nur wenn die location einen pfad zum aktuellen standort des characters hat
                                     for (auto c: e.connections) {
                                         //durchsuchen die aktiven connections der aktuellen node nach einam pfad zum character
-                                        if (character1->GetCurrentLocationID() ==
+                                        if (currentCharacter->GetCurrentLocationID() ==
                                             map.GetSlotByID(c.first)->location_id &&
                                             c.second == true) {
                                             //std::cout << "Mouse clicked inside the rectangle.\n";
@@ -1090,7 +1074,7 @@ namespace JanSordid::SDL_Example {
                                             moveTarget = e.location_id;
                                             playerMoved = true;
                                             //if we did not dodge past already this turn
-                                            if(cTracker.alreadyDodged != moveTarget) {
+                                            if(cTracker.alreadyDodged != currentCharacter->GetCurrentLocationID()) {
                                                 if (!locationManager.GetItem(
                                                         currentCharacter->GetCurrentLocationID())->monsters.empty()) {
                                                     currentEncounterIsOnlyCombat = true;
@@ -1101,7 +1085,7 @@ namespace JanSordid::SDL_Example {
 
                                                     cTracker.updateCurrentMonster();
                                                     UpdateCombatEncounter();
-                                                    eTracker.activeEncounter = encounterManager.getEncounter(
+                                                    eTracker.activeEncounter = encounterManager.GetEncounter(
                                                             EncounterID::Combat_Encounter);
                                                     eTracker.encounterID = EncounterID::Combat_Encounter;
                                                 }
@@ -1159,7 +1143,7 @@ namespace JanSordid::SDL_Example {
                                       static_cast<int>((EncounterLayout.DialogueMainTextEnd.y * 0.01 +
                                                         validCount *
                                                         EncounterLayout.DialogueOptionFieldScale.y *
-                                                        0.01) * windowSize.y),
+                                                        0.01) * windowSize.y) , ///bigger text, quick fix to match
                                       static_cast<int>((EncounterLayout.DialogueMainTextEnd.x * 0.01 * windowSize.x)),
                                       static_cast<int>((EncounterLayout.DialogueOptionFieldScale.y * 0.01) *
                                                        windowSize.y)},true});
@@ -1284,6 +1268,7 @@ namespace JanSordid::SDL_Example {
                         fmt::println("MouseButtonDownn Mouse x= {}, Mouse Y = {}", mouseOverX, mouseOverY);
                         for (int i = 0; i < 2; i++) {
                             button = OptionVector[0].first;
+                            button.y;
                         if(i == 1){
                             button.y = button.y+button.h;
                         }
@@ -1339,13 +1324,27 @@ namespace JanSordid::SDL_Example {
 //            //Play the music
 //            Mix_PlayMusic( villageTheme, -1 );
 //        }
+if(currentCharacter->GetStamina() <= 0){
+//TODO make death screen - Max
+}
+if(currentCharacter->GetSanity() <= 0){
+
+}
+///screw the ability system, simple way to use items is here!
+///do this: activeItem = currentCharacter.UseItem(ItemID) and set itemInUse = true
+///TODO just add the item id to the switch in ResolveItemUsage and make it do whatever you want! - Max
+if(itemInUse){
+    ResolveItemUsage(activeItem);
+    activeItem = ItemID::NONE;
+    itemInUse = false;
+}
 
         if (Phase == GamePhases::UPKEEP) {
 
             //place character somewhere if not placed
-            if (character1->GetCurrentLocationID() == LocationID::UNASSIGNED) {
-                character1->SetCurrentLocation(LocationID::Forest);
-                character1->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->locationRect);
+            if (currentCharacter->GetCurrentLocationID() == LocationID::UNASSIGNED) {
+                currentCharacter->SetCurrentLocation(LocationID::Forest);
+                currentCharacter->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->locationRect);
             }
 
             movementPoints = currentCharacter->GetCurrentStats().GetStat(SPEED);
@@ -1360,9 +1359,8 @@ namespace JanSordid::SDL_Example {
             if (movementPoints > 0 && !endMovementConfirmation) {
                 if (playerMoved) {
                     if(!currentEncounterIsOnlyCombat) {
-
-                        character1->SetCurrentLocation(moveTarget);
-                        character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
+                        currentCharacter->SetCurrentLocation(moveTarget);
+                        currentCharacter->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
                         movementPoints--;
                         playerMoved = false;
                     }else{
@@ -1383,7 +1381,7 @@ namespace JanSordid::SDL_Example {
                     if (locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID()) !=
                         EncounterID::NO_ENCOUNTER_ASSIGNED) {
                         eTracker.encounterID = locationManager.GetEncounterID(currentCharacter->GetCurrentLocationID());
-                        eTracker.activeEncounter = encounterManager.getEncounter(eTracker.encounterID);
+                        eTracker.activeEncounter = encounterManager.GetEncounter(eTracker.encounterID);
                         eTracker.diaPhase = DialoguePhase::Scene;
                         eTracker.monsterIDs = encounterManager.getEncounter(eTracker.activeEncounter->id)->monsterIDs;
                         eTracker.szeneWin = eTracker.activeEncounter->fightVictorySzene;
@@ -1413,11 +1411,10 @@ namespace JanSordid::SDL_Example {
                             if (eTracker.szene == 4) { //szene 4 passiert nur wenn encounter durch kampf gewonnen
                                 //check if this is a encounter triggered fight
                                 if(!cTracker.encounterTriggeredThis) {
-                                    locationManager.GetItem(cTracker.location)->RemoveMonster(cTracker
-                                                                                                      .monID);
+                                    DespawnMonster(cTracker.location,cTracker.monID);
                                 }
                                 cTracker.RemoveMonster(cTracker.monID);
-                                cTracker.monstersInFight -1;
+
                             }
                             if (eTracker.szene == 5) {
                                 cTracker.monstersInFight -1;
@@ -1444,6 +1441,10 @@ namespace JanSordid::SDL_Example {
                                     }
                                     if(ske.getCurrentSkill() == StatNames::FIGHT){
                                         ske.setModifier(cTracker.combatRating);
+                                        ///we set Difficulty for combat as toughness - hp to account for damage taken
+                                        ske.setDifficulty(
+                                                eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].difficulty - (cTracker.toughness-cTracker.hp));
+
                                     }
                                 }
                                 //if the skillcheck is not successful we ask if the player wants to spend fate
@@ -1452,10 +1453,17 @@ namespace JanSordid::SDL_Example {
                                     awaitingInput = true;
                                     eTracker.chooseFateReroll = true;
                                     eTracker.alreadyDisplayedText = false;
+                                    //only update monster hp with fight successes
+                                    if(ske.getCurrentSkill() == StatNames::FIGHT) {
+                                        cTracker.hpVisual -= ske.getSuccesses();
+                                    }
                                 } else {
+                                    if(ske.getCurrentSkill() == StatNames::FIGHT) {
+                                        cTracker.hpVisual -= ske.getSuccesses();
+                                        cTracker.hp = 0;
+                                    }
                                     //if successfull we resolve the outcome and set the next scene as well as showing the rolls
                                     eTracker.diaPhase = DialoguePhase::DieRoll;
-                                    //spaghetti workaround: if true then outome is combat encounter
                                    eTracker.exFlag = encounterManager.iterateOverOutcomes(
                                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].rewardItemIDs,
                                             eTracker.activeEncounter->scenes[eTracker.szene].options[eTracker.selectedOption].successOutcomes,
@@ -1501,6 +1509,7 @@ namespace JanSordid::SDL_Example {
                         awaitingInput = false;
                         eTracker.diaPhase = DialoguePhase::Scene;
                     } else {
+                        //wenn alle monster besiegt oder dodged sind
                         if(cTracker.monsters.empty()) {
                             if(!cTracker.encounterTriggeredThis) {
                                 Phase = GamePhases::MOVEMENT;
@@ -1510,7 +1519,7 @@ namespace JanSordid::SDL_Example {
                                 UpdateCombatEncounter();
                                 cTracker.alreadyDodged = cTracker.location;
                             }
-
+                            //wenn noch monster da sind
                         } else {
                             Phase = GamePhases::ENCOUNTER;
                             eTracker.bShowPreviousDicerolls = false;
@@ -1518,7 +1527,7 @@ namespace JanSordid::SDL_Example {
                             awaitingInput = true;
                             cTracker.updateCurrentMonster();
                             UpdateCombatEncounter();
-                            eTracker.activeEncounter = encounterManager.getEncounter(
+                            eTracker.activeEncounter = encounterManager.GetEncounter(
                                     EncounterID::Combat_Encounter);
                             eTracker.encounterID = EncounterID::Combat_Encounter;
                         }
@@ -1532,6 +1541,8 @@ namespace JanSordid::SDL_Example {
 
 
             } else {
+
+                /// FATE REROLL LOGIC IN THIS SECTION
                 if (eTracker.fateRerollChoice == 0 && currentCharacter->GetFatePoints() > 0) {
                     currentCharacter->SpendFate();
                     if (ske.addFateDice()) {
@@ -1546,11 +1557,21 @@ namespace JanSordid::SDL_Example {
                         eTracker.fateRerollChoice = -1;
                         eTracker.diaPhase = DialoguePhase::Scene;
                         awaitingInput = true;
+
+                        if(ske.getCurrentSkill() == StatNames::FIGHT) {
+                            cTracker.hpVisual = 0;
+                            cTracker.hp = 0;
+                        }
                     } else {
                         if (currentCharacter->GetFatePoints() > 0) {
                             eTracker.diaPhase = DialoguePhase::DieRoll;
                             eTracker.alreadyDisplayedText = false;
                             eTracker.fateRerollChoice = -1;
+                            if(ske.getCurrentSkill() == StatNames::FIGHT) {
+                                cTracker.hpVisual = cTracker.hp;
+                                cTracker.hpVisual -= ske.getSuccesses();
+                            }
+
                         }
 
                     }
@@ -1568,115 +1589,125 @@ namespace JanSordid::SDL_Example {
                     eTracker.diaPhase = DialoguePhase::Scene;
                     awaitingInput = true;
                     eTracker.selectedOption = -1;
+
+                    cTracker.hp -= ske.getSuccesses();
+                    if(cTracker.hp < 0){cTracker.hp = 0;}
+                    eTracker.activeEncounter->hp = cTracker.hp;
+                    if(eTracker.activeEncounter->hp < 0){eTracker.activeEncounter->hp = 0;}
                 }
             }
             //resolve external functions of execute flags
-            switch(eTracker.exFlag){
-                case ExecuteFlags::StartCombat:
-                    //save the current event to jump back in after combat
-                    eTrackerSaver = eTracker;
-                    cTracker.encounterTriggeredThis = true;
-                    currentEncounterIsOnlyCombat = true;
-                    //prepare a combat encounter on the location without filling the location with monsters
-                    for(int i = 0; i< eTracker.monsterIDs.size();i++) {
-                        cTracker.monsters.push_back(monsterManager.GetMonster(eTracker.monsterIDs[i]));
-                    }
+            for(auto e : eTracker.exFlag) {
+                switch (e) {
+                    case ExecuteFlags::StartCombat:
+                        //save the current event to jump back in after combat
+                        eTrackerSaver = eTracker;
+                        cTracker.encounterTriggeredThis = true;
+                        currentEncounterIsOnlyCombat = true;
+                        //prepare a combat encounter on the location without filling the location with monsters
+                        for (auto &monsterID: eTracker.monsterIDs) {
+                            cTracker.monsters.push_back(monsterManager.GetMonster(monsterID));
+                        }
                         Phase = GamePhases::ENCOUNTER;
                         eTracker.bShowPreviousDicerolls = false;
                         cTracker.monID = cTracker.monsters.back().id;
                         cTracker.updateCurrentMonster();
                         UpdateCombatEncounter();
-                        eTracker.activeEncounter = encounterManager.getEncounter(
+                        eTracker.activeEncounter = encounterManager.GetEncounter(
                                 EncounterID::Combat_Encounter);
                         eTracker.encounterID = EncounterID::Combat_Encounter;
 
                         eTracker.szene = 0;
                         awaitingInput = true;
                         eTracker.diaPhase = DialoguePhase::Scene;
-                        eTracker.exFlag = ExecuteFlags::NONE;
+                        eTracker.exFlag.clear();
                         break;
 
-                case ExecuteFlags::FinishedCombatWIN:
-                    //win in encounter triggered combat goes to szeneWin
-                    if(cTracker.encounterTriggeredThis) {
-                        if(cTracker.monsters.empty()) {
+                    case ExecuteFlags::FinishedCombatWIN:
+                        //win in encounter triggered combat goes to szeneWin
+                        if (cTracker.encounterTriggeredThis) {
+                            if (cTracker.monsters.empty()) {
+                                cTracker.encounterTriggeredThis = false;
+                                eTracker = eTrackerSaver;
+                                eTracker.szene = eTracker.szeneWin;
+                                eTracker.alreadyDisplayedText = false;
+                                eTracker.bShowPreviousDicerolls = false;
+                                currentEncounterIsOnlyCombat = false;
+                                eTracker.diaPhase = DialoguePhase::Scene;
+                                awaitingInput = true;
+                                eTracker.exFlag.clear();
+                                cTracker.Reset();
+                            } else {
+                                //if the combat has multiple enemies we go here
+                                Phase = GamePhases::ENCOUNTER;
+                                currentEncounterIsOnlyCombat = true;
+                                eTracker.bShowPreviousDicerolls = false;
+                                cTracker.monID = cTracker.monsters.back().id;
+                                awaitingInput = true;
+                                cTracker.updateCurrentMonster();
+                                UpdateCombatEncounter();
+                                eTracker.activeEncounter = encounterManager.GetEncounter(
+                                        EncounterID::Combat_Encounter);
+                                eTracker.encounterID = EncounterID::Combat_Encounter;
+                                eTracker.exFlag.clear();
+
+                            }
+                        }
+                        break;
+                        //running away immediately triggers LOSS in combats triggered by events so no need to trigger more combat
+                    case ExecuteFlags::FinishedCombatLOSS:
+                        if (cTracker.encounterTriggeredThis) {
                             cTracker.encounterTriggeredThis = false;
                             eTracker = eTrackerSaver;
-                            eTracker.szene = eTracker.szeneWin;
-                            eTracker.alreadyDisplayedText = false;
+                            eTracker.szene = eTracker.szeneLoss;
                             eTracker.bShowPreviousDicerolls = false;
                             currentEncounterIsOnlyCombat = false;
                             eTracker.diaPhase = DialoguePhase::Scene;
                             awaitingInput = true;
-                            eTracker.exFlag = ExecuteFlags::NONE;
+                            eTracker.exFlag.clear();
                             cTracker.Reset();
-                        }else{
-                            //if the combat has multiple enemies we go here
-                            Phase = GamePhases::ENCOUNTER;
-                            currentEncounterIsOnlyCombat = true;
-                            eTracker.bShowPreviousDicerolls = false;
-                            cTracker.monID = cTracker.monsters.back().id;
-                            awaitingInput = true;
-                            cTracker.updateCurrentMonster();
-                            UpdateCombatEncounter();
-                            eTracker.activeEncounter = encounterManager.getEncounter(
-                                    EncounterID::Combat_Encounter);
-                            eTracker.encounterID = EncounterID::Combat_Encounter;
-                            eTracker.exFlag = ExecuteFlags::NONE;
 
                         }
-                    }
-                    break;
-                    //running away immediately triggers LOSS in combats triggered by events so no need to trigger more combat
-                case ExecuteFlags::FinishedCombatLOSS:
-                    if(cTracker.encounterTriggeredThis) {
-                        cTracker.encounterTriggeredThis = false;
-                        eTracker = eTrackerSaver;
-                        eTracker.szene = eTracker.szeneLoss;
-                        eTracker.bShowPreviousDicerolls = false;
-                        currentEncounterIsOnlyCombat = false;
-                        eTracker.diaPhase = DialoguePhase::Scene;
-                        awaitingInput = true;
-                        eTracker.exFlag = ExecuteFlags::NONE;
-                        cTracker.Reset();
+                        break;
+                    case ExecuteFlags::UnloadLeadBullet:
+                        if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunLead)
+                        {
+                            currentCharacter->UnequipItem(ItemID::LoadedGunLead);//unload gun in first
+                            currentCharacter->RemoveFromInventory(ItemID::LoadedGunLead);
+                            currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
 
-                    }
-                    break;
-                case ExecuteFlags::SpawnMonster:
-                   //TODO implement spawns in general too
-                   break;
-                case ExecuteFlags::UnloadLeadBullet:
-                    if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunLead)
-                    {
-                        currentCharacter->UnequipItem(ItemID::LoadedGunLead);//unload gun in first
-                        currentCharacter->RemoveFromInventory(ItemID::LoadedGunLead);
-                        currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+                        }
+                        else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunLead)//tbh redundant - you need the gun to get here
+                        {
+                            currentCharacter->UnequipItem(ItemID::LoadedGunLead);//unload gun in first
+                            currentCharacter->RemoveFromInventory(ItemID::LoadedGunLead);
+                            currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+                        }
+                        break;
+                    case ExecuteFlags::UnloadSilverBullet:
+                        if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunSilver)
+                        {
+                            currentCharacter->UnequipItem(ItemID::LoadedGunSilver);//unload gun in first
+                            currentCharacter->RemoveFromInventory(ItemID::LoadedGunSilver);
+                            currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
 
-                    }
-                    else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunLead)//tbh redundant - you need the gun to get here
-                    {
-                        currentCharacter->UnequipItem(ItemID::LoadedGunLead);//unload gun in first
-                        currentCharacter->RemoveFromInventory(ItemID::LoadedGunLead);
-                        currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
-                    }
-                    break;
-                case ExecuteFlags::UnloadSilverBullet:
-                    if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunSilver)
-                    {
-                        currentCharacter->UnequipItem(ItemID::LoadedGunSilver);//unload gun in first
-                        currentCharacter->RemoveFromInventory(ItemID::LoadedGunSilver);
-                        currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+                        }
+                        else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunSilver)//tbh redundant - you need the gun to get here
+                        {
+                            currentCharacter->UnequipItem(ItemID::LoadedGunSilver);//unload gun in first
+                            currentCharacter->RemoveFromInventory(ItemID::LoadedGunSilver);
+                            currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+                        }
+                        break;
 
-                    }
-                    else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunSilver)//tbh redundant - you need the gun to get here
-                    {
-                        currentCharacter->UnequipItem(ItemID::LoadedGunSilver);//unload gun in first
-                        currentCharacter->RemoveFromInventory(ItemID::LoadedGunSilver);
-                        currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
-                    }
-                    break;
-                default:eTracker.exFlag = ExecuteFlags::NONE; break;
+                    case ExecuteFlags::SpawnMonster:
+                        //probably use SpawnMonster(locationID,monsterID) and pull relevant location and monster from event
+                        break;
+                    default:
+                        eTracker.exFlag.clear();
+                        break;
 
+                }
             }
         }
 
@@ -1711,7 +1742,7 @@ namespace JanSordid::SDL_Example {
                     cTracker.monID = cTracker.monsters.back().id;
                     cTracker.updateCurrentMonster();
                     UpdateCombatEncounter();
-                    eTracker.activeEncounter = encounterManager.getEncounter(
+                    eTracker.activeEncounter = encounterManager.GetEncounter(
                             EncounterID::Combat_Encounter);
                     eTracker.encounterID = EncounterID::Combat_Encounter;
 
@@ -1725,24 +1756,28 @@ namespace JanSordid::SDL_Example {
 
 
         if(Phase == GamePhases::DISASTER){
+            using enum LocationID;
+            using enum MonsterID;
             musicManager.changeMusic(bgm::main_theme);
             std::cout << "DISASTER PHASE REACHED \n";
             std::cout.flush();
-
-
             //testing spawning monsters
 
-            if(locationManager.GetItem(LocationID::Thicket)->monsters.size() < 3) {
-                locationManager.GetItem(LocationID::Thicket)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf));
-            }
+            ///has a switch with monster movement types to be expanded upon
+            MoveMonsters();
+            SpawnMonster(Farm,Wolf);
+
+
+
+
+
 
             Phase = GamePhases::UPKEEP;
 
         }
 
 
-        // std::cout << "Item: " << character1->GetInventory().back()->GetName();
-        // std::cout << "\n";
+
     }
 
     std::map<SceneCompositionSlots,SDL_Point> sceneCompositionTarget //  TODO EXPAND AS NEEDED
@@ -1775,6 +1810,7 @@ namespace JanSordid::SDL_Example {
             case EnvironmentType::Ravine: musicManager.changeMusic(bgm::forest_quiet);break;
             case EnvironmentType::ForestHeart: musicManager.changeMusic(bgm::battle);break;
             case EnvironmentType::MonasteryInterior: musicManager.changeMusic(bgm::monastery);break;
+            case EnvironmentType::VillageChurch: musicManager.changeMusic(bgm::monastery);break;
             default:musicManager.changeMusic(bgm::main_theme);break;
 
 
@@ -1948,6 +1984,15 @@ namespace JanSordid::SDL_Example {
 
                     renderFromSpritesheet(targetRect,veteranSprite);
                     break;
+                case SceneCompositionEntities::Priest:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvaluePriestY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvaluePriestX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvaluePriestY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,priestSprite);
+                    break;
 
 
                     //Overlays
@@ -1963,7 +2008,10 @@ namespace JanSordid::SDL_Example {
                     //fmt::println("Garou X: {}", SpriteData.ScalingValueGarouX*windowSize.x);
                     targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor);
                     //fmt::println("Garou Y: {} = {} * {} * {}", SpriteData.ScalingValueGarouY*windowSize.y,SpriteData.Garou_IMG.y,SpriteData.ScalingValueGarouY,windowSize.y);
-                    renderFromSpritesheet(targetRect,errorIMG);
+                    ///dumb fix to display multiple background enemies without errors popping up in the end of combat - Max
+                    if(eTracker.szene != 4) {
+                        renderFromSpritesheet(targetRect, errorIMG);
+                    }
                     fmt::println("Scene Element not yet implemented");
             }
 
@@ -1993,7 +2041,7 @@ namespace JanSordid::SDL_Example {
 
         renderText(SidebarTextTarget,SidebarText); //TODO complete Placeholder, ideally replace with premade image/portrait etc.
 
-        //todo make font size variable
+        //todo make font size variable || font size is all the way at the top of beasthoodstate with explanation! - Max
 
         SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
         SDL_DestroyTexture(SidebarText);
@@ -2024,6 +2072,13 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(SidebarText);
         SidebarText = textToTexture(("Speed   "+ std::to_string(currentCharacter->GetCurrentStats().GetStat(StatNames::SPEED))).c_str());
         renderText(SidebarTextTarget,SidebarText);
+
+        ///added Move Points here - Max
+        SidebarTextTarget.x += 2*(SidebarLayout.SkillTextScale.y*0.01*windowSize.x);
+        SDL_DestroyTexture(SidebarText);
+        SidebarText = textToTexture(("MovePoints  "+ std::to_string(movementPoints)).c_str());
+        renderText(SidebarTextTarget,SidebarText);
+        SidebarTextTarget.x -= 2*(SidebarLayout.SkillTextScale.y*0.01*windowSize.x);
 
         SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
         SDL_DestroyTexture(SidebarText);
@@ -2210,37 +2265,45 @@ namespace JanSordid::SDL_Example {
             SDL_DestroyTexture(DisplayText);
 
 
+            if(!inventoryScreen.currentPage.MouseOverIcon->referencedItem->isBullet){
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT)) + " FIGHT").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.02), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SPEED)) + " SPEED").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.03), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT)) + " FIGHT").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.02), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SNEAK)) + " SNEAK").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.04), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SPEED)) + " SPEED").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.03), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::WILLPOWER)) +
+                         " WILLPOWER").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.05), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SNEAK)) + " SNEAK").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.04), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FAITH)) + " FAITH").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.06), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::WILLPOWER)) + " WILLPOWER").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.05), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
-
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FAITH)) + " FAITH").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.06), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
-
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::OCCULT)) + " OCCULT").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::OCCULT)) + " OCCULT").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
+            }
+            else if(inventoryScreen.currentPage.MouseOverIcon->referencedItem->GetItemID() == ItemID::BulletLead)
+            {
+                DisplayText = textToTexture(
+                        (std::to_string(currentCharacter->leadBulletCount) + " Lead Bullets remaining").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
+            }
 
 
             if (ItemToDisplay->GetAbility()) {
@@ -2437,10 +2500,6 @@ namespace JanSordid::SDL_Example {
                                            map.GetSlotByID(c)->position.x, map.GetSlotByID(c)->position.y);
                     }
                 }
-                //render character icon on map
-                if (character1->GetCurrentLocationID() != LocationID::UNASSIGNED) {
-                    //  renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
-                }
             }
             RenderSidebar();
             RenderTurnButton(true);
@@ -2535,6 +2594,9 @@ namespace JanSordid::SDL_Example {
                     case EnvironmentType::SheepTree:
                         renderFromSpritesheet(sceneWindow,sheep_treeBG);
                         break;
+                    case EnvironmentType::VillageChurch:
+                        renderFromSpritesheet(sceneWindow,churchBG);
+                        break;
 
 
                     default:SDL_RenderFillRect(renderer(),&sceneWindow);
@@ -2560,12 +2622,13 @@ namespace JanSordid::SDL_Example {
                     default: break;
                 }
 
-                //Render Healthbar
+               // Render Healthbar
 
-                if(eTracker.activeEncounter->id == EncounterID::Combat_Encounter)
-                {
-                    RenderHealthbar(tempHealth);
-                }
+               if(eTracker.activeEncounter->id == EncounterID::Combat_Encounter)
+               {
+                   //
+                  // RenderHealthbar(tempHealth);
+               }
 
 
                 //Render Text Field Background todo Find a Texture
@@ -2705,7 +2768,7 @@ namespace JanSordid::SDL_Example {
                                                         static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01)*windowSize.y),
                                                         static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
                                                         static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
-                                OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)) ,
+                                OptionVector.push_back({static_cast<int>((EncounterLayout.DialogueMainTextStart.x*0.01*windowSize.x)),
                                                         static_cast<int>((EncounterLayout.DialogueMainTextEnd.y*0.01+EncounterLayout.DialogueOptionFieldScale.y*0.01)*windowSize.y),
                                                         static_cast<int>((EncounterLayout.DialogueMainTextEnd.x*0.01*windowSize.x)),
                                                         static_cast<int>(EncounterLayout.DialogueOptionFieldScale.y*0.01*windowSize.y)});
@@ -2773,7 +2836,7 @@ namespace JanSordid::SDL_Example {
                             renderFateDieAnimation(ske);
                             renderDicerollAnimation(ske);
                             eTracker.diaPhase = DialoguePhase::Scene;
-                            //todo exit after roll result? do we want to allow the spending of all wp in one check?
+                            //todo exit after roll result? do we want to allow the spending of all wp in one check? | Yes we do -Max
 
                         }
 
@@ -3209,7 +3272,7 @@ namespace JanSordid::SDL_Example {
                                                 {},
                                                 11,
                                                 255,
-                                                {ItemID::RitualSkull}, // rewardItemIDs
+                                                {ItemID::RitualSkullCursed}, // rewardItemIDs
                                                 {}  // failureItemIDs
                                         }
                                 },
@@ -3374,6 +3437,10 @@ namespace JanSordid::SDL_Example {
         encounterManager.addEncounter(monasteryMain.id,monasteryMain);
         encounterManager.addEncounter(testingCombat.id,testingCombat);
 
+        encounterManager.addEncounter(VillageMain.id,VillageMain);
+        encounterManager.addEncounter(EncounterID::HermitMain,HermitMain);
+        encounterManager.addEncounter(EncounterID::HunterCamp,HunterCamp);
+
         //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
 
@@ -3382,7 +3449,8 @@ namespace JanSordid::SDL_Example {
                      LocationID::UNASSIGNED,
                      MonsterID::Werewolf,
                      MonsterType::Beast,
-                     MovementType::Fast,
+                     MovementType::Wandering,
+                     10,
                      10,
                      4,
                      -3,
@@ -3398,6 +3466,7 @@ namespace JanSordid::SDL_Example {
                 MonsterType::Beast,
                 MovementType::Stalking,
                 3,
+                3,
                 2,
                 0,
                 0,
@@ -3410,7 +3479,8 @@ namespace JanSordid::SDL_Example {
                 LocationID::UNASSIGNED,
                 MonsterID::Bear,
                 MonsterType::Beast,
-                MovementType::Stalking,
+                MovementType::Wandering,
+                4,
                 4,
                 1,
                 -1,
@@ -3430,6 +3500,9 @@ namespace JanSordid::SDL_Example {
         locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
         locationManager.GetItem(LocationID::Monastery)->related_events.push_back(EncounterID::MonasteryMain); //TODO TESTING ENCOUNTERS
         locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::Testing_Combat);
+        locationManager.GetItem(LocationID::Village)->related_events.push_back(EncounterID::VillageMain);
+        locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::HunterCamp);
+        locationManager.GetItem(LocationID::Hermit)->related_events.push_back(EncounterID::HermitMain);
 
     }
 
@@ -3544,25 +3617,36 @@ namespace JanSordid::SDL_Example {
 
         }
     }
-    void BeasthoodState::UpdateCombatEncounter(){
-        encounterManager.removeEncounter(EncounterID::Combat_Encounter);
-        SceneCompositionEntities currentEnemy;
-        //matches the monster ID to the correspondig SCE and gets the correct texture this way
-        switch(cTracker.monID) {
+    SceneCompositionEntities BeasthoodState::MatchMonsterIDtoSceneComp(MonsterID target){
+        SceneCompositionEntities result;
+        switch(target) {
             case MonsterID::Wolf:
-                currentEnemy = SceneCompositionEntities::Wolf;
+                result = SceneCompositionEntities::Wolf;
                 break;
             case MonsterID::Werewolf:
-                currentEnemy = SceneCompositionEntities::Werewolf;
+                result = SceneCompositionEntities::Werewolf;
                 break;
             case MonsterID::Bear:
-                currentEnemy = SceneCompositionEntities::Bear;
+                result = SceneCompositionEntities::Bear;
                 break;
             default:
-                currentEnemy = SceneCompositionEntities::Character;
+                result = SceneCompositionEntities::Character;
 
                 //add more as needed
         }
+        return result;
+    }
+    void BeasthoodState::UpdateCombatEncounter(){
+        //reset the Encounter
+        encounterManager.removeEncounter(EncounterID::Combat_Encounter);
+        //3 slots for enemies in scene
+        SceneCompositionEntities currentEnemy;
+        SceneCompositionEntities additionalEnemy1,additionalEnemy2;
+        //matches the monster ID to the correspondig SCE and gets the correct texture this way
+        currentEnemy = MatchMonsterIDtoSceneComp(cTracker.monID);
+        if(cTracker.monsters.size() >= 2){additionalEnemy1 = MatchMonsterIDtoSceneComp(cTracker.monsters[1].id);}
+        if(cTracker.monsters.size() >= 3){additionalEnemy2 = MatchMonsterIDtoSceneComp(cTracker.monsters[2].id);}
+
         Encounter CombatEncounter{
                 EncounterID::Combat_Encounter,
                 EncounterTypeID::Tutorial,  // Replace
@@ -3634,7 +3718,7 @@ namespace JanSordid::SDL_Example {
                                                 "Make a Fight check",
                                                 true,
                                                 StatNames::FIGHT,
-                                                cTracker.toughness,
+                                                cTracker.hp,
                                                 {},
                                                 {{ExecuteFlags::Wound,cTracker.combatDamage}},
                                                 4,
@@ -3703,7 +3787,7 @@ namespace JanSordid::SDL_Example {
                                 {
 
                                         {
-                                                "Leave the area.",
+                                                "Move on. (If additional Monsters lurk here you must fight or dodge them too)",
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
@@ -3717,8 +3801,8 @@ namespace JanSordid::SDL_Example {
                                 },
                                 {
                                         {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                      //  {SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_2},
-                                        //{SceneCompositionEntities::Wolf,SceneCompositionSlots::Enemy_3}
+                                        {additionalEnemy1,SceneCompositionSlots::Enemy_2},
+                                        {additionalEnemy2,SceneCompositionSlots::Enemy_3}
                                 }
                         },
                         {
@@ -3826,7 +3910,7 @@ namespace JanSordid::SDL_Example {
                         }
 
                 },
-                DialoguePhase::Scene // Starting dialogue phase
+                DialoguePhase::Scene,// Starting dialogue phase
         };
         encounterManager.addEncounter(EncounterID::Combat_Encounter,CombatEncounter);
     }
@@ -3856,7 +3940,7 @@ namespace JanSordid::SDL_Example {
                 else
                 {return false;}
             case RequirementFlags::occult:
-                if(currentCharacter->GetCurrentStats().GetStat(OCCULT) >=get<1>(requirement))
+                if(currentCharacter->GetCurrentStats().GetStat(OCCULT) >= get<1>(requirement))
                 {return true;}
                 else
                 {return false;}
@@ -3979,6 +4063,238 @@ namespace JanSordid::SDL_Example {
         QuestTitle= nullptr;
 
     }
+//    void BeasthoodState::RenderHealthbar(float currentHealth)
+//    {
+//        //Render Combat Encounter specifics
+//        SDL_Rect HealthBG{
+//                static_cast<int>(EncounterLayout.HealthbarBorderStart.x*0.01*windowSize.x),
+//                static_cast<int>(EncounterLayout.HealthbarBorderStart.y*0.01*windowSize.y),
+//                static_cast<int>(EncounterLayout.HealthbarBorderScale.x*0.01*windowSize.x),
+//                static_cast<int>(EncounterLayout.HealthbarBorderScale.y*0.01*windowSize.y),
+//
+//        };
+//        renderFromSpritesheet(HealthBG,healtbarBG);
+//
+//
+//        //SDL_SetRenderDrawColor(renderer(),200,10,10,0);
+//        SDL_Rect HealthBarVariablePart = {static_cast<int>(EncounterLayout.HealthBarStart.x*0.01*windowSize.x),
+//                                          static_cast<int>(EncounterLayout.HealthBarStart.y*0.01*windowSize.y),
+//                                          static_cast<int>(EncounterLayout.HealthBarScale.x*0.01*windowSize.x*currentHealth),
+//                                          static_cast<int>(EncounterLayout.HealthBarScale.y*0.01*windowSize.y)
+//        };
+//        SDL_Rect HealthbarRedPart {
+//            0,0,
+//            static_cast<int>(1152*currentHealth),
+//            8
+//        };
+//        SDL_RenderCopy(renderer(),healtbarRed,&HealthbarRedPart,&HealthBarVariablePart);
+//        //SDL_RenderFillRect(renderer(),&HealthBarVariablePart);
+//        SDL_Rect HealthbarEdge {
+//                static_cast<int>(EncounterLayout.HealthbarBorderStart.x*0.01*windowSize.x + EncounterLayout.HealthBarScale.x*0.01*windowSize.x*currentHealth),
+//                static_cast<int>(EncounterLayout.HealthbarBorderStart.y*0.01*windowSize.y),
+//                static_cast<int>(0.01*windowSize.x*1),
+//                static_cast<int>(EncounterLayout.HealthbarBorderScale.y*0.01*windowSize.y)
+//
+//        };
+//        if (currentHealth<1.)
+//        {
+////            SDL_SetRenderDrawColor(renderer(),0,0,0,0);
+////            SDL_RenderFillRect(renderer(),&HealthbarEdge);
+//            renderFromSpritesheet(HealthbarEdge,healthbarEdge);
+//        }
+//
+//        TTF_SetFontSize(_font,static_cast<int>(20*windowSize.y/1080));
+//
+//        Texture * enemyName = textToTexture("Wolf"); //Todo find good way to pass name of enemy
+//        SDL_Rect TextTarget {
+//            static_cast<int>(EncounterLayout.HealthBarTitleStart.x*0.01*windowSize.x),
+//            static_cast<int>(EncounterLayout.HealthBarTitleStart.y*0.01*windowSize.y),
+//            static_cast<int>(EncounterLayout.HealthbarTitleScale.x*0.01*windowSize.x),
+//                static_cast<int>(EncounterLayout.HealthbarTitleScale.y*0.01*windowSize.y)
+//
+//
+//        };
+//        renderText(TextTarget,enemyName);
+//        TTF_SetFontSize(_font,static_cast<int>(15*windowSize.y/1080));
+//
+//
+//    }
+    void BeasthoodState::CleanupMonsterTextures() {
+        for (auto& pair : monsterIDtoTextureMap) {
+            SDL_DestroyTexture(pair.second);
+        }
+        monsterIDtoTextureMap.clear();
+    }
+    void BeasthoodState::ResolveItemUsage(ItemID id){
+        switch(id){
+            ///Example Item, function best replaced with bandages
+            case ItemID::PrayerBook:
+                currentCharacter->AdjustStamina(4);
+                currentCharacter->RemoveFromInventory(id);
+                break;
+            default: break;
+        }
+        ///add more as needed - Max
+    }
+
+
+
+    void BeasthoodState::MoveMonsters(){
+        int target = 0;
+        LocationID targetLocation = map.GetSlotByID(target)->location_id;
+        bool alreadyMoved = false;
+        //reset marking for moved monsters
+        for(auto &a : map.slots){
+            for(auto &b : locationManager.GetItem(a.location_id)->monsters){
+                b.alreadyMoved = false;
+            }
+        }
+        for(auto e : map.slots){
+            if(!locationManager.GetItem(e.location_id)->monsters.empty())
+            {
+                for(auto m : locationManager.GetItem(e.location_id)->monsters){
+                    //set the current location as location for the monster
+                    m.location = e.location_id;
+
+                    switch(m.moveType) {
+                        case MovementType::Stalking:
+                            ///Moves closer to Player if within 2 Location steps
+                            if(!m.alreadyMoved) {
+                                for (auto c: e.connections) {
+                                    //if Character is on connected slot monsters go to character
+                                    if(m.location == currentCharacter->GetCurrentLocationID()){
+                                        m.alreadyMoved = true;
+                                        break;
+                                    }
+                                    if(m.alreadyMoved) {
+                                    break;
+                                    }
+
+                                    if (currentCharacter->GetCurrentLocationID() ==
+                                        map.GetSlotByID(c.first)->location_id &&
+                                        c.second)
+                                    {
+                                        alreadyMoved = true;
+                                        m.alreadyMoved = true;
+                                        MoveMonster(e.location_id, currentCharacter->GetCurrentLocationID(), m);
+                                    }
+                                }
+                                if (!alreadyMoved) {
+                                    for (auto c: e.connections) {
+                                        if(m.alreadyMoved){
+                                            break;}
+                                        //if player is 2 steps away, close the gap
+                                        for (auto cc: map.GetSlotByID(c.first)->connections) {
+                                            LocationID firstStep = map.GetSlotByID(c.first)->location_id;
+                                            LocationID secondStep = map.GetSlotByID(cc.first)->location_id;
+                                            if (currentCharacter->GetCurrentLocationID() == secondStep && cc.second) {
+                                                m.alreadyMoved = true;
+
+                                                    MoveMonster(e.location_id, firstStep, m);
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                            break;
+                        case MovementType::Wandering:
+                        ///Wandering Monster moves from map node 0 to map node maximum in a straight path
+                            if(!m.alreadyMoved) {
+                                if (locationManager.GetItem(m.location)->GetMapSlot()->id == 0) {
+
+                                    target = map.slots.size() - 1;
+                                    m.moveTarget = map.GetSlotByID(target)->location_id;
+                                }
+                                if (locationManager.GetItem(m.location)->GetMapSlot()->id == map.slots.size() - 1) {
+                                    target = 0;
+                                    m.moveTarget = map.GetSlotByID(target)->location_id;
+                                }
+                                if (m.moveTarget == LocationID::UNASSIGNED) { m.moveTarget = targetLocation; }
+
+                                targetLocation = FindNextStep(m.location, m.moveTarget);
+                                m.alreadyMoved = true;
+
+                                if (targetLocation != m.location) {  // Move only if a valid step is found
+                                    if (locationManager.GetItem(targetLocation)->monsters.size() < 3) {
+                                        MoveMonster(m.location, targetLocation, m);
+                                    }
+                                }
+                            }
+                            break;
+                            ///add more as needed. Script the Werwolf movement by using MoveMonster in DISASTER Phase
+                        default:break;
+                    }
+                }
+
+            }
+        }
+    }
+
+
+
+// Function to find the next step in the shortest path using BFS
+    LocationID BeasthoodState::FindNextStep(LocationID start, LocationID goal) {
+        if (start == goal) return start;  // Already at target
+
+        std::queue<LocationID> queue;
+        std::unordered_map<LocationID, LocationID> cameFrom; // Stores previous steps
+
+        queue.push(start);
+        cameFrom[start] = start;  // Start has no previous node
+
+        // BFS to find shortest path
+        while (!queue.empty()) {
+            LocationID current = queue.front();
+            queue.pop();
+
+            // If we reached the goal, backtrack to find the next step
+            if (current == goal) {
+                LocationID step = goal;
+                while (cameFrom[step] != start) {
+                    step = cameFrom[step];
+                }
+                return step;
+            }
+
+            // Explore neighbors
+            for (auto c : map.GetSlotByID(locationManager.GetItem(current)->GetMapSlot()->id)->connections) {
+                LocationID neighbor = map.GetSlotByID(c.first)->location_id;
+
+                if (cameFrom.find(neighbor) == cameFrom.end() && c.second) { // Not visited & connected
+                    queue.push(neighbor);
+                    cameFrom[neighbor] = current;  // Track path
+                }
+            }
+        }
+
+        return start;  // No path found, stay in place
+    }
+
+    void BeasthoodState::SpawnMonster(LocationID location, MonsterID monster){
+        if(locationManager.GetItem(location)->monsters.size() < 3){
+            if(monsterManager.GetMonster(monster).spawnLimit > map.getMonsterCount(monster) || map.getMonsterCount(monster) == 0) {
+                map.increaseMonsterCounter( locationManager.GetItem(location)->AddMonster(monsterManager.GetMonster(monster)));
+
+            }
+        }
+    }
+
+    void BeasthoodState::DespawnMonster(LocationID location, MonsterID monster){
+            map.decreaseMonsterCounter(monster);
+            locationManager.GetItem(location)->RemoveMonster(monster);
+
+    }
+    void BeasthoodState::MoveMonster(LocationID origin,LocationID destination,Monster monster){
+        if(locationManager.GetItem(destination)->monsters.size() < 3){
+            Monster temp = monster;
+            DespawnMonster(origin,monster.id);
+            map.increaseMonsterCounter(monster.id);
+            locationManager.GetItem(destination)->AddMonster(monster);
+        }
+
+    }
+
     void BeasthoodState::RenderHealthbar(float currentHealth)
     {
         //Render Combat Encounter specifics
@@ -3999,9 +4315,9 @@ namespace JanSordid::SDL_Example {
                                           static_cast<int>(EncounterLayout.HealthBarScale.y*0.01*windowSize.y)
         };
         SDL_Rect HealthbarRedPart {
-            0,0,
-            static_cast<int>(1152*currentHealth),
-            8
+                0,0,
+                static_cast<int>(1152*currentHealth),
+                8
         };
         SDL_RenderCopy(renderer(),healtbarRed,&HealthbarRedPart,&HealthBarVariablePart);
         //SDL_RenderFillRect(renderer(),&HealthBarVariablePart);
@@ -4023,9 +4339,9 @@ namespace JanSordid::SDL_Example {
 
         Texture * enemyName = textToTexture("Wolf"); //Todo find good way to pass name of enemy
         SDL_Rect TextTarget {
-            static_cast<int>(EncounterLayout.HealthBarTitleStart.x*0.01*windowSize.x),
-            static_cast<int>(EncounterLayout.HealthBarTitleStart.y*0.01*windowSize.y),
-            static_cast<int>(EncounterLayout.HealthbarTitleScale.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthBarTitleStart.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthBarTitleStart.y*0.01*windowSize.y),
+                static_cast<int>(EncounterLayout.HealthbarTitleScale.x*0.01*windowSize.x),
                 static_cast<int>(EncounterLayout.HealthbarTitleScale.y*0.01*windowSize.y)
 
 
@@ -4035,12 +4351,7 @@ namespace JanSordid::SDL_Example {
 
 
     }
-    void BeasthoodState::CleanupMonsterTextures() {
-        for (auto& pair : monsterIDtoTextureMap) {
-            SDL_DestroyTexture(pair.second);
-        }
-        monsterIDtoTextureMap.clear();
-    }
+
 
 
 }

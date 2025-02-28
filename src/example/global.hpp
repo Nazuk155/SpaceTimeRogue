@@ -24,6 +24,7 @@ enum class ExecuteFlags {
     FinishedCombatWIN,
     FinishedCombatLOSS,
     SpawnMonster,
+    GainBulletLead,
     UnloadSilverBullet,
     UnloadLeadBullet //todo one unload function may be enough? the requirement splits the outcmes in the scene
 };
@@ -58,7 +59,19 @@ enum class EncounterID{
     Generic_FindSurvivor,
     Church_HolyWaterConversation,
     //use recognizable names
-    MonasteryMain
+
+    Intro,
+    MonasteryMain,
+    VillageMain,
+    HunterCamp,
+    CorpseDiscovery,
+    SkullDiscovery,
+    FlowerDiscovery,
+    HermitMain,
+    RavineMain,
+    ForestHeartApproach,
+    ForestHeartFinal
+
 };
 enum class EncounterTypeID{
     Tutorial,
@@ -66,11 +79,13 @@ enum class EncounterTypeID{
     Trade,
     Trap,
     Unique,
+    FinalZone
     //etc add as needed
 };
 enum class ItemID {
     NONE,
     Halberd,
+    HalberdMaster,
     Sword,
     BetterSword,
     Torch,
@@ -84,7 +99,10 @@ enum class ItemID {
     Talisman,
     Tome,
 
-    RitualSkull,
+    RitualSkullCursed,
+    RitualSkullBound, //TODO use?
+    RitualSkullFaith,
+    Relic,
     BulletLead,
     BulletSilver,
     LoadedGunLead,
@@ -99,12 +117,13 @@ enum class LocationID {
     Smith,
     Windmill,
     Crossroads,
-    Cave,
+    Hermit,
     Monastery,
     Farm,
     Clearing,
-    Townhall,
+    Village,
     Thicket,
+    HunterCamp,
     UNASSIGNED
 };
 
@@ -125,7 +144,7 @@ enum class QuestID {
 
 
 enum class MonsterID {
-    UNASSIGNED,
+    UNASSIGNED_MONSTERID,
     Wolf,
     Bear,
     Ghoul,
@@ -144,7 +163,7 @@ enum class MonsterType {
 
 enum class MovementType {
     Stalking,
-    Fast,
+    Wandering,
     Flying,
     // Add other movement types here
 };

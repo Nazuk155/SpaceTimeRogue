@@ -32,6 +32,12 @@ public:
         }
         return nullptr;
     }
+    Encounter* GetEncounter(EncounterID id) {
+        auto it = encounters.find(id);
+        return (it != encounters.end()) ? &it->second : nullptr;
+    }
+
+
 
     // Remove an encounter by ID
     void removeEncounter(EncounterID id) {
@@ -161,15 +167,15 @@ public:
 
 ///refactored this so it returns a ExecuteFlag which we use in a switch to resolve the outcome in beasthoodstate
 ///handle all future added outcomes outside for easier access to functionality - Max
-ExecuteFlags iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::tuple<ExecuteFlags, int>> &outcomes, Character &currentCharacter, QuestLog& questlog) const {
+Vector<ExecuteFlags> iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vector<std::tuple<ExecuteFlags, int>> &outcomes, Character &currentCharacter, QuestLog& questlog) const {
+    Vector<ExecuteFlags> results;
     for (std::tuple<ExecuteFlags, int> outcome: outcomes) {
 
         switch (get<0>(outcome)) {
             case ExecuteFlags::Wound:
-
                 fmt::print("Debug- Injury");
                 currentCharacter.AdjustStamina(-get<1>(outcome));
-                return ExecuteFlags::Wound;
+                results.push_back(ExecuteFlags::Wound);
                 break;
             case ExecuteFlags::GainItem:
                 for(auto e : rewards) {
@@ -177,24 +183,32 @@ ExecuteFlags iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vecto
                     currentCharacter.AddToInventory(iManager->GetItem(e));
                 }
                 //TODO Ressources
-                return ExecuteFlags::GainItem;
+                results.push_back(ExecuteFlags::GainItem);
                 break;
             case ExecuteFlags::UnloadSilverBullet:
-                return ExecuteFlags::UnloadSilverBullet;
+                results.push_back(ExecuteFlags::UnloadSilverBullet);break;
             case ExecuteFlags::UnloadLeadBullet:
-                return ExecuteFlags::UnloadLeadBullet;
+                results.push_back(ExecuteFlags::UnloadLeadBullet);break;
+            case ExecuteFlags::GainBulletLead:
+
+                if (currentCharacter.leadBulletCount == 0)
+                {
+                    currentCharacter.AddToInventory(iManager->GetItem(ItemID::BulletLead));
+
+                }
+                currentCharacter.leadBulletCount += get<1>(outcome);
+                break;
             case ExecuteFlags::Heal:
                 currentCharacter.AdjustStamina(get<1>(outcome));
-                return ExecuteFlags::Heal;
-                break;
+                results.push_back(ExecuteFlags::Heal);break;
             case ExecuteFlags::SanityLoss:
                 currentCharacter.AdjustSanity(-get<1>(outcome)); //todo fix this mess/warning
-                return ExecuteFlags::SanityLoss;
+                results.push_back(ExecuteFlags::SanityLoss);
                 break;
             case ExecuteFlags::RegainSan:
                 currentCharacter.AdjustSanity(get<1>(outcome));
-                return ExecuteFlags::RegainSan;
-                break;
+                results.push_back(ExecuteFlags::RegainSan);break;
+
             case ExecuteFlags::StartQuest:
                 if(!questlog.addQuest(get<1>(outcome)))
                 {
@@ -203,8 +217,8 @@ ExecuteFlags iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vecto
                 {
                     fmt::println("started quest:",get<1>(outcome));
                 }
-                return ExecuteFlags::StartQuest;
-                break;
+                results.push_back(ExecuteFlags::StartQuest);break;
+
             case ExecuteFlags::AdvanceQuestStage:
             {
                 int questId = get<1>(outcome)/1000;
@@ -232,20 +246,22 @@ ExecuteFlags iterateOverOutcomes(const Vector<ItemID>& rewards, const std::vecto
                     }
                 }
 
-            } return ExecuteFlags::AdvanceQuestStage;break;
+            } results.push_back(ExecuteFlags::AdvanceQuestStage);break;
             case ExecuteFlags::StartCombat:
-                return ExecuteFlags::StartCombat;break;
+                results.push_back(ExecuteFlags::StartCombat);break;
 
             case ExecuteFlags::FinishedCombatWIN:
-                return ExecuteFlags::FinishedCombatWIN;break;
+                results.push_back(ExecuteFlags::FinishedCombatWIN);break;
             case ExecuteFlags::FinishedCombatLOSS:
-                return ExecuteFlags::FinishedCombatLOSS;break;
+                results.push_back(ExecuteFlags::SanityLoss);
+                break;
             case ExecuteFlags::SpawnMonster:
 
-                return ExecuteFlags::SpawnMonster;
+                results.push_back(ExecuteFlags::SpawnMonster);
+                break;
         }
     }
-        return ExecuteFlags::Heal; //TODO why is this here?
+        return results;
     }
 
 

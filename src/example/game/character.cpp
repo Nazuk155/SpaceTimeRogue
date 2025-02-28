@@ -208,6 +208,24 @@ int Character::GetBaseStamina() const {
     return base_stamina;
 }
 
+Item* Character::FindItem(ItemID id) {
+    auto it = std::find_if(inventory.begin(), inventory.end(),
+                           [id](Item* item) { return item->GetItemID() == id; });
+
+    return (it != inventory.end()) ? *it : nullptr;
+}
+
+
+ItemID Character::UseItem(ItemID id){
+Item* target = FindItem(id);
+if(target == nullptr){
+    fmt::println("Item NOT found during UseItem");
+    }else{
+        id = target->UseItem();
+        return id;
+    }
+}
+
 
 
 

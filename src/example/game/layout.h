@@ -14,7 +14,7 @@ struct
     SDL_Point SidebarEnd {100,100};
     SDL_Point SidebarSize {20,100};
 
-    SDL_Point SidebarContentStart {81,4};
+    SDL_Point SidebarContentStart {81,0};
     SDL_Point SidebarContentEnd {98,100};
 
     SDL_Point ClassTextBox {16,4};
@@ -25,7 +25,7 @@ struct
 
     SDL_Point SkillTextScale {16,3};
 
-    SDL_Point EquippedItemsStart {81,7*SkillTextScale.y};
+    SDL_Point EquippedItemsStart {81,8*SkillTextScale.y};
     SDL_Point InventoryRowScale{18,7};
 
     SDL_Point InventoryScale {18,6*InventoryRowScale.y};
@@ -160,6 +160,9 @@ struct  //TODO PLACEHOLDER for better system, encounter data etc
     const float ScalingvalueVeteranX = veteran_IMG.x/(1920*2.7);
     const float ScalingvalueVeteranY = veteran_IMG.y/(1080*2.7);
 
+    SDL_Point priest_IMG {615,1250};
+    const float ScalingvaluePriestX = priest_IMG.x/(1920*2.7);
+    const float ScalingvaluePriestY = priest_IMG.y/(1080*2.7);
 
     const SDL_Point Turn_Button = {409, 1040};
 

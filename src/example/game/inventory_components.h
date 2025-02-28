@@ -48,6 +48,10 @@ inline void RenderItemIcon(SDL_Renderer*renderer,const Item* item,SDL_Texture* b
             SDL_RenderCopy(renderer, iconVector[1], &iconScale, &destinationRect
             );
             break;
+        case ItemID::HalberdMaster:
+            SDL_RenderCopy(renderer, iconVector[1], &iconScale, &destinationRect
+            );
+            break;
         case ItemID::PrayerBook:
             SDL_RenderCopy(renderer, iconVector[2], &iconScale, &destinationRect
             );
@@ -64,13 +68,14 @@ inline void RenderItemIcon(SDL_Renderer*renderer,const Item* item,SDL_Texture* b
             SDL_RenderCopy(renderer, iconVector[5], &iconScale, &destinationRect
             );
             break;
-        case ItemID::RitualSkull:
+        case ItemID::RitualSkullCursed:
             SDL_RenderCopy(renderer, iconVector[6], &iconScale, &destinationRect
             );
             break;
         case ItemID::BulletLead:
             SDL_RenderCopy(renderer, iconVector[7], &iconScale, &destinationRect
             );
+//Todo text to texture?
             break;
         case ItemID::BulletSilver:
             SDL_RenderCopy(renderer, iconVector[8], &iconScale, &destinationRect
@@ -466,7 +471,14 @@ class InventoryScreen
                             break;
                         default:
                             fmt::println("loading lead bullet");
-                            currentCharacter->RemoveFromInventory(currentPage.MouseOverIcon->referencedItem->GetItemID());
+                            if(currentCharacter->leadBulletCount ==1) {
+                                currentCharacter->RemoveFromInventory(
+                                        currentPage.MouseOverIcon->referencedItem->GetItemID());
+                            }
+                            else
+                            {
+                                currentCharacter->leadBulletCount--;
+                            }
 
 
 
