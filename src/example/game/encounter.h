@@ -1197,19 +1197,6 @@ inline Encounter VillageMain
                                     {},
                                     {},
                                 false,
-                            },
-                            {
-                                    "Continue.",
-                                    true,
-                                    StatNames::FAITH,
-                                    0,
-                                    {},
-                                    {},
-                                    5, 255,
-                                    {},
-                                    {},
-                                    {},
-                                    false,
                             }
                     },
                     {

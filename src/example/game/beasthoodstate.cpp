@@ -3643,9 +3643,9 @@ if(itemInUse){
             case StatNames::WILLPOWER:
                 return "Willpower";
             case StatNames::OCCULT:
-                return "Knowledge";
+                return "Occult";
             case StatNames::FAITH:
-                return "Luck";
+                return "Faith";
 
         }
     }
