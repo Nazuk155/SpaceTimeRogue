@@ -23,7 +23,8 @@ enum class ExecuteFlags {
     StartCombat,
     FinishedCombatWIN,
     FinishedCombatLOSS,
-    SpawnMonster
+    SpawnMonster,
+    RemoveEncounter
 };
 
 enum class GamePhases

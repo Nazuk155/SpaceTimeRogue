@@ -422,8 +422,6 @@ namespace JanSordid::SDL_Example {
              locationManager.AddItem(std::move(church));
              */
 
-        // locations.emplace_back( "Location " + std::to_string(i),i);
-        //map.SetLocation(i, locations.back());
         for (int i = 0; i <= 11; ++i) {
             locationManager.AddItem(std::move(std::make_unique<Location>(static_cast<LocationID>(i))));
             map.SetLocation(i, *locationManager.GetItem(static_cast<LocationID>(i)));
@@ -1232,6 +1230,7 @@ namespace JanSordid::SDL_Example {
 //            //Play the music
 //            Mix_PlayMusic( villageTheme, -1 );
 //        }
+
 if(currentCharacter->GetStamina() <= 0){
 //TODO make death screen - Max
 }
@@ -1246,6 +1245,7 @@ if(itemInUse){
     activeItem = ItemID::NONE;
     itemInUse = false;
 }
+
 
         if (Phase == GamePhases::UPKEEP) {
 
@@ -1580,6 +1580,9 @@ if(itemInUse){
                     case ExecuteFlags::SpawnMonster:
                         //probably use SpawnMonster(locationID,monsterID) and pull relevant location and monster from event
                         break;
+                    case ExecuteFlags::RemoveEncounter:
+                        RemoveEncounter(currentCharacter->GetCurrentLocationID(),eTracker.encounterID);
+
                     default:
                         eTracker.exFlag.clear();
                         break;
@@ -3388,6 +3391,7 @@ if(itemInUse){
         //3 slots for enemies in scene
         SceneCompositionEntities currentEnemy;
         SceneCompositionEntities additionalEnemy1,additionalEnemy2;
+
         //matches the monster ID to the correspondig SCE and gets the correct texture this way
         currentEnemy = MatchMonsterIDtoSceneComp(cTracker.monID);
         if(cTracker.monsters.size() >= 2){additionalEnemy1 = MatchMonsterIDtoSceneComp(cTracker.monsters[1].id);}
@@ -3801,6 +3805,7 @@ if(itemInUse){
             case ItemID::PrayerBook:
                 currentCharacter->AdjustStamina(4);
                 currentCharacter->RemoveFromInventory(id);
+                inventoryScreen.RebuildInventory();
                 break;
             default: break;
         }
@@ -3965,6 +3970,12 @@ if(itemInUse){
 
     }
 
+    void BeasthoodState::AddEncounter(LocationID lID,EncounterID eID){
+        locationManager.GetItem(lID)->AddEncounter(eID);
+    }
+    void BeasthoodState::RemoveEncounter(LocationID lID,EncounterID eID){
+        locationManager.GetItem(lID)->RemoveEncounter(eID);
+    }
 
 
 }

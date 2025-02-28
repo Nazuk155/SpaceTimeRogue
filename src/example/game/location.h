@@ -35,4 +35,7 @@ public:
     Monster GetMonster(MonsterID id);
     void RemoveMonster(MonsterID id);
 
+    void AddEncounter(EncounterID id);
+
+    void RemoveEncounter(EncounterID id);
 };

@@ -680,6 +680,10 @@ namespace JanSordid::SDL_Example {
         void DespawnMonster(LocationID location, MonsterID monster);
 
         void MoveMonster(LocationID origin,LocationID destination, Monster monster);
+
+        void AddEncounter(LocationID lID, EncounterID eID);
+
+        void RemoveEncounter(LocationID lID, EncounterID eID);
     };
 
 }

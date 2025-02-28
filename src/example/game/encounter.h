@@ -270,11 +270,11 @@ inline Encounter testingCombat
 
                                         },
                                         {
-                                                "Finish Event",
+                                                "Finish Event and Remove Encounter from Location",
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
-                                                {},
+                                                {{ExecuteFlags::RemoveEncounter,0}},
                                                 {},
                                                 255, 255,
                                                 {},
