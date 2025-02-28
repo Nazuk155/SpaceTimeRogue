@@ -844,7 +844,7 @@ inline Encounter IntroEncounter
 
                                  },
                                  {
-                                         "An ancien heirloom - a lead amulet of a pagan forest god of Roman time. With it in hand the forests seem to hide you on their own.",
+                                         "An ancient heirloom - a lead amulet of a pagan forest god of Roman time. With it in hand the forests seem to hide you on their own.",
                                          false,
                                          StatNames::FAITH,
                                          0,
@@ -852,6 +852,20 @@ inline Encounter IntroEncounter
                                          {},
                                          2, 255,
                                          {ItemID::Talisman},
+                                         {},
+                                         {{}}, //If not on Quest 3, start quest 3
+                                         false,
+
+                                 },
+                                 {
+                                         "Your faith is your shield. You carry your prayer-book with you.",
+                                         false,
+                                         StatNames::FAITH,
+                                         0,
+                                         {{ExecuteFlags::GainItem, 1}},
+                                         {},
+                                         2, 255,
+                                         {ItemID::PrayerBook},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,

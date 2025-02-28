@@ -610,10 +610,10 @@ namespace JanSordid::SDL_Example {
         currentCharacter = new Character(*landsknechtBlueprint);
         currentCharacter->RefillFatePoints();
 
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
         currentCharacter->leadBulletCount++;
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
