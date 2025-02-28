@@ -694,7 +694,7 @@ namespace JanSordid::SDL_Example {
                                               LocationID::UNASSIGNED_LOCATION);
         }
 
-        //calls UpdateCombat with background based on EncounterID, if not given eID it sets the given envType. Defaults to DenseForest background.
+        //calls UpdateCombat with background based on given parameter. Best used by only inputting one parameter.
         void Update_and_ChangeCombatBackground(EncounterID eID = EncounterID::NO_ENCOUNTER_ASSIGNED,
                                                EnvironmentType envType = EnvironmentType::DenseForest,
                                                LocationID locID = LocationID::UNASSIGNED_LOCATION);

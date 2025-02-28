@@ -1683,26 +1683,59 @@ if(itemInUse){
             };
     void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector, const EnvironmentType environment)
     {
-        switch (environment) {
-            case EnvironmentType::DenseForest: musicManager.changeMusic(bgm::forest_quiet);break;
-            case EnvironmentType::MonasteryPath: musicManager.changeMusic(bgm::main_theme);break;
-            case EnvironmentType::Village: musicManager.changeMusic(bgm::village1);break;
-            case EnvironmentType::Village2: musicManager.changeMusic(bgm::village1);break;
-            case EnvironmentType::WindmillOutskirts: musicManager.changeMusic(bgm::main_theme);break;
-            case EnvironmentType::HunterCamp: musicManager.changeMusic(bgm::forest_quiet);break;
-            case EnvironmentType::ForestOutskirts: musicManager.changeMusic(bgm::forest_quiet);break;
-            case EnvironmentType::ForestClearing: musicManager.changeMusic(bgm::forest_quiet);break;
-            case EnvironmentType::ForestLake: musicManager.changeMusic(bgm::forest_quiet);break;
-            case EnvironmentType::HeartApproach: musicManager.changeMusic(bgm::forest_quiet);break;
-            case EnvironmentType::HermitLodge: musicManager.changeMusic(bgm::forest_quiet);break;
-            case EnvironmentType::ForestHeart: musicManager.changeMusic(bgm::battle);break;
-            case EnvironmentType::MonasteryInterior: musicManager.changeMusic(bgm::monastery);break;
-            default:musicManager.changeMusic(bgm::main_theme);break;
-
-
-
-
+        //bypass environment music in important combat
+        //add other Monsters wit || MonsterID::
+        if(cTracker.monID == MonsterID::Werewolf) {
+            musicManager.changeMusic(bgm::battle);
+        }else {
+            switch (environment) {
+                case EnvironmentType::DenseForest:
+                    musicManager.changeMusic(bgm::forest_quiet);
+                    break;
+                case EnvironmentType::MonasteryPath:
+                    musicManager.changeMusic(bgm::main_theme);
+                    break;
+                case EnvironmentType::Village:
+                    musicManager.changeMusic(bgm::village1);
+                    break;
+                case EnvironmentType::Village2:
+                    musicManager.changeMusic(bgm::village1);
+                    break;
+                case EnvironmentType::WindmillOutskirts:
+                    musicManager.changeMusic(bgm::main_theme);
+                    break;
+                case EnvironmentType::HunterCamp:
+                    musicManager.changeMusic(bgm::forest_quiet);
+                    break;
+                case EnvironmentType::ForestOutskirts:
+                    musicManager.changeMusic(bgm::forest_quiet);
+                    break;
+                case EnvironmentType::ForestClearing:
+                    musicManager.changeMusic(bgm::forest_quiet);
+                    break;
+                case EnvironmentType::ForestLake:
+                    musicManager.changeMusic(bgm::forest_quiet);
+                    break;
+                case EnvironmentType::HeartApproach:
+                    musicManager.changeMusic(bgm::forest_quiet);
+                    break;
+                case EnvironmentType::HermitLodge:
+                    musicManager.changeMusic(bgm::forest_quiet);
+                    break;
+                case EnvironmentType::ForestHeart:
+                    musicManager.changeMusic(bgm::battle);
+                    break;
+                case EnvironmentType::MonasteryInterior:
+                    musicManager.changeMusic(bgm::monastery);
+                    break;
+                default:
+                    musicManager.changeMusic(bgm::main_theme);
+                    break;
+            }
         }
+
+
+
 
 
         SDL_Rect targetRect;
@@ -4010,6 +4043,9 @@ if(itemInUse){
             {
                 case LocationID::Crossroads:
                     UpdateCombatEncounter(EnvironmentType::OakPath);
+                    break;
+                case LocationID::Church:
+                    UpdateCombatEncounter(EnvironmentType::MonasteryGate);
                     break;
                 default:
                     UpdateCombatEncounter();
