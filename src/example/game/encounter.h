@@ -1486,7 +1486,7 @@ inline Encounter CorpseDiscovery
                              "A sign of the evil at work here. A clue towards the vile nature of your quarry.",
                              false,
                              StatNames::FAITH,
-                             3, {{ExecuteFlags::AdvanceQuestStage,1040}}, {},
+                             3, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
                              255, 255,
                              {}, {}, {{RequirementFlags::hasQuestOnStage,1020}}, true
                      },
@@ -1495,7 +1495,7 @@ inline Encounter CorpseDiscovery
                              "A sign of the evil at work here. You have your second clue",
                              false,
                              StatNames::FAITH,
-                             3, {{ExecuteFlags::AdvanceQuestStage,1040}}, {},
+                             3, {{ExecuteFlags::AdvanceQuestStage,1040},{ExecuteFlags::RemoveEncounter,1}}, {},
                              255, 255,
                              {}, {}, {{RequirementFlags::hasQuestOnStage,1030}}, true
                      },
@@ -1586,7 +1586,7 @@ inline Encounter SkullDiscovery
                                     "Leave. You have your first clue.",
                                     false,
                                     StatNames::OCCULT,
-                                    4, {{ExecuteFlags::AdvanceQuestStage,1030}}, {},
+                                    4, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
                                     255, 255,
                                     {},{},{{RequirementFlags::hasQuestOnStage,1020}},true
 
@@ -1597,7 +1597,7 @@ inline Encounter SkullDiscovery
                                     "Leave. You have your second clue.",
                                     false,
                                     StatNames::OCCULT,
-                                    4, {{ExecuteFlags::AdvanceQuestStage,1030}}, {},
+                                    4, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
                                     255, 255,
                                     {},{},{{RequirementFlags::hasQuestOnStage,1040}},true
 
@@ -1608,7 +1608,7 @@ inline Encounter SkullDiscovery
                                     "Leave. Though you are getting ahead of yourself, this is important.",
                                     false,
                                     StatNames::OCCULT,
-                                    4, {{ExecuteFlags::AdvanceQuestStage,1030}}, {},
+                                    4, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
                                     255, 255,
                                     {},{},{{RequirementFlags::hasQuest,1}},true
 
@@ -1620,7 +1620,7 @@ inline Encounter SkullDiscovery
                                     "Leave. Though you are getting VERY ahead of yourself, this is important.",
                                     false,
                                     StatNames::OCCULT,
-                                    4, {{ExecuteFlags::StartQuest,1},{ExecuteFlags::AdvanceQuestStage,1030}}, {},
+                                    4, {{ExecuteFlags::StartQuest,1},{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
                                     255, 255,
                                     {},{},{{RequirementFlags::notOnQuest,1}},true
 

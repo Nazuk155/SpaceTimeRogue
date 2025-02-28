@@ -1745,6 +1745,9 @@ if(itemInUse){
                     case ExecuteFlags::SpawnMonster:
                         //probably use SpawnMonster(locationID,monsterID) and pull relevant location and monster from event
                         break;
+                    case ExecuteFlags::RemoveEncounter:
+                        RemoveEncounter(currentCharacter->GetCurrentLocationID(),eTracker.encounterID);
+
                     default:
                         eTracker.exFlag.clear();
                         break;
@@ -4342,6 +4345,13 @@ if(itemInUse){
             locationManager.GetItem(destination)->AddMonster(monster);
         }
 
+    }
+
+    void BeasthoodState::AddEncounter(LocationID lID,EncounterID eID){
+        locationManager.GetItem(lID)->AddEncounter(eID);
+    }
+    void BeasthoodState::RemoveEncounter(LocationID lID,EncounterID eID){
+        locationManager.GetItem(lID)->RemoveEncounter(eID);
     }
 
     void BeasthoodState::RenderHealthbar(float currentHealth)

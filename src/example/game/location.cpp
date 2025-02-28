@@ -72,3 +72,18 @@ Monster Location::GetMonster(MonsterID id)  {
     }
     throw std::runtime_error("Monster not found in this location");
 }
+
+
+
+void Location::AddEncounter(EncounterID id) {
+    // Check if the encounter is already in the vector to prevent duplicates
+    if (std::find(related_events.begin(), related_events.end(), id) == related_events.end()) {
+        related_events.push_back(id);
+    }
+}
+
+void Location::RemoveEncounter(EncounterID id) {
+    // Use erase-remove idiom to remove the encounter ID if it exists
+    related_events.erase(std::remove(related_events.begin(), related_events.end(), id), related_events.end());
+}
+

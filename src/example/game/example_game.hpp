@@ -714,6 +714,10 @@ namespace JanSordid::SDL_Example {
         void MoveMonster(LocationID origin,LocationID destination, Monster monster);
 
         void RenderHealthbar(float currentHealth);
+
+        void AddEncounter(LocationID lID, EncounterID eID);
+
+        void RemoveEncounter(LocationID lID, EncounterID eID);
     };
 
 }

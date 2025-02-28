@@ -260,6 +260,9 @@ Vector<ExecuteFlags> iterateOverOutcomes(const Vector<ItemID>& rewards, const st
 
                 results.push_back(ExecuteFlags::SpawnMonster);
                 break;
+            case ExecuteFlags::RemoveEncounter:
+                results.push_back(ExecuteFlags::RemoveEncounter);
+                break;
         }
     }
         return results;
