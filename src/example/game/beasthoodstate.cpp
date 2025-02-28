@@ -1747,6 +1747,10 @@ if(itemInUse){
                         break;
                     case ExecuteFlags::RemoveEncounter:
                         RemoveEncounter(currentCharacter->GetCurrentLocationID(),eTracker.encounterID);
+                        break;
+                    case ExecuteFlags::LoseItem:
+                        inventoryScreen.RebuildInventory();
+                        break;
 
                     default:
                         eTracker.exFlag.clear();

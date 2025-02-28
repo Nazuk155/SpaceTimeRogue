@@ -182,6 +182,14 @@ Vector<ExecuteFlags> iterateOverOutcomes(const Vector<ItemID>& rewards, const st
                     fmt::println("Adding item");
                     currentCharacter.AddToInventory(iManager->GetItem(e));
                 }
+
+                results.push_back(ExecuteFlags::GainItem);
+                break;
+            case ExecuteFlags::LoseItem:
+                for(auto e : rewards) {
+                    fmt::println("Losing item {}",iManager->GetItem(e)->GetName());
+                    currentCharacter.RemoveFromInventory(iManager->GetItem(e)->GetItemID());
+                }
                 //TODO Ressources
                 results.push_back(ExecuteFlags::GainItem);
                 break;

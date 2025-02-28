@@ -50,7 +50,8 @@ inline std::vector<Quest> availableQuests
      {
              {0,"You picked up a skull inscribed with a glowing sigil. You feel fingertips at the surface of your mind."},
              {5,"Your faith protects you from the cursed skull you carry."},
-             {10,"You bound the skull to your will. You can draw a drop of infernal strength from it."}
+             {10,"You bound the skull to your will. You can draw a drop of infernal strength from it."},
+             {100,"The skull is now with the monastery, may it rest in peace."}
      },0},
 
     {"The Corpses","You found a pile of savaged corpses.",11,

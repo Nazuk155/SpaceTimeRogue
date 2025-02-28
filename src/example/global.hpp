@@ -18,6 +18,7 @@ enum class ExecuteFlags {
     Heal,
     RegainSan,
     GainItem,
+    LoseItem,
     StartQuest,
     AdvanceQuestStage,
     StartCombat,

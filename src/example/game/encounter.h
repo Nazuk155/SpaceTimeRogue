@@ -535,8 +535,25 @@ inline Encounter monasteryMain
                                            true
 
 
-                                   },  //Regain San/Rest
+                                   }  //Regain San/Rest
                                    // {} // I found this skull in the forest? TODO Expand MSQ, Sidequests etc
+                                   ,
+                                   {
+
+                                       "I need your help, I found signs of a great evil in the forest. [Give short explanation] ",
+                                               false,
+                                               StatNames::FIGHT,
+                                               0,
+                                               {},
+                                               {},
+                                               9, 255,
+                                               {},
+                                               {},
+                                               {{RequirementFlags::hasQuestOnStage,1050}}, //If not on Quest 3, start quest 3
+                                               true
+
+
+                                   }
 
 
                            },
@@ -612,10 +629,26 @@ inline Encounter monasteryMain
                                                 {},
                                                 {},
                                                 {}, //If not on Quest 3, start quest 3
+                                                false
+
+
+                                        },
+                                        {
+
+                                                "I need your help, I found signs of a great evil in the forest. [Give short explanation] ",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                9, 255,
+                                                {},
+                                                {},
+                                                {{RequirementFlags::hasQuestOnStage,1050}}, //If not on Quest 3, start quest 3
                                                 true
 
 
-                                        }  //Regain San/Rest
+                                        } //Regain San/Rest
                                         // {} // I found this skull in the forest? TODO Expand MSQ, Sidequests etc
                                 }   ,
                                 {
@@ -749,7 +782,239 @@ inline Encounter monasteryMain
 
                                 {{SceneCompositionEntities::Character, SceneCompositionSlots::InteractionMain}
                                 }
+                        },
+                        {
+                            //Scene 9 - Speak about the evil
+                            "The monk nods. \"We had some suspicions about the nature of the evil, but could hardly traverse the forest ourselves. Let me get the Abbot, he will know what to do.\"",
+                            EnvironmentType::MonasteryGate,
+                            {
+                                    {
+                                            "Continue",
+                                            false,
+                                            StatNames::FIGHT,
+                                            0,
+                                            {},
+                                            {},
+                                            10, 255,
+                                            {},
+                                            {},
+                                            {}, //If not on Quest 3, start quest 3
+                                            false
+                                    }
+
+                            },
+
+                            {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain},
+                             {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain}}
+                        },
+                        {
+                                //Scene 10 - Speak about the evil Abbot
+                                "The Abbot arrives in a notable hurry, clearly worried. \"I hear you found signs of evil that go beyond the mere terrestrial? The skull in particular is concerning.\"",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {
+                                            "I fear some devilry is afoot,yes",
+                                            false,
+                                            StatNames::FIGHT,
+                                            0,
+                                            {},
+                                            {},
+                                            11, 255,
+                                            {},
+                                            {},
+                                            {}, //If not on Quest 3, start quest 3
+                                            false
+
+
+                                            },
+                                        {
+                                            "Somebody has been invoking the demons of the air, I fear.",
+                                            false,
+                                            StatNames::FIGHT,
+                                            0,
+                                            {},
+                                            {},
+                                            11, 255,
+                                            {},
+                                            {},
+                                            {{RequirementFlags::occult,3}},
+                                            true
+                                        }
+
+                                },
+
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain},
+                                 {SceneCompositionEntities::Abbot, SceneCompositionSlots::CharacterFront} }
+                        },
+                        {
+
+                                R"(He nods. "Indeed. Somebody likely invoked demonic power to create a werewolf curse. Or to become one. The devil invoked, you see, is called Marchosias")",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                12, 255,
+                                                {},
+                                                {},
+                                                {}, //If not on Quest 3, start quest 3
+                                                false
+
+
+                                        }
+
+                                },
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain},
+                                 {SceneCompositionEntities::Abbot, SceneCompositionSlots::CharacterFront} }
+
                         }
+                        ,
+                        {
+
+                                R"(He makes the sign of the cross, " - a wolf chimera" He nods. "I am not entirely sure how to banish it, but Brother Kasimir will know.)",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                13, 255,
+                                                {},
+                                                {},
+                                                {}, //If not on Quest 3, start quest 3
+                                                false
+
+
+                                        }
+
+                                },
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain},
+                                 {SceneCompositionEntities::Abbot, SceneCompositionSlots::CharacterFront} }
+
+                        },
+                        {
+
+                                "\"You will find him, if you haven't already, in the forest. He chose the path of the hermit, you see. Speak to him, he will know what must be done. Finally...\" He looks at the skull.",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::AdvanceQuestStage,1060}},
+                                                {},
+                                                14, 255,
+                                                {},
+                                                {},
+                                            {{RequirementFlags::hasQuestOnStage,9010}}, //If not on Quest 3, start quest 3
+                                                true
+
+
+                                        },
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::AdvanceQuestStage,1060}},
+                                                {},
+                                                15, 255,
+                                                {},
+                                                {},
+                                                {{RequirementFlags::notOnStage,9010}}, //If not on Quest 3, start quest 3
+                                                true
+
+
+                                        }
+
+                                },
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain},
+                                 {SceneCompositionEntities::Abbot, SceneCompositionSlots::CharacterFront} }
+
+                        }
+                        ,
+                        {
+
+                                R"(."It will serve an ironic purpose, I trust.", he looks at you shrewdly "Good luck")",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {
+                                                "",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                255, 255,
+                                                {},
+                                                {},
+                                                {}, //If not on Quest 3, start quest 3
+                                                false
+
+
+                                        }
+
+                                },
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain},
+                                 {SceneCompositionEntities::Abbot, SceneCompositionSlots::CharacterFront} }
+
+                        },
+                        {
+
+                                R"("We will put it to rest. You should not have to carry such a burden.")",
+                                EnvironmentType::MonasteryInterior,
+                                {
+                                        {
+                                                "Leave (the skull)",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::LoseItem,1}, {ExecuteFlags::AdvanceQuestStage,9100}},
+                                                {},
+                                                255, 255,
+                                                {ItemID::RitualSkullCursed},
+                                                {},
+                                                {{RequirementFlags::hasQuestOnStage,9000}}, //If not on Quest 3, start quest 3
+                                                true
+
+
+                                        },
+                                        {
+                                                "Leave (the skull)",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::LoseItem,1},{ExecuteFlags::AdvanceQuestStage,9100}},
+                                                {},
+                                                255, 255,
+                                                {ItemID::RitualSkullBound},
+                                                {},
+                                                {{RequirementFlags::hasQuestOnStage,9005}}, //If not on Quest 3, start quest 3
+                                                true
+
+
+                                        }
+
+                                },
+                                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                 {SceneCompositionEntities::Monk, SceneCompositionSlots::EnemyMain},
+                                 {SceneCompositionEntities::Abbot, SceneCompositionSlots::CharacterFront} }
+
+                        }
+
 
                 },DialoguePhase::Scene // Starting dialogue phase
 //             EnvironmentType::MonasteryOutside,
@@ -1049,6 +1314,20 @@ inline Encounter VillageMain
                                     true,
                             },
                             {
+                                    //returned from finding 1+ clues
+                                    "Now, let's talk.",
+                                    false,
+                                    StatNames::OCCULT,
+                                    0,
+                                    {},
+                                    {},
+                                    12, 255,
+                                    {},
+                                    {},
+                                    {{RequirementFlags::hasQuest,4},{RequirementFlags::hasQuest,11},{RequirementFlags::hasQuest,9}}, //If both clues
+                                    true,
+                            },
+                            {
                                     "Leave",
                                     false,
                                     StatNames::OCCULT,
@@ -1078,7 +1357,7 @@ inline Encounter VillageMain
                 //veteran gunner
 
                     "\"What is it?\"",//todo NAME!!!
-                    EnvironmentType::Village,
+                    EnvironmentType::Village2,
                     {
                             {//no gun
                                     "We need a gun for this beast. (shortened quest - no money)", //TODO?
@@ -1151,7 +1430,7 @@ inline Encounter VillageMain
 
             {
                     //Villager 2 - Describe clues
-                    "\"Not an ordinary beast indeed. I think it best if you had more firepower. Let's fetch Grimaldus. He is a veteran that knows his way around blackpowder.\"",//todo NAME!!!
+                    "\"Not an ordinary beast indeed. I think it best if you had more firepower. Let's fetch Grimaldus. He is a veteran that knows his way around blackpowder. Let's talk further once you are armed .\"",
                     EnvironmentType::Village,
                     {
 
@@ -1458,6 +1737,45 @@ inline Encounter VillageMain
 
                     }
 
+            },
+            {
+                    R"(There is an evil present in these woods. The hand of a devil or a witch I reckon." The man shudders. "Go to the monastery. They are both learned men and deeply pious. They will know what to do.")",
+                    EnvironmentType::Village,
+                    {
+                            {
+                                    {
+                                            "That is true, I know them to be good, pious men. I will go at once.",
+                                            false,
+                                            StatNames::FAITH,
+                                            2,
+                                            {{ExecuteFlags::AdvanceQuestStage,1050}},
+                                            {},
+                                            255, 255,
+                                            {},
+                                            {},
+                                            {{RequirementFlags::hasQuest,3}}, //If skull no corpse
+                                            true,
+                                    },
+                                    {
+                                            "I have heard of the monastery. It seems wise to go there.",
+                                            false,
+                                            StatNames::FAITH,
+                                            2,
+                                            {{ExecuteFlags::AdvanceQuestStage,1050}},
+                                            {},
+                                            255, 255,
+                                            {},
+                                            {},
+                                            {{RequirementFlags::notOnQuest,3}}, //If skull no corpse
+                                            true,
+                                    }
+                            }
+                        },
+                    {
+                            {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                            {SceneCompositionEntities::Villager2,SceneCompositionSlots::CharacterFront}
+                    }
+
             }
 
 
@@ -1486,7 +1804,7 @@ inline Encounter CorpseDiscovery
                              "A sign of the evil at work here. A clue towards the vile nature of your quarry.",
                              false,
                              StatNames::FAITH,
-                             3, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
+                             3, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1},{ExecuteFlags::StartQuest,11}}, {},
                              255, 255,
                              {}, {}, {{RequirementFlags::hasQuestOnStage,1020}}, true
                      },
@@ -1495,7 +1813,7 @@ inline Encounter CorpseDiscovery
                              "A sign of the evil at work here. You have your second clue",
                              false,
                              StatNames::FAITH,
-                             3, {{ExecuteFlags::AdvanceQuestStage,1040},{ExecuteFlags::RemoveEncounter,1}}, {},
+                             3, {{ExecuteFlags::AdvanceQuestStage,1040},{ExecuteFlags::RemoveEncounter,1},{ExecuteFlags::StartQuest,11}}, {},
                              255, 255,
                              {}, {}, {{RequirementFlags::hasQuestOnStage,1030}}, true
                      },
@@ -1657,7 +1975,7 @@ inline Encounter HermitMain
                              0, {}, {},
                              1, 3,
                              {},{},
-                             {{RequirementFlags::hasQuestOnStage,1020}},true  //TODO fix shortcut
+                             {{RequirementFlags::hasQuestOnStage,1060}},true
                      },
                      {
                              //MSQ 2 - failed to get silver?
