@@ -305,6 +305,7 @@ namespace JanSordid::SDL_Example {
     protected:
         //tracks the current game phase between input,update and render
         GamePhases Phase = GamePhases::UPKEEP;
+        int DisasterCounter = 0;
 
         Point windowSize;
         int fontsize = 18;
@@ -492,7 +493,7 @@ namespace JanSordid::SDL_Example {
         struct CombatTracker{
             LocationID location = LocationID::UNASSIGNED;
             LocationID alreadyDodged = LocationID::UNASSIGNED;
-            MonsterID monID = MonsterID::UNASSIGNED;
+            MonsterID monID = MonsterID::UNASSIGNED_MONSTERID;
             int hpVisual = 0; /// USE THIS FOR THE HP BAR
             /// logical hp gets calculated after FATE REROLL, Visual HP does not.
             /// Example: We reduce a 4 toughness monster to 2 HP by having 2 successes. -> not dead -> spend FATE?
@@ -521,7 +522,7 @@ namespace JanSordid::SDL_Example {
                     horrorRating = monsters.back().horrorRating;
                     combatRating = monsters.back().combatRating;
                 }else{
-                     monID = MonsterID::UNASSIGNED;
+                     monID = MonsterID::UNASSIGNED_MONSTERID;
                      hpVisual = 0;
                      hp = 0;
                      awareness = 0;
@@ -550,7 +551,7 @@ namespace JanSordid::SDL_Example {
                 combatDamage = 0;
                 horrorRating = 0;
                 combatRating = 0;
-                monID = MonsterID::UNASSIGNED;
+                monID = MonsterID::UNASSIGNED_MONSTERID;
                 alreadyDodged = LocationID::UNASSIGNED;
                 monsters.clear();
 
@@ -669,6 +670,16 @@ namespace JanSordid::SDL_Example {
         SceneCompositionEntities MatchMonsterIDtoSceneComp(MonsterID target);
 
         void ResolveItemUsage(ItemID id);
+
+        void MoveMonsters();
+
+        LocationID FindNextStep(LocationID start, LocationID goal);
+
+        void SpawnMonster(LocationID location, MonsterID monster);
+
+        void DespawnMonster(LocationID location, MonsterID monster);
+
+        void MoveMonster(LocationID origin,LocationID destination, Monster monster);
     };
 
 }

@@ -7,11 +7,15 @@ struct Map_Slot {
     int id;                                      // Unique identifier
     SDL_Point position; // X, Y position
     SDL_Rect locationRect = {position.x, position.y, 128, 128};
-    LocationID location_id;                             // ID of the location assigned UNASSIGNED
+    LocationID location_id;                             // ID of the location assigned UNASSIGNED_MONSTERID
     //maybe change vector to unordered_map for better lookup
     std::vector<std::pair<int, bool>> connections; // Connections with status (active/inactive)
     std::vector<SDL_Rect> playerRects; // Up to 3 player character positions
     std::vector<SDL_Rect> enemyRects;  // Up to 3 enemy positions
+
+
+
+
 
 
 
@@ -56,6 +60,38 @@ private:
 
 public:
     std::vector<Map_Slot> slots; // Vector of all slots
+
+    std::vector<std::pair<MonsterID,int>> monsterCounter;
+
+
+    void increaseMonsterCounter(MonsterID id) {
+        for (auto& pair : monsterCounter) {
+            if (pair.first == id) {
+                pair.second++;  // Increase count if ID exists
+                return;
+            }
+        }
+        // If not found, add new entry with count 1
+        monsterCounter.emplace_back(id, 1);
+    }
+    void decreaseMonsterCounter(MonsterID id) {
+        for (auto& pair : monsterCounter) {
+            if (pair.first == id) {
+                pair.second--;  // decrease
+                return;
+            }
+        }
+    }
+
+    [[nodiscard]] int getMonsterCount(MonsterID id) const {
+        for (const auto& pair : monsterCounter) {
+            if (pair.first == id) {
+                return pair.second;  // Return the count if ID is found
+            }
+        }
+        return 0;  // Return 0 if the ID is not in the vector
+    }
+
 
     Map();
     void AddSlot(int id, SDL_Point position);

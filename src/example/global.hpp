@@ -119,7 +119,7 @@ enum class QuestID {
 
 
 enum class MonsterID {
-    UNASSIGNED,
+    UNASSIGNED_MONSTERID,
     Wolf,
     Bear,
     Ghoul,
@@ -138,7 +138,7 @@ enum class MonsterType {
 
 enum class MovementType {
     Stalking,
-    Fast,
+    Wandering,
     Flying,
     // Add other movement types here
 };

@@ -31,7 +31,8 @@ public:
     [[nodiscard]] std::string GetLocationString() const;
 
     Map_Slot* GetMapSlot();
-    void AddMonster(const Monster& monster);
+    MonsterID AddMonster(const Monster& monster);
+    Monster GetMonster(MonsterID id);
     void RemoveMonster(MonsterID id);
 
 };

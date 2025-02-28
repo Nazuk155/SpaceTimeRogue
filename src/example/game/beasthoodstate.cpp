@@ -14,14 +14,13 @@
 #include "item_manager.h"
 #include "item.h"
 #include "character.h"
+#include <queue>
 //#include "encounter.h"
 #include "skillCheckEngine.h"
 #include "layout.h"
 
 
 
-//TODO HP/Sanity 0 conditions in Encounter einbauen sowie Monster mit HP und inkrementalen verletzungen anstatt toughness überbieten or bust
-//TODO monster spawn und bewegung per Disaster Phase regeln.
 
 namespace JanSordid::SDL_Example {
     struct {
@@ -299,7 +298,7 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Thicket].nameTexture = textToTexture("Thicket");
 
         locationTextureMap[LocationID::UNASSIGNED].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::UNASSIGNED].nameTexture = textToTexture("UNASSIGNED");
+        locationTextureMap[LocationID::UNASSIGNED].nameTexture = textToTexture("UNASSIGNED_MONSTERID");
 
 
         font = TTF_OpenFont(BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16);
@@ -539,10 +538,8 @@ namespace JanSordid::SDL_Example {
         std::cout << "Stats: " << Landsknecht.GetCurrentStats().GetStat(FIGHT);
         std::cout.flush();
 
-        character1 = new Character(*landsknechtBlueprint);
-
-        character1->RefillFatePoints();
-        currentCharacter = character1;
+        currentCharacter = new Character(*landsknechtBlueprint);
+        currentCharacter->RefillFatePoints();
 
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
@@ -552,9 +549,7 @@ namespace JanSordid::SDL_Example {
 
         // get character into SKE
         ske.changeCharacter(currentCharacter);
-        fmt::println("Fate available: {}",
-                     character1->GetFatePoints()); //todo 0 fate dialogue makes no sense, prints options that should not be printed
-        std::cout.flush();
+
 
         currentCharacter->SetCurrentLocation(LocationID::Forest);
         //currentCharacter->EquipItem(currentCharacter->GetInventory().back());
@@ -565,15 +560,14 @@ namespace JanSordid::SDL_Example {
         PopulateMonsterManager();
         PopulateEventManager();
         PopulateLocationEvents();
+    using enum LocationID;
+    using enum MonsterID;
 
-
-
-        locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf));
-       // locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf));
-       // locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Bear));
-
-        //locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
-        //locationManager.GetItem(LocationID::Forest)->monsters_or_npcs.push_back(MonsterID::Wolf);
+        SpawnMonster(Forest,Wolf);
+        SpawnMonster(Thicket,Bear);
+        SpawnMonster(Cave,Bear);
+        //old version
+        //map.increaseMonsterCounter(locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf)));
 
         //Load Music system
 
@@ -903,23 +897,11 @@ namespace JanSordid::SDL_Example {
                             bInInventory=!bInInventory;
                             break;
                         case SDLK_u:
+                            ///Testing item usage. TODO implement usage via inventory UI
                             activeItem = currentCharacter->UseItem(ItemID::PrayerBook);
                             itemInUse = true;
                             break;
-                            //TODO what is happening here? possible problem with the button? copied to wrong case at some point?
-                            /*
-                            if(!locationManager.GetItem(currentCharacter->GetCurrentLocationID())->monsters.empty()){
-                            currentEncounterIsOnlyCombat = true;
-                            cTracker.location = currentCharacter->GetCurrentLocationID();
-                            cTracker.monsters = locationManager.GetItem(cTracker.location)->monsters;
-                            cTracker.monID = locationManager.GetItem(cTracker.location)->monsters.back().id;
 
-                           cTracker.updateCurrentMonster();
-                            UpdateCombatEncounter();
-                            eTracker.activeEncounter = encounterManager.getEncounter(EncounterID::Combat_Encounter);
-                            eTracker.encounterID = EncounterID::Combat_Encounter;
-                        }break;
-                            */
                     }
                 }
                 if (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN) {
@@ -941,7 +923,7 @@ namespace JanSordid::SDL_Example {
                                 }, mouseOverX, mouseOverY))
                         { endMovementConfirmation = true;
 
-                            //TODO what is happening here? possible problem with the button? copied to wrong case at some point?
+                            //TODO what is happening here? possible problem with the button? copied to wrong case at some point? FIXED? -Max
                             //check if we already avoided the fight
                             if(cTracker.alreadyDodged != currentCharacter->GetCurrentLocationID()) {
                                 if (!locationManager.GetItem(
@@ -992,7 +974,7 @@ namespace JanSordid::SDL_Example {
                                     //mausklick reagiert nur wenn die location einen pfad zum aktuellen standort des characters hat
                                     for (auto c: e.connections) {
                                         //durchsuchen die aktiven connections der aktuellen node nach einam pfad zum character
-                                        if (character1->GetCurrentLocationID() ==
+                                        if (currentCharacter->GetCurrentLocationID() ==
                                             map.GetSlotByID(c.first)->location_id &&
                                             c.second == true) {
                                             //std::cout << "Mouse clicked inside the rectangle.\n";
@@ -1000,7 +982,7 @@ namespace JanSordid::SDL_Example {
                                             moveTarget = e.location_id;
                                             playerMoved = true;
                                             //if we did not dodge past already this turn
-                                            if(cTracker.alreadyDodged != moveTarget) {
+                                            if(cTracker.alreadyDodged != currentCharacter->GetCurrentLocationID()) {
                                                 if (!locationManager.GetItem(
                                                         currentCharacter->GetCurrentLocationID())->monsters.empty()) {
                                                     currentEncounterIsOnlyCombat = true;
@@ -1251,14 +1233,14 @@ namespace JanSordid::SDL_Example {
 //            Mix_PlayMusic( villageTheme, -1 );
 //        }
 if(currentCharacter->GetStamina() <= 0){
-//TODO make death screen
+//TODO make death screen - Max
 }
 if(currentCharacter->GetSanity() <= 0){
 
 }
 ///screw the ability system, simple way to use items is here!
 ///do this: activeItem = currentCharacter.UseItem(ItemID) and set itemInUse = true
-///TODO just add the item id to the switch in ResolveItemUsage and make it do whateer you want! - Max
+///TODO just add the item id to the switch in ResolveItemUsage and make it do whatever you want! - Max
 if(itemInUse){
     ResolveItemUsage(activeItem);
     activeItem = ItemID::NONE;
@@ -1268,9 +1250,9 @@ if(itemInUse){
         if (Phase == GamePhases::UPKEEP) {
 
             //place character somewhere if not placed
-            if (character1->GetCurrentLocationID() == LocationID::UNASSIGNED) {
-                character1->SetCurrentLocation(LocationID::Forest);
-                character1->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->locationRect);
+            if (currentCharacter->GetCurrentLocationID() == LocationID::UNASSIGNED) {
+                currentCharacter->SetCurrentLocation(LocationID::Forest);
+                currentCharacter->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->locationRect);
             }
 
             movementPoints = currentCharacter->GetCurrentStats().GetStat(SPEED);
@@ -1285,9 +1267,8 @@ if(itemInUse){
             if (movementPoints > 0 && !endMovementConfirmation) {
                 if (playerMoved) {
                     if(!currentEncounterIsOnlyCombat) {
-
-                        character1->SetCurrentLocation(moveTarget);
-                        character1->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
+                        currentCharacter->SetCurrentLocation(moveTarget);
+                        currentCharacter->SetPos(locationManager.GetItem(moveTarget)->GetMapSlot()->locationRect);
                         movementPoints--;
                         playerMoved = false;
                     }else{
@@ -1338,11 +1319,10 @@ if(itemInUse){
                             if (eTracker.szene == 4) { //szene 4 passiert nur wenn encounter durch kampf gewonnen
                                 //check if this is a encounter triggered fight
                                 if(!cTracker.encounterTriggeredThis) {
-                                    locationManager.GetItem(cTracker.location)->RemoveMonster(cTracker
-                                                                                                      .monID);
+                                    DespawnMonster(cTracker.location,cTracker.monID);
                                 }
                                 cTracker.RemoveMonster(cTracker.monID);
-                                cTracker.monstersInFight -1;
+
                             }
                             if (eTracker.szene == 5) {
                                 cTracker.monstersInFight -1;
@@ -1519,7 +1499,9 @@ if(itemInUse){
                     eTracker.selectedOption = -1;
 
                     cTracker.hp -= ske.getSuccesses();
+                    if(cTracker.hp < 0){cTracker.hp = 0;}
                     eTracker.activeEncounter->hp = cTracker.hp;
+                    if(eTracker.activeEncounter->hp < 0){eTracker.activeEncounter->hp = 0;}
                 }
             }
             //resolve external functions of execute flags
@@ -1596,7 +1578,7 @@ if(itemInUse){
                         }
                         break;
                     case ExecuteFlags::SpawnMonster:
-                        //TODO implement spawns in general too
+                        //probably use SpawnMonster(locationID,monsterID) and pull relevant location and monster from event
                         break;
                     default:
                         eTracker.exFlag.clear();
@@ -1651,22 +1633,28 @@ if(itemInUse){
 
 
         if(Phase == GamePhases::DISASTER){
+            using enum LocationID;
+            using enum MonsterID;
             musicManager.changeMusic(bgm::main_theme);
             std::cout << "DISASTER PHASE REACHED \n";
             std::cout.flush();
             //testing spawning monsters
 
-            if(locationManager.GetItem(LocationID::Thicket)->monsters.size() < 3) {
-                locationManager.GetItem(LocationID::Thicket)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf));
-            }
+            ///has a switch with monster movement types to be expanded upon
+            MoveMonsters();
+            SpawnMonster(Farm,Wolf);
+
+
+
+
+
 
             Phase = GamePhases::UPKEEP;
 
         }
 
 
-        // std::cout << "Item: " << character1->GetInventory().back()->GetName();
-        // std::cout << "\n";
+
     }
 
     std::map<SceneCompositionSlots,SDL_Point> sceneCompositionTarget //  TODO EXPAND AS NEEDED
@@ -1889,7 +1877,7 @@ if(itemInUse){
 
         renderText(SidebarTextTarget,SidebarText); //TODO complete Placeholder, ideally replace with premade image/portrait etc.
 
-        //todo make font size variable
+        //todo make font size variable || font size is all the way at the top of beasthoodstate with explanation! - Max
 
         SidebarTextTarget.y += SidebarLayout.SkillTextScale.y*0.01*windowSize.y;
         SDL_DestroyTexture(SidebarText);
@@ -2335,10 +2323,6 @@ if(itemInUse){
                                            map.GetSlotByID(c)->position.x, map.GetSlotByID(c)->position.y);
                     }
                 }
-                //render character icon on map
-                if (character1->GetCurrentLocationID() != LocationID::UNASSIGNED) {
-                    //  renderFromSpritesheet(character1->GetRect(), playerMapIconTexture);
-                }
             }
             RenderSidebar();
             RenderTurnButton(true);
@@ -2657,7 +2641,7 @@ if(itemInUse){
                             renderFateDieAnimation(ske);
                             renderDicerollAnimation(ske);
                             eTracker.diaPhase = DialoguePhase::Scene;
-                            //todo exit after roll result? do we want to allow the spending of all wp in one check?
+                            //todo exit after roll result? do we want to allow the spending of all wp in one check? | Yes we do -Max
 
                         }
 
@@ -3214,7 +3198,7 @@ if(itemInUse){
                      LocationID::UNASSIGNED,
                      MonsterID::Werewolf,
                      MonsterType::Beast,
-                     MovementType::Fast,
+                     MovementType::Wandering,
                      10,
                      10,
                      4,
@@ -3244,7 +3228,7 @@ if(itemInUse){
                 LocationID::UNASSIGNED,
                 MonsterID::Bear,
                 MonsterType::Beast,
-                MovementType::Stalking,
+                MovementType::Wandering,
                 4,
                 4,
                 1,
@@ -3822,6 +3806,165 @@ if(itemInUse){
         }
         ///add more as needed - Max
     }
+
+
+
+    void BeasthoodState::MoveMonsters(){
+        int target = 0;
+        LocationID targetLocation = map.GetSlotByID(target)->location_id;
+        bool alreadyMoved = false;
+        //reset marking for moved monsters
+        for(auto &a : map.slots){
+            for(auto &b : locationManager.GetItem(a.location_id)->monsters){
+                b.alreadyMoved = false;
+            }
+        }
+        for(auto e : map.slots){
+            if(!locationManager.GetItem(e.location_id)->monsters.empty())
+            {
+                for(auto m : locationManager.GetItem(e.location_id)->monsters){
+                    //set the current location as location for the monster
+                    m.location = e.location_id;
+
+                    switch(m.moveType) {
+                        case MovementType::Stalking:
+                            ///Moves closer to Player if within 2 Location steps
+                            if(!m.alreadyMoved) {
+                                for (auto c: e.connections) {
+                                    //if Character is on connected slot monsters go to character
+                                    if(m.location == currentCharacter->GetCurrentLocationID()){
+                                        m.alreadyMoved = true;
+                                        break;
+                                    }
+                                    if(m.alreadyMoved) {
+                                    break;
+                                    }
+
+                                    if (currentCharacter->GetCurrentLocationID() ==
+                                        map.GetSlotByID(c.first)->location_id &&
+                                        c.second)
+                                    {
+                                        alreadyMoved = true;
+                                        m.alreadyMoved = true;
+                                        MoveMonster(e.location_id, currentCharacter->GetCurrentLocationID(), m);
+                                    }
+                                }
+                                if (!alreadyMoved) {
+                                    for (auto c: e.connections) {
+                                        if(m.alreadyMoved){
+                                            break;}
+                                        //if player is 2 steps away, close the gap
+                                        for (auto cc: map.GetSlotByID(c.first)->connections) {
+                                            LocationID firstStep = map.GetSlotByID(c.first)->location_id;
+                                            LocationID secondStep = map.GetSlotByID(cc.first)->location_id;
+                                            if (currentCharacter->GetCurrentLocationID() == secondStep && cc.second) {
+                                                m.alreadyMoved = true;
+
+                                                    MoveMonster(e.location_id, firstStep, m);
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                            break;
+                        case MovementType::Wandering:
+                        ///Wandering Monster moves from map node 0 to map node maximum in a straight path
+                            if(!m.alreadyMoved) {
+                                if (locationManager.GetItem(m.location)->GetMapSlot()->id == 0) {
+
+                                    target = map.slots.size() - 1;
+                                    m.moveTarget = map.GetSlotByID(target)->location_id;
+                                }
+                                if (locationManager.GetItem(m.location)->GetMapSlot()->id == map.slots.size() - 1) {
+                                    target = 0;
+                                    m.moveTarget = map.GetSlotByID(target)->location_id;
+                                }
+                                if (m.moveTarget == LocationID::UNASSIGNED) { m.moveTarget = targetLocation; }
+
+                                targetLocation = FindNextStep(m.location, m.moveTarget);
+                                m.alreadyMoved = true;
+
+                                if (targetLocation != m.location) {  // Move only if a valid step is found
+                                    if (locationManager.GetItem(targetLocation)->monsters.size() < 3) {
+                                        MoveMonster(m.location, targetLocation, m);
+                                    }
+                                }
+                            }
+                            break;
+                            ///add more as needed. Script the Werwolf movement by using MoveMonster in DISASTER Phase
+                        default:break;
+                    }
+                }
+
+            }
+        }
+    }
+
+
+
+// Function to find the next step in the shortest path using BFS
+    LocationID BeasthoodState::FindNextStep(LocationID start, LocationID goal) {
+        if (start == goal) return start;  // Already at target
+
+        std::queue<LocationID> queue;
+        std::unordered_map<LocationID, LocationID> cameFrom; // Stores previous steps
+
+        queue.push(start);
+        cameFrom[start] = start;  // Start has no previous node
+
+        // BFS to find shortest path
+        while (!queue.empty()) {
+            LocationID current = queue.front();
+            queue.pop();
+
+            // If we reached the goal, backtrack to find the next step
+            if (current == goal) {
+                LocationID step = goal;
+                while (cameFrom[step] != start) {
+                    step = cameFrom[step];
+                }
+                return step;
+            }
+
+            // Explore neighbors
+            for (auto c : map.GetSlotByID(locationManager.GetItem(current)->GetMapSlot()->id)->connections) {
+                LocationID neighbor = map.GetSlotByID(c.first)->location_id;
+
+                if (cameFrom.find(neighbor) == cameFrom.end() && c.second) { // Not visited & connected
+                    queue.push(neighbor);
+                    cameFrom[neighbor] = current;  // Track path
+                }
+            }
+        }
+
+        return start;  // No path found, stay in place
+    }
+
+    void BeasthoodState::SpawnMonster(LocationID location, MonsterID monster){
+        if(locationManager.GetItem(location)->monsters.size() < 3){
+            if(monsterManager.GetMonster(monster).spawnLimit > map.getMonsterCount(monster) || map.getMonsterCount(monster) == 0) {
+                map.increaseMonsterCounter( locationManager.GetItem(location)->AddMonster(monsterManager.GetMonster(monster)));
+
+            }
+        }
+    }
+
+    void BeasthoodState::DespawnMonster(LocationID location, MonsterID monster){
+            map.decreaseMonsterCounter(monster);
+            locationManager.GetItem(location)->RemoveMonster(monster);
+
+    }
+    void BeasthoodState::MoveMonster(LocationID origin,LocationID destination,Monster monster){
+        if(locationManager.GetItem(destination)->monsters.size() < 3){
+            Monster temp = monster;
+            DespawnMonster(origin,monster.id);
+            map.increaseMonsterCounter(monster.id);
+            locationManager.GetItem(destination)->AddMonster(monster);
+        }
+
+    }
+
 
 
 }
