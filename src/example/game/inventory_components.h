@@ -89,6 +89,18 @@ inline void RenderItemIcon(SDL_Renderer*renderer,const Item* item,SDL_Texture* b
             SDL_RenderCopy(renderer, iconVector[10], &iconScale, &destinationRect
             );
             break;
+        case ItemID::Relic:
+            SDL_RenderCopy(renderer, iconVector[11], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::Sword:
+            SDL_RenderCopy(renderer, iconVector[12], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::Honorius:
+            SDL_RenderCopy(renderer, iconVector[13], &iconScale, &destinationRect
+            );
+            break;
         default:
             SDL_RenderCopy(renderer, iconVector[0], &iconScale, &destinationRect
             );

@@ -168,6 +168,10 @@ namespace JanSordid::SDL_Example {
         String ritualSkullIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/ritual_skull_icon.png";
         String bulletLeadPath = BasePath "/src/example/game/Ressources/Image_assets/items/bullet_lead.png";
         String bulletSilverPath = BasePath "/src/example/game/Ressources/Image_assets/items/bullet_silver.png";
+        String relicIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/relic_icon.png";
+        String shortSwordIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/shortsword_icon.png";
+        String honoriusPath = BasePath "/src/example/game/Ressources/Image_assets/items/honorius_icon.png";
+
 
 
 
@@ -279,6 +283,10 @@ namespace JanSordid::SDL_Example {
         torchIcon= loadFromFile(torchIconPath);
         ritualSkullIcon = loadFromFile(ritualSkullIconPath);
 
+        shortSwordIcon= loadFromFile(shortSwordIconPath);
+        relicIcon= loadFromFile(relicIconPath);
+        honoriusIcon= loadFromFile(honoriusPath);
+
         bulletLead= loadFromFile(bulletLeadPath);
         bulletSilver= loadFromFile(bulletSilverPath);
 
@@ -295,6 +303,9 @@ namespace JanSordid::SDL_Example {
         Icons.push_back(bulletSilver); //Silver = 8
         Icons.push_back(gunLeadIcon); //Lead loaded gun = 9
         Icons.push_back(gunSilverIcon); //Silver loaded gun = 10
+        Icons.push_back(relicIcon); //Relic = 11
+        Icons.push_back(shortSwordIcon); //sword = 12
+        Icons.push_back(honoriusIcon); //honorius 13
 
 
 
@@ -564,6 +575,10 @@ namespace JanSordid::SDL_Example {
         itemManager.AddItem(std::move(gunLoadedLead));
 
 
+        auto honorius = std::make_unique<Item>(ItemID::Honorius, ItemType::Unique,"Grimoire of Honorius",1);
+        honorius->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(honorius));
+
 
         auto prayerBook = std::make_unique<Item>(ItemID::PrayerBook, ItemType::Unique,"Prayer Book of St. Lycon",1);
         prayerBook->SetStats({0, 0, 1, 2, 2, 6});
@@ -576,6 +591,18 @@ namespace JanSordid::SDL_Example {
         auto ritual_skull = std::make_unique<Item>(ItemID::RitualSkullCursed, ItemType::Unique,"Ritual Skull",0);
         ritual_skull->SetStats({0, 0, 0, 0, 1, -2});
         itemManager.AddItem(std::move(ritual_skull));
+
+        auto ritual_skull_occult = std::make_unique<Item>(ItemID::RitualSkullBound, ItemType::Unique,"Suborned Ritual Skull",0);
+        ritual_skull_occult->SetStats({2, 0, 2, 2, 2, 1});
+        itemManager.AddItem(std::move(ritual_skull_occult));
+
+        auto ritual_skull_faith = std::make_unique<Item>(ItemID::RitualSkullFaith, ItemType::Unique,"Quieted Ritual Skull",0);
+        ritual_skull_faith->SetStats({0, 0, 0, 0, 1, 0});
+        itemManager.AddItem(std::move(ritual_skull_faith));
+
+        auto relic = std::make_unique<Item>(ItemID::Relic, ItemType::Unique,"Relic",0);
+        relic->SetStats({0, 0, 0, 2, 1, 7});
+        itemManager.AddItem(std::move(relic));
 
         auto bullet_silver = std::make_unique<Item>(ItemID::BulletSilver,ItemType::Magic,"Silver Bullet",0);
         bullet_silver->isBullet = true;

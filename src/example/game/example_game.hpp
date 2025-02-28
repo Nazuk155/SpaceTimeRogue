@@ -385,6 +385,10 @@ namespace JanSordid::SDL_Example {
 
         Texture * halberdIcon = nullptr;
 
+        Texture * relicIcon = nullptr;
+        Texture * shortSwordIcon = nullptr;
+        Texture * honoriusIcon = nullptr;
+
         Texture * gunIcon = nullptr;
         Texture * bulletSilver = nullptr;
         Texture * bulletLead = nullptr;

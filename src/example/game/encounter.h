@@ -1477,12 +1477,108 @@ inline Encounter SkullDiscovery
     EncounterID::SkullDiscovery,EncounterTypeID::Unique,
     {
             {
-                "A gruesome sight meets your eyes. A skull and a dismembered hand hand from a tree.",
-                EnvironmentType::ForestClearing
-                ,
-                    {}
+                    "A gruesome sight meets your eyes. A skull and a dismembered hand hand from a tree.",
+                    EnvironmentType::ForestClearing
+                    ,
+                    {
+                            {
+                                    //Occult
+                                    "It is clearly a ritual implement. Try to bind it for yourself.",
+                                    true,
+                                    StatNames::OCCULT,
+                                    3, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::AdvanceQuestStage,9010},{ExecuteFlags::GainItem,1}}, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::GainItem,1}},
+                                    1, 255,
+                                    {ItemID::RitualSkullBound},{ItemID::RitualSkullCursed},{{RequirementFlags::occult,3}},true
+
+
+                            },
+                            {
+                                    //Faith
+                                    "It is clearly infernal in nature. Recite the Pater Noster when touching it.",
+                                    true,
+                                    StatNames::FAITH,
+                                    3, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::AdvanceQuestStage,9005},{ExecuteFlags::GainItem,1}}, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::GainItem,1}},
+                                    1, 255,
+                                    {ItemID::RitualSkullBound},{ItemID::RitualSkullCursed},{{RequirementFlags::faith,3}},true
+                            },
+                            {
+                                    //none
+                                    "You should take it to somebody knowledgeable.",
+                                    false,
+                                    StatNames::FAITH,
+                                    3, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::AdvanceQuestStage,9000},{ExecuteFlags::GainItem,1}}, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::GainItem,1}},
+                                    1, 255,
+                                    {ItemID::RitualSkullCursed},{ItemID::RitualSkullCursed},{},false
+                            }
+
+
+
+                    },
+                    {
+                            {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                            {SceneCompositionEntities::RitualSkullOverlay,SceneCompositionSlots::OverlayMainPoint}
+                    }
+            },
+            {
+                    "Whatever your methods of dealing with it, this is clearly evidence of supernatural happenings. You take it with you.",
+                    EnvironmentType::ForestClearing
+                    ,
+                    {//check whether first or second
+                            {
+                                    //first
+                                    "Leave. You have your first clue.",
+                                    false,
+                                    StatNames::OCCULT,
+                                    4, {{ExecuteFlags::AdvanceQuestStage,1030}}, {},
+                                    255, 255,
+                                    {},{},{{RequirementFlags::hasQuestOnStage,1020}},true
+
+
+                            },
+                            {
+                                    //Second Clue
+                                    "Leave. You have your second clue.",
+                                    false,
+                                    StatNames::OCCULT,
+                                    4, {{ExecuteFlags::AdvanceQuestStage,1030}}, {},
+                                    255, 255,
+                                    {},{},{{RequirementFlags::hasQuestOnStage,1040}},true
+
+
+                            },
+                            {
+                                    //Sequence break
+                                    "Leave. Though you are getting ahead of yourself, this is important.",
+                                    false,
+                                    StatNames::OCCULT,
+                                    4, {{ExecuteFlags::AdvanceQuestStage,1030}}, {},
+                                    255, 255,
+                                    {},{},{{RequirementFlags::hasQuest,1}},true
+
+
+                            }
+                            ,
+                            {
+                                    //Sequence break 2
+                                    "Leave. Though you are getting VERY ahead of yourself, this is important.",
+                                    false,
+                                    StatNames::OCCULT,
+                                    4, {{ExecuteFlags::StartQuest,1},{ExecuteFlags::AdvanceQuestStage,1030}}, {},
+                                    255, 255,
+                                    {},{},{{RequirementFlags::notOnQuest,1}},true
+
+
+                            }
+
+
+
+
+                    },
+                    {
+                            {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}
+                    }
             }
-    }
+    },DialoguePhase::Scene // Starting dialogue phase
     //todo advance msq / start clue quest 2
 
         };
