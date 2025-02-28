@@ -691,7 +691,8 @@ namespace JanSordid::SDL_Example {
         //Load Music system
 
         musicManager.init();
-      //  Questlog.setStage(1,80);
+        //Start MSQ
+      Questlog.addQuest(1);
       encounterManager.addEncounter(EncounterID::Intro,IntroEncounter);
         eTracker.activeEncounter = encounterManager.GetEncounter(
                 EncounterID::Intro);
@@ -2709,7 +2710,7 @@ if(itemInUse){
                if(eTracker.activeEncounter->id == EncounterID::Combat_Encounter)
                {
                    //
-                  // RenderHealthbar(tempHealth);
+                  //RenderHealthbar(cTracker.hp/cTracker.toughness);
                }
 
 
