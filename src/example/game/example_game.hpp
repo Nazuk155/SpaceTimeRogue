@@ -474,7 +474,7 @@ namespace JanSordid::SDL_Example {
         Character *currentCharacter;
 
         //movement phase related variables
-        LocationID moveTarget = LocationID::UNASSIGNED;
+        LocationID moveTarget = LocationID::UNASSIGNED_LOCATION;
         bool playerMoved = false;
         bool endMovementConfirmation = false;
         u8 movementPoints = 0;
@@ -524,8 +524,8 @@ namespace JanSordid::SDL_Example {
 
         //sets up the combat encounters values when triggered
         struct CombatTracker{
-            LocationID location = LocationID::UNASSIGNED;
-            LocationID alreadyDodged = LocationID::UNASSIGNED;
+            LocationID location = LocationID::UNASSIGNED_LOCATION;
+            LocationID alreadyDodged = LocationID::UNASSIGNED_LOCATION;
             MonsterID monID = MonsterID::UNASSIGNED_MONSTERID;
             int hpVisual = 0; /// USE THIS FOR THE HP BAR
             /// logical hp gets calculated after FATE REROLL, Visual HP does not.
@@ -575,7 +575,7 @@ namespace JanSordid::SDL_Example {
                 }
             }
             void Reset(){
-                location = LocationID::UNASSIGNED;
+                location = LocationID::UNASSIGNED_LOCATION;
                 hpVisual = 0;
                 hp = 0;
                 awareness = 0;
@@ -585,7 +585,7 @@ namespace JanSordid::SDL_Example {
                 horrorRating = 0;
                 combatRating = 0;
                 monID = MonsterID::UNASSIGNED_MONSTERID;
-                alreadyDodged = LocationID::UNASSIGNED;
+                alreadyDodged = LocationID::UNASSIGNED_LOCATION;
                 monsters.clear();
 
             }
@@ -683,7 +683,7 @@ namespace JanSordid::SDL_Example {
 
         void PopulateMonsterManager();
 
-        void UpdateCombatEncounter();
+        void UpdateCombatEncounter(EnvironmentType background = EnvironmentType::DenseForest);
         //void RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities, SceneCompositionSlots>>& compositionVector);
 
         void RenderSidebar();
@@ -719,6 +719,20 @@ namespace JanSordid::SDL_Example {
         void AddEncounter(LocationID lID, EncounterID eID);
 
         void RemoveEncounter(LocationID lID, EncounterID eID);
+
+        //overloaded versions
+        void Update_and_ChangeCombatBackground(LocationID locID) {
+            Update_and_ChangeCombatBackground(EncounterID::NO_ENCOUNTER_ASSIGNED, EnvironmentType::DenseForest, locID);
+        }
+        void Update_and_ChangeCombatBackground(EnvironmentType envType) {
+            Update_and_ChangeCombatBackground(EncounterID::NO_ENCOUNTER_ASSIGNED, envType,
+                                              LocationID::UNASSIGNED_LOCATION);
+        }
+
+        //calls UpdateCombat with background based on EncounterID, if not given eID it sets the given envType. Defaults to DenseForest background.
+        void Update_and_ChangeCombatBackground(EncounterID eID = EncounterID::NO_ENCOUNTER_ASSIGNED,
+                                               EnvironmentType envType = EnvironmentType::DenseForest,
+                                               LocationID locID = LocationID::UNASSIGNED_LOCATION);
     };
 
 }

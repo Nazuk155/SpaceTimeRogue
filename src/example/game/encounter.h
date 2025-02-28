@@ -280,11 +280,11 @@ inline Encounter testingCombat
 
                                         },
                                         {
-                                                "Finish Event",
+                                                "Finish Event and Remove Encounter from Location",
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
-                                                {},
+                                                {{ExecuteFlags::RemoveEncounter,0}},
                                                 {},
                                                 255, 255,
                                                 {},
@@ -1419,6 +1419,21 @@ inline Encounter VillageMain
                                     {{RequirementFlags::hasQuestOnStage,1085}}, //If not on Quest 3, start quest 3
                                     true,
                             }
+                            ,
+                            {
+                                    //forge silver bullet?
+                                    "Leave",
+                                    false,
+                                    StatNames::OCCULT,
+                                    0,
+                                    { },
+                                    {},
+                                    255, 255,
+                                    {},
+                                    {},
+                                    {}, //If not on Quest 3, start quest 3
+                                    false,
+                            }
 
                     }
                     ,
@@ -1984,7 +1999,7 @@ inline Encounter HermitMain
                              false,
                              StatNames::FAITH,
                              0, {}, {},
-                             255,
+                             7,
                              255,
                              {},{},
                              {{RequirementFlags::hasQuestOnStage,1082}}, true
@@ -2121,6 +2136,28 @@ inline Encounter HermitMain
                       0,
                       {
                               {ExecuteFlags::AdvanceQuestStage, 1080}     //TODO PROGRESS MSQ
+
+                      },
+                      {},
+                      255, 255
+              }
+      },
+      {
+              {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterFront},
+              {SceneCompositionEntities::Hermit,SceneCompositionSlots::EnemyMain}
+
+      }
+     },
+
+     {R"("I did, yes. It involves grave-robbing and apostasy. In the ravine a pagan warlord lies buried. He bears a silver idol of his gods. It will suffice.")",
+      EnvironmentType::HermitLodge, {
+              {
+                      "A grim path that must be walked. I will go. [Leave.]",
+                      false,
+                      StatNames::OCCULT,
+                      0,
+                      {
+                              {ExecuteFlags::AdvanceQuestStage, 1083}     //TODO PROGRESS MSQ
 
                       },
                       {},
@@ -2280,7 +2317,7 @@ inline Encounter RavineMain
                                     0,
                                     {}, {}, 1, 255,
                                     {}, {},
-                                    {{RequirementFlags::hasQuestOnStage, 83}}, true
+                                    {{RequirementFlags::hasQuestOnStage, 1083}}, true
 
                             }
                     }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}}
@@ -2294,7 +2331,7 @@ inline Encounter RavineMain
                                     false,
                                     StatNames::FIGHT,
                                     0,
-                                    {}, {}, 255, 255
+                                    {}, {}, 2, 255
 
                             }
                     }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}}
@@ -2309,14 +2346,41 @@ inline Encounter RavineMain
                                     false,
                                     StatNames::FIGHT,
                                     0,
-                                    {{ExecuteFlags::StartCombat,1}}, {}, 255, 255
+                                    {{ExecuteFlags::StartCombat,1}}, {}, 3, 255
 
                             }
                     }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
                         {SceneCompositionEntities::SpearSkeleton,SceneCompositionSlots::EnemyMain}}
             },
-            {},
-            {}
+            {
+                    "You have triumphed, and yet...Was this a dream? What wounds you had taken, are gone, if they were ever real..",
+                    EnvironmentType::Ravine,
+                    {
+                            {
+                                    "Take the idol and do not linger.",
+                                    false,
+                                    StatNames::FIGHT,
+                                    0,
+                                    {{ExecuteFlags::AdvanceQuestStage,1085}}, {}, 255, 255
+
+                            }
+                    }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}}
+            },
+            {
+                     "You can not fight that which is dead. Run, fool.",
+                     EnvironmentType::Elsewhere,
+                     {
+                             {
+                                     "What is happening?",
+                                     false,
+                                     StatNames::FIGHT,
+                                     0,
+                                     {}, {}, 255, 255
+
+                             }
+                     }, {
+                         {SceneCompositionEntities::SpearSkeleton,SceneCompositionSlots::EnemyMain}}
+             }
 
 
 
@@ -2324,7 +2388,7 @@ inline Encounter RavineMain
 
         },
                 DialoguePhase::Scene,
-    {},3,4
+    {MonsterID::Skeleton},3,4,{}
 
         };
 

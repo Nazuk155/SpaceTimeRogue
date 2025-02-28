@@ -9,14 +9,14 @@ Character::Character(const std::string& name, int base_stamina, int base_sanity,
           stamina(base_stamina), sanity(base_sanity), base_stats(base_stats),base_stats_boundary(std::move(base_stats_boundary)),
           current_stats(base_stats), focus(focus), ability(ability),
           fate_points(0), fate_refill_condition(fate_condition),
-          non_item_resources(0), current_location_id(LocationID::UNASSIGNED), equipped_items({nullptr, nullptr}) {}
+          non_item_resources(0), current_location_id(LocationID::UNASSIGNED_LOCATION), equipped_items({nullptr, nullptr}) {}
 
 Character::Character(const CharacterBlueprint& blueprint)
         : name(blueprint.name), base_stamina(blueprint.base_stamina), base_sanity(blueprint.base_sanity),
           stamina(blueprint.base_stamina), sanity(blueprint.base_sanity), base_stats(blueprint.base_stats),base_stats_boundary(blueprint.base_stats_boundary),
           current_stats(blueprint.base_stats), focus(blueprint.focus), ability(blueprint.ability),
           fate_points(0), fate_refill_condition(blueprint.fate_refill_condition),
-          inventory(blueprint.starting_items), player_id(-1), current_location_id(LocationID::UNASSIGNED) {}
+          inventory(blueprint.starting_items), player_id(-1), current_location_id(LocationID::UNASSIGNED_LOCATION) {}
 
 
 // Getters

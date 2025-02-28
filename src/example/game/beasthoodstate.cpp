@@ -358,8 +358,8 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Thicket].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Thicket].nameTexture = textToTexture("Thicket");
 
-        locationTextureMap[LocationID::UNASSIGNED].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::UNASSIGNED].nameTexture = textToTexture("UNASSIGNED_MONSTERID");
+        locationTextureMap[LocationID::UNASSIGNED_LOCATION].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::UNASSIGNED_LOCATION].nameTexture = textToTexture("UNASSIGNED_MONSTERID");
 
 
         font = TTF_OpenFont(BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16);
@@ -504,7 +504,7 @@ namespace JanSordid::SDL_Example {
                 }
                 std::cout << "\n";
 
-                map.SetConnectionStatus(2, 0, false);
+                map.SetConnectionStatus(2, 0, true); //todo test
 
                 // Location* loc = &locations[i - 1];
                 std::cout << "  Location: " << locationManager.GetItem(static_cast<LocationID>(i))->name
@@ -1072,7 +1072,8 @@ namespace JanSordid::SDL_Example {
                                     cTracker.monID = cTracker.monsters.back().id;
 
                                     cTracker.updateCurrentMonster();
-                                    UpdateCombatEncounter();
+                                    Update_and_ChangeCombatBackground(cTracker.location);
+                                    // UpdateCombatEncounter();
                                     eTracker.activeEncounter = encounterManager.GetEncounter(
                                             EncounterID::Combat_Encounter);
                                     eTracker.encounterID = EncounterID::Combat_Encounter;
@@ -1130,7 +1131,7 @@ namespace JanSordid::SDL_Example {
                                                     cTracker.monID = cTracker.monsters.back().id;
 
                                                     cTracker.updateCurrentMonster();
-                                                    UpdateCombatEncounter();
+                                                    Update_and_ChangeCombatBackground(cTracker.location);
                                                     eTracker.activeEncounter = encounterManager.GetEncounter(
                                                             EncounterID::Combat_Encounter);
                                                     eTracker.encounterID = EncounterID::Combat_Encounter;
@@ -1388,7 +1389,7 @@ if(itemInUse){
         if (Phase == GamePhases::UPKEEP) {
 
             //place character somewhere if not placed
-            if (currentCharacter->GetCurrentLocationID() == LocationID::UNASSIGNED) {
+            if (currentCharacter->GetCurrentLocationID() == LocationID::UNASSIGNED_LOCATION) {
                 currentCharacter->SetCurrentLocation(LocationID::Forest);
                 currentCharacter->SetPos(locationManager.GetItem(LocationID::Forest)->GetMapSlot()->locationRect);
             }
@@ -1562,7 +1563,7 @@ if(itemInUse){
                                 eTracker.bShowPreviousDicerolls = false;
                                 currentEncounterIsOnlyCombat = false;
                                 cTracker.updateCurrentMonster();
-                                UpdateCombatEncounter();
+                                Update_and_ChangeCombatBackground(cTracker.location);
                                 cTracker.alreadyDodged = cTracker.location;
                             }
                             //wenn noch monster da sind
@@ -1572,7 +1573,7 @@ if(itemInUse){
                             cTracker.monID = cTracker.monsters.back().id;
                             awaitingInput = true;
                             cTracker.updateCurrentMonster();
-                            UpdateCombatEncounter();
+                            Update_and_ChangeCombatBackground(cTracker.location);
                             eTracker.activeEncounter = encounterManager.GetEncounter(
                                     EncounterID::Combat_Encounter);
                             eTracker.encounterID = EncounterID::Combat_Encounter;
@@ -1691,7 +1692,9 @@ if(itemInUse){
                                 cTracker.monID = cTracker.monsters.back().id;
                                 awaitingInput = true;
                                 cTracker.updateCurrentMonster();
-                                UpdateCombatEncounter();
+
+                                Update_and_ChangeCombatBackground(eTrackerSaver.encounterID);
+
                                 eTracker.activeEncounter = encounterManager.GetEncounter(
                                         EncounterID::Combat_Encounter);
                                 eTracker.encounterID = EncounterID::Combat_Encounter;
@@ -1706,12 +1709,14 @@ if(itemInUse){
                             cTracker.encounterTriggeredThis = false;
                             eTracker = eTrackerSaver;
                             eTracker.szene = eTracker.szeneLoss;
+                            eTracker.alreadyDisplayedText = false;
                             eTracker.bShowPreviousDicerolls = false;
                             currentEncounterIsOnlyCombat = false;
                             eTracker.diaPhase = DialoguePhase::Scene;
                             awaitingInput = true;
                             eTracker.exFlag.clear();
-                            cTracker.Reset();
+                            cTracker.updateCurrentMonster();
+                            Update_and_ChangeCombatBackground(eTracker.encounterID);
 
                         }
                         break;
@@ -1750,6 +1755,7 @@ if(itemInUse){
                         //probably use SpawnMonster(locationID,monsterID) and pull relevant location and monster from event
                         break;
                     case ExecuteFlags::RemoveEncounter:
+                        //encounter removes itself
                         RemoveEncounter(currentCharacter->GetCurrentLocationID(),eTracker.encounterID);
                         break;
                     case ExecuteFlags::LoseItem:
@@ -1782,7 +1788,7 @@ if(itemInUse){
                         eTracker.bShowPreviousDicerolls = false;
                         currentEncounterIsOnlyCombat = false;
                         cTracker.updateCurrentMonster();
-                        UpdateCombatEncounter();
+                        Update_and_ChangeCombatBackground(cTracker.location);
                         cTracker.alreadyDodged = cTracker.location;
 
                         eTracker.szene = 0;
@@ -1790,18 +1796,20 @@ if(itemInUse){
                         eTracker.diaPhase = DialoguePhase::Scene;
                     }
                 } else {
-                    Phase = GamePhases::ENCOUNTER;
-                    eTracker.bShowPreviousDicerolls = false;
-                    cTracker.monID = cTracker.monsters.back().id;
-                    cTracker.updateCurrentMonster();
-                    UpdateCombatEncounter();
-                    eTracker.activeEncounter = encounterManager.GetEncounter(
-                            EncounterID::Combat_Encounter);
-                    eTracker.encounterID = EncounterID::Combat_Encounter;
+                    if(!cTracker.encounterTriggeredThis) {
+                        Phase = GamePhases::ENCOUNTER;
+                        eTracker.bShowPreviousDicerolls = false;
+                        cTracker.monID = cTracker.monsters.back().id;
+                        cTracker.updateCurrentMonster();
+                        Update_and_ChangeCombatBackground(cTracker.location);
+                        eTracker.activeEncounter = encounterManager.GetEncounter(
+                                EncounterID::Combat_Encounter);
+                        eTracker.encounterID = EncounterID::Combat_Encounter;
 
-                    eTracker.szene = 0;
-                    awaitingInput = true;
-                    eTracker.diaPhase = DialoguePhase::Scene;
+                        eTracker.szene = 0;
+                        awaitingInput = true;
+                        eTracker.diaPhase = DialoguePhase::Scene;
+                    }
                 }
             }
 
@@ -1845,8 +1853,7 @@ if(itemInUse){
                     {SceneCompositionSlots::InteractionMain,EncounterLayout.enemyMainPoint},
                     {SceneCompositionSlots::OverlayMainPoint,EncounterLayout.overlayMainPoint}
             };
-    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector,
-                                                const EnvironmentType environment)
+    void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector, const EnvironmentType environment)
     {
         switch (environment) {
             case EnvironmentType::DenseForest: musicManager.changeMusic(bgm::forest_quiet);break;
@@ -3503,13 +3510,14 @@ if(itemInUse){
         encounterManager.addEncounter(EncounterID::HunterCamp,HunterCamp);
         encounterManager.addEncounter(EncounterID::SkullDiscovery,SkullDiscovery);
         encounterManager.addEncounter(EncounterID::CorpseDiscovery,CorpseDiscovery);
+        encounterManager.addEncounter(EncounterID::RavineMain,RavineMain);
 
         //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
 
     void BeasthoodState::PopulateMonsterManager(){
         Monster mon1("Werwolf",
-                     LocationID::UNASSIGNED,
+                     LocationID::UNASSIGNED_LOCATION,
                      MonsterID::Werewolf,
                      MonsterType::Beast,
                      MovementType::Wandering,
@@ -3524,7 +3532,7 @@ if(itemInUse){
                      1);
         monsterManager.addMonster(mon1);
         mon1 = {"Wolf",
-                LocationID::UNASSIGNED,
+                LocationID::UNASSIGNED_LOCATION,
                 MonsterID::Wolf,
                 MonsterType::Beast,
                 MovementType::Stalking,
@@ -3539,7 +3547,7 @@ if(itemInUse){
                 6};
         monsterManager.addMonster(mon1);
         mon1 = {"Bear",
-                LocationID::UNASSIGNED,
+                LocationID::UNASSIGNED_LOCATION,
                 MonsterID::Bear,
                 MonsterType::Beast,
                 MovementType::Wandering,
@@ -3554,7 +3562,7 @@ if(itemInUse){
                 3};
         monsterManager.addMonster(mon1);
         mon1 = {"Skeleton",
-                LocationID::UNASSIGNED,
+                LocationID::UNASSIGNED_LOCATION,
                 MonsterID::Skeleton,
                 MonsterType::Undead,
                 MovementType::Stalking,
@@ -3577,11 +3585,13 @@ if(itemInUse){
         // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
         locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::SkullDiscovery);
         locationManager.GetItem(LocationID::Monastery)->related_events.push_back(EncounterID::MonasteryMain); //TODO TESTING ENCOUNTERS
-        locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::Testing_Combat);
+        //locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::Testing_Combat);
         locationManager.GetItem(LocationID::Village)->related_events.push_back(EncounterID::VillageMain);
         locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::HunterCamp);
         locationManager.GetItem(LocationID::Hermit)->related_events.push_back(EncounterID::HermitMain);
         locationManager.GetItem(LocationID::Clearing)->related_events.push_back(EncounterID::CorpseDiscovery);
+       // locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::RavineMain);
+        locationManager.GetItem(LocationID::River)->related_events.push_back(EncounterID::RavineMain);
 
     }
 
@@ -3715,12 +3725,13 @@ if(itemInUse){
         }
         return result;
     }
-    void BeasthoodState::UpdateCombatEncounter(){
+    void BeasthoodState::UpdateCombatEncounter(EnvironmentType background){
         //reset the Encounter
         encounterManager.removeEncounter(EncounterID::Combat_Encounter);
         //3 slots for enemies in scene
         SceneCompositionEntities currentEnemy;
         SceneCompositionEntities additionalEnemy1,additionalEnemy2;
+
         //matches the monster ID to the correspondig SCE and gets the correct texture this way
         currentEnemy = MatchMonsterIDtoSceneComp(cTracker.monID);
         if(cTracker.monsters.size() >= 2){additionalEnemy1 = MatchMonsterIDtoSceneComp(cTracker.monsters[1].id);}
@@ -3732,7 +3743,7 @@ if(itemInUse){
                 {
                         {
                                 "You are confronted by a Monster. Its presence chills you to the bone. Do you try to evade it or stand your ground?",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
                                         {
                                                 "Evade the monster (SNEAK)" ,
@@ -3767,7 +3778,7 @@ if(itemInUse){
                         },
                         {
                                 "The Monsters nightmarish visage fills your mind with dread. You must summon your will to avoid breaking down.",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
 
                                         {
@@ -3790,7 +3801,7 @@ if(itemInUse){
                         },
                         {
                                 "With a surge of courage, you attempt to slay the Monster. Can you overpower the beast?",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
 
                                         {
@@ -3827,7 +3838,7 @@ if(itemInUse){
                         },
                         {
                                 "<failed check> Having failed your attempt the Monster takes advantage and strikes you with brutal ferocity.",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
 
                                         {
@@ -3862,7 +3873,7 @@ if(itemInUse){
                         },
                         {
                                 "You defeat the Monster, its body crumpling to the ground. The threat has been eliminated, but at what cost?",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
 
                                         {
@@ -3886,7 +3897,7 @@ if(itemInUse){
                         },
                         {
                                 "<STEALTH check success> You manage to get away from the Monster, either through cunning or sheer luck. For now, you are safe.",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
 
                                         {
@@ -3908,7 +3919,7 @@ if(itemInUse){
                         },
                         {
                                 "<WILLPOWER check failed> Both mind and body are ravaged as the Monster spots you in your attempted cowardice!",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
 
                                         {
@@ -3943,7 +3954,7 @@ if(itemInUse){
                         },
                         {
                                 "<STEALTH check failed> Failing to evade its gaze, you attempt to guard your mind from slipping into panic as the creatures horrifying form ravages your body!",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
 
                                         {
@@ -3966,7 +3977,7 @@ if(itemInUse){
                         },
                         {
                                 "<WILLPOWER check failed> Your mind writhes in abject horror as the creatures visage meets your gaze.",
-                                EnvironmentType::DenseForest,
+                                background,
                                 {
 
                                         {
@@ -4289,7 +4300,7 @@ if(itemInUse){
                                     target = 0;
                                     m.moveTarget = map.GetSlotByID(target)->location_id;
                                 }
-                                if (m.moveTarget == LocationID::UNASSIGNED) { m.moveTarget = targetLocation; }
+                                if (m.moveTarget == LocationID::UNASSIGNED_LOCATION) { m.moveTarget = targetLocation; }
 
                                 targetLocation = FindNextStep(m.location, m.moveTarget);
                                 m.alreadyMoved = true;
@@ -4437,6 +4448,48 @@ if(itemInUse){
 
 
     }
+    void BeasthoodState::Update_and_ChangeCombatBackground(EncounterID eID, EnvironmentType envType, LocationID locID) {
+//        using
+//        enum EncounterID;
+//        using
+//        enum EnvironmentType;
+//        using
+//        enum LocationID;
+
+
+        if (locID == LocationID::UNASSIGNED_LOCATION || eID !=EncounterID::NO_ENCOUNTER_ASSIGNED || eID !=EncounterID::RavineMain) {
+            switch (eID) {
+                case EncounterID::Testing_Combat:
+                    UpdateCombatEncounter(EnvironmentType::HunterCamp);
+                    break;
+                case EncounterID::RavineMain:
+                    UpdateCombatEncounter(EnvironmentType::Elsewhere);
+                    break;
+                default:
+
+                    if (envType == EnvironmentType::DenseForest) {
+                        UpdateCombatEncounter();
+                    } else {
+                        UpdateCombatEncounter(envType);
+                    }
+                    break;
+            }
+        }else{
+            switch(locID)
+            {
+                case LocationID::Crossroads:
+                    UpdateCombatEncounter(EnvironmentType::OakPath);
+                    break;
+                case LocationID::Church:
+                    UpdateCombatEncounter(EnvironmentType::MonasteryGate);
+                    break;
+                default:
+                    UpdateCombatEncounter();
+                    break;
+            }
+        }
+    }
+
 
 
 

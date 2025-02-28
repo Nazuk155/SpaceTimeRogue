@@ -126,7 +126,7 @@ enum class LocationID {
     Village,
     Thicket,
     HunterCamp,
-    UNASSIGNED
+    UNASSIGNED_LOCATION
 };
 
 enum class AbilityID {
