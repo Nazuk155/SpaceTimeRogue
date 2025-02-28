@@ -53,9 +53,9 @@ inline std::vector<Quest> availableQuests
              {10,"You bound the skull to your will. You can draw a drop of infernal strength from it."}
      },0},
 
-    {"The Corpse","You found a savaged corpse.",11,
+    {"The Corpses","You found a pile of savaged corpses.",11,
      {
-             {0,"The corpse was torn apart by a massive animal. Even a bear has smaller claws."},
+             {0,"The corpses were torn apart by what appears to be a massive animal. But a bear has smaller claws, and few animals revel in such bloody displays."},
      },0},
 
 

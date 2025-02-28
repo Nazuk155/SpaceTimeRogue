@@ -101,7 +101,8 @@ enum class SceneCompositionEntities {
     Priest,
 
     //Overlays
-    RitualSkullOverlay
+    RitualSkullOverlay,
+    CorpsePileOverlay
 };
 enum class SceneCompositionSlots {
     OverlayMainPoint,
@@ -821,7 +822,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::Honorius},
+                                         {ItemID::Honorius,ItemID::Halberd},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -836,7 +837,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}, {ExecuteFlags::GainBulletLead, 3}},
                                          {},
                                          2, 255,
-                                         {ItemID::LoadedGunLead},
+                                         {ItemID::LoadedGunLead,ItemID::Halberd},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -851,7 +852,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::Talisman},
+                                         {ItemID::Talisman,ItemID::Halberd},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -865,7 +866,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::PrayerBook},
+                                         {ItemID::PrayerBook,ItemID::Halberd},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1469,10 +1470,54 @@ inline Encounter CorpseDiscovery
     EncounterID::CorpseDiscovery,
     EncounterTypeID::Unique,
     {
-        {"",
-        EnvironmentType::ForestOutskirts,}}
+            {"A pile of torn apart corpses. Is this the work of an animal or an evil intellect?",
+             EnvironmentType::ForestOutskirts, {
+                     {
+                             //none
+                             "Leave. Just leave.",
+                             false,
+                             StatNames::FAITH,
+                             3, {}, {},
+                             255, 255,
+                             {}, {}, {{RequirementFlags::notOnStage,1020},{RequirementFlags::notOnStage,1030}}, true
+                     },
+                     {
+                             //none
+                             "A sign of the evil at work here. A clue towards the vile nature of your quarry.",
+                             false,
+                             StatNames::FAITH,
+                             3, {{ExecuteFlags::AdvanceQuestStage,1040}}, {},
+                             255, 255,
+                             {}, {}, {{RequirementFlags::hasQuestOnStage,1020}}, true
+                     },
+                     {
+                             //none
+                             "A sign of the evil at work here. You have your second clue",
+                             false,
+                             StatNames::FAITH,
+                             3, {{ExecuteFlags::AdvanceQuestStage,1040}}, {},
+                             255, 255,
+                             {}, {}, {{RequirementFlags::hasQuestOnStage,1030}}, true
+                     },
+
+
+             },
+                    {{ SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain },
+                     {SceneCompositionEntities::CorpsePileOverlay,SceneCompositionSlots::OverlayMainPoint}}
+
+
+             },
+
+
+            } ,DialoguePhase::Scene //
+
+
 //todo end on dire wolf fight, advance msq / start clue quest 1
+
+
     };
+
+
 inline Encounter SkullDiscovery
         {
     EncounterID::SkullDiscovery,EncounterTypeID::Unique,

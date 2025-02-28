@@ -129,6 +129,7 @@ namespace JanSordid::SDL_Example {
         //Overlay Items
 
         string OverlayForestClearingSkullPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/forest_clearing_overlay_skull.png";
+        string OverlayCorpsPilePAth = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/corpses_overlay.png";
 
         //Buttons
 
@@ -209,6 +210,7 @@ namespace JanSordid::SDL_Example {
 
         //Overlay Items
         OverlayForestClearingSkull = loadFromFile(OverlayForestClearingSkullPath);
+        CorpsePileOverlay  = loadFromFile(OverlayCorpsPilePAth);
 
         //NPCs
 
@@ -548,10 +550,16 @@ namespace JanSordid::SDL_Example {
         abilityManager.AddAbility(std::move(staminaAbility));
 
         // Create and add items
-        auto sword = std::make_unique<Item>(ItemID::Halberd, ItemType::Melee, "Halberd of Valor", 2);
+        auto sword = std::make_unique<Item>(ItemID::Halberd, ItemType::Melee, "Halberd", 2);
         sword->SetStats({0, 0, 5, 0, 0, 0});
         sword->SetAbility(staminaAbilityPtr); // Associate ability with item
         itemManager.AddItem(std::move(sword));
+
+        auto halberdMaster = std::make_unique<Item>(ItemID::HalberdMaster, ItemType::Melee, "Master-crafted Halberd", 2);
+        halberdMaster->SetStats({1, 0, 7, 1, 0, 0});
+        halberdMaster->SetAbility(staminaAbilityPtr); // Associate ability with item
+        itemManager.AddItem(std::move(halberdMaster));
+
 
         auto shortsword = std::make_unique<Item>(ItemID::Sword, ItemType::Melee, "One-handed Sword", 1);
         shortsword->SetStats({0, 0, 2, 0, 0, 0});
@@ -712,6 +720,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(ravineBG);
 
         SDL_DestroyTexture(OverlayForestClearingSkull);
+        SDL_DestroyTexture(CorpsePileOverlay);
 
 
 
@@ -801,6 +810,7 @@ namespace JanSordid::SDL_Example {
         ravineBG= nullptr;
 
         OverlayForestClearingSkull = nullptr;
+        CorpsePileOverlay = nullptr;
 
         enemyWereWolfMainSprite = nullptr;
         enemyWolfSprite = nullptr;
@@ -2030,6 +2040,10 @@ if(itemInUse){
                     //Overlays
                 case SceneCompositionEntities::RitualSkullOverlay:
                     renderFromSpritesheet({0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)},OverlayForestClearingSkull);
+                    //SDL_Rect sceneWindow = {0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)};
+                    break;
+                case SceneCompositionEntities::CorpsePileOverlay:
+                    renderFromSpritesheet({0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)},CorpsePileOverlay);
                     //SDL_Rect sceneWindow = {0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)};
                     break;
 
@@ -3473,6 +3487,7 @@ if(itemInUse){
         encounterManager.addEncounter(EncounterID::HermitMain,HermitMain);
         encounterManager.addEncounter(EncounterID::HunterCamp,HunterCamp);
         encounterManager.addEncounter(EncounterID::SkullDiscovery,SkullDiscovery);
+        encounterManager.addEncounter(EncounterID::CorpseDiscovery,CorpseDiscovery);
 
         //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
@@ -3536,6 +3551,7 @@ if(itemInUse){
         locationManager.GetItem(LocationID::Village)->related_events.push_back(EncounterID::VillageMain);
         locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::HunterCamp);
         locationManager.GetItem(LocationID::Hermit)->related_events.push_back(EncounterID::HermitMain);
+        locationManager.GetItem(LocationID::Clearing)->related_events.push_back(EncounterID::CorpseDiscovery);
 
     }
 

@@ -450,6 +450,7 @@ namespace JanSordid::SDL_Example {
 
         //Overlay Items
         Texture* OverlayForestClearingSkull = nullptr;
+        Texture * CorpsePileOverlay = nullptr;
 
 
 
