@@ -233,20 +233,28 @@ Vector<ExecuteFlags> iterateOverOutcomes(const Vector<ItemID>& rewards, const st
                     }
                 }
 
-            } results.push_back(ExecuteFlags::AdvanceQuestStage);break;
+            } results.push_back(ExecuteFlags::AdvanceQuestStage)
+            ;break;
             case ExecuteFlags::StartCombat:
-                results.push_back(ExecuteFlags::StartCombat);break;
+
+                results.push_back(ExecuteFlags::StartCombat)
+                ;break;
 
             case ExecuteFlags::FinishedCombatWIN:
-                results.push_back(ExecuteFlags::FinishedCombatWIN);break;
+
+                results.push_back(ExecuteFlags::FinishedCombatWIN)
+                ;break;
             case ExecuteFlags::FinishedCombatLOSS:
-                results.push_back(ExecuteFlags::SanityLoss);
+
+                results.push_back(ExecuteFlags::FinishedCombatLOSS);
                 break;
             case ExecuteFlags::SpawnMonster:
 
                 results.push_back(ExecuteFlags::SpawnMonster);
                 break;
+
             case ExecuteFlags::RemoveEncounter:
+
                 results.push_back(ExecuteFlags::RemoveEncounter);
                 break;
         }

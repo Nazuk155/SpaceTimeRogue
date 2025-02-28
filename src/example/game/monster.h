@@ -7,11 +7,11 @@
 class Monster {
 public:
     const char* name = "";
-    LocationID location = LocationID::UNASSIGNED;
+    LocationID location = LocationID::UNASSIGNED_LOCATION;
     MonsterID id = MonsterID::UNASSIGNED_MONSTERID; // Add an UNASSIGNED_MONSTERID enum value
     MonsterType type = MonsterType::None;
     MovementType moveType = MovementType::Stalking;
-    LocationID moveTarget = LocationID::UNASSIGNED;
+    LocationID moveTarget = LocationID::UNASSIGNED_LOCATION;
     bool alreadyMoved = false;
     int hp = 0;
     int toughness = 0;

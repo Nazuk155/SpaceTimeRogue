@@ -100,7 +100,7 @@ enum class LocationID {
     Clearing,
     Townhall,
     Thicket,
-    UNASSIGNED
+    UNASSIGNED_LOCATION
 };
 
 enum class AbilityID {
