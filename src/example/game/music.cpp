@@ -11,6 +11,7 @@ void MusicManager::init()
     villageTheme= Mix_LoadMUS(BGM2Path.c_str());
     forestTheme= Mix_LoadMUS(forestBGMPath.c_str());
     monasteryTheme= Mix_LoadMUS(monasteryBGMPAth.c_str());
+    darkWoodsCombat=Mix_LoadMUS(elsewhereBattlePAth.c_str());
     Mix_Volume(-1,1); //TODO seems broken?
     if( mainMusic == nullptr )
     {
@@ -32,9 +33,14 @@ void MusicManager::init()
         printf( "Failed to load monastery music! SDL_mixer Error: %s\n", Mix_GetError() );
         bDone = false;
     }
+    if( darkWoodsCombat == nullptr )
+    {
+        printf( "Failed to load monastery music! SDL_mixer Error: %s\n", Mix_GetError() );
+        bDone = false;
+    }
     bIsInitialized=bDone;
     currentBGM= bgm::main_theme;
-    Mix_VolumeMusic(MIX_MAX_VOLUME/2);
+    Mix_VolumeMusic(5);
     Mix_PlayMusic(mainMusic, -1 );
 
 
@@ -57,6 +63,10 @@ void MusicManager::changeMusic(bgm toPlay)
                 break;
             case bgm::monastery:
                 Mix_PlayMusic(monasteryTheme,-1);
+                currentBGM=toPlay;
+                break;
+            case bgm::battle:
+                Mix_PlayMusic(darkWoodsCombat,-1);
                 currentBGM=toPlay;
                 break;
             default:Mix_PlayMusic( mainMusic, -1 );

@@ -331,6 +331,14 @@ namespace JanSordid::SDL_Example {
         bool bShowRightItemInfo = false;
         bool bShowLeftItemInfo = false;
 
+        //Healtbar components
+        Texture * healtbarBG = nullptr;
+        Texture * healtbarRed = nullptr;
+        Texture * healthbarEdge = nullptr;
+        //TODO TEMP REMOVE
+        float tempHealth = 1.0;
+
+
         //   std::vector<Location> locations;
         Font *font = nullptr;
         Owned<Font> _font = nullptr;
@@ -370,12 +378,24 @@ namespace JanSordid::SDL_Example {
         Texture * missingIcon = nullptr;
         Texture * candleIcon = nullptr;
         Texture * prayerbookIcon = nullptr;
-        Texture * gunIcon = nullptr;
+
         Texture * torchIcon = nullptr;
 
         Texture *ritualSkullIcon = nullptr;
 
         Texture * halberdIcon = nullptr;
+
+        Texture * relicIcon = nullptr;
+        Texture * shortSwordIcon = nullptr;
+        Texture * honoriusIcon = nullptr;
+
+        Texture * gunIcon = nullptr;
+        Texture * bulletSilver = nullptr;
+        Texture * bulletLead = nullptr;
+        Texture * gunSilverIcon = nullptr;
+        Texture * gunLeadIcon = nullptr;
+
+
         std::vector<Texture*> Icons;
 
         //NPCs
@@ -388,11 +408,15 @@ namespace JanSordid::SDL_Example {
         Texture* peasant2Sprite = nullptr;
         Texture* hunterSprite = nullptr;
         Texture* peasantWomanSprite = nullptr;
+        Texture *mercenarySprite= nullptr;
+        Texture * veteranSprite = nullptr;
+        Texture * priestSprite = nullptr;
 
 
         Texture *enemyWereWolfMainSprite = nullptr;
         Texture *enemyWolfSprite = nullptr;
         Texture* enemyBearSprite=nullptr;
+        Texture* enemySkeletonSpearSprite = nullptr;
 
 
 
@@ -419,10 +443,19 @@ namespace JanSordid::SDL_Example {
         Texture* forestPathToHeartBG= nullptr;
         Texture* forestPathToHeartFG= nullptr;
         Texture* forestHeartBG= nullptr;
+        Texture * ravineBG = nullptr;
+        Texture * sheep_treeBG = nullptr;
+        Texture * churchBG = nullptr;
+        Texture * elswhereBG = nullptr;
 
 
         //Overlay Items
         Texture* OverlayForestClearingSkull = nullptr;
+        Texture * CorpsePileOverlay = nullptr;
+
+
+
+
 
 
         struct LocationTextures {
@@ -681,6 +714,8 @@ namespace JanSordid::SDL_Example {
 
         void MoveMonster(LocationID origin,LocationID destination, Monster monster);
 
+        void RenderHealthbar(float currentHealth);
+
         void AddEncounter(LocationID lID, EncounterID eID);
 
         void RemoveEncounter(LocationID lID, EncounterID eID);
@@ -694,11 +729,10 @@ namespace JanSordid::SDL_Example {
                                               LocationID::UNASSIGNED_LOCATION);
         }
 
-        //calls UpdateCombat with background based on given parameter. Best used by only inputting one parameter.
+        //calls UpdateCombat with background based on EncounterID, if not given eID it sets the given envType. Defaults to DenseForest background.
         void Update_and_ChangeCombatBackground(EncounterID eID = EncounterID::NO_ENCOUNTER_ASSIGNED,
                                                EnvironmentType envType = EnvironmentType::DenseForest,
                                                LocationID locID = LocationID::UNASSIGNED_LOCATION);
     };
-
 
 }

@@ -21,6 +21,7 @@ inline String forestBGMPath = BasePath "/src/example/game/Ressources/bgm/Woods_o
 //inline String forestBGMPath = BasePath "/src/example/game/Ressources/bgm/Woods_of_Vorduin-Serenade_of_the_Silent_Grove-08_Gārsecg.mp3";
 inline String BGM2Path = BasePath "/src/example/game/Ressources/bgm/Zavlore-A_Tale_Never_Told-08The_Song_of_Other_Skies.mp3";
 inline String monasteryBGMPAth = BasePath "/src/example/game/Ressources/bgm/Schola_Gregoriana-Antiphona_et_Magnificat.ogg";
+inline String elsewhereBattlePAth = BasePath "/src/example/game/Ressources/bgm/DarkAges-TheTractatusdeHereticisetSortilegiis-05CompendiumMaleficarum.mp3";
 
 
 enum class bgm

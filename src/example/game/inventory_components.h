@@ -48,6 +48,10 @@ inline void RenderItemIcon(SDL_Renderer*renderer,const Item* item,SDL_Texture* b
             SDL_RenderCopy(renderer, iconVector[1], &iconScale, &destinationRect
             );
             break;
+        case ItemID::HalberdMaster:
+            SDL_RenderCopy(renderer, iconVector[1], &iconScale, &destinationRect
+            );
+            break;
         case ItemID::PrayerBook:
             SDL_RenderCopy(renderer, iconVector[2], &iconScale, &destinationRect
             );
@@ -64,8 +68,37 @@ inline void RenderItemIcon(SDL_Renderer*renderer,const Item* item,SDL_Texture* b
             SDL_RenderCopy(renderer, iconVector[5], &iconScale, &destinationRect
             );
             break;
-        case ItemID::RitualSkull:
+        case ItemID::RitualSkullCursed:
             SDL_RenderCopy(renderer, iconVector[6], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::BulletLead:
+            SDL_RenderCopy(renderer, iconVector[7], &iconScale, &destinationRect
+            );
+//Todo text to texture?
+            break;
+        case ItemID::BulletSilver:
+            SDL_RenderCopy(renderer, iconVector[8], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::LoadedGunLead:
+            SDL_RenderCopy(renderer, iconVector[9], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::LoadedGunSilver:
+            SDL_RenderCopy(renderer, iconVector[10], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::Relic:
+            SDL_RenderCopy(renderer, iconVector[11], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::Sword:
+            SDL_RenderCopy(renderer, iconVector[12], &iconScale, &destinationRect
+            );
+            break;
+        case ItemID::Honorius:
+            SDL_RenderCopy(renderer, iconVector[13], &iconScale, &destinationRect
             );
             break;
         default:
@@ -109,6 +142,7 @@ public:
         {
             if (!icon)
             {
+                fmt::println("Failed to load icon");
                 bIconsLoaded= false;
             }
 
@@ -281,10 +315,10 @@ class InventoryScreen
 
 
 
-    void Click(int mouseX, int mouseY, int screenWidth, int screenHeight)
+    void Click(int mouseX, int mouseY, int screenWidth, int screenHeight, ItemManager* itemManager)
     {
 
-        if(currentPage.bIconSelected && currentPage.MouseOverIcon->referencedItem->GetHandsNeeded()!=0)
+        if(currentPage.bIconSelected && currentPage.MouseOverIcon->referencedItem->GetHandsNeeded()!=0 && !currentPage.MouseOverIcon->referencedItem->isBullet)
         {
             //fmt::println("Clicked while selection locked");
 
@@ -369,6 +403,126 @@ class InventoryScreen
 
 
 
+        }
+        else if(currentPage.bIconSelected && currentPage.MouseOverIcon->referencedItem->GetHandsNeeded() == 0 &&currentPage.MouseOverIcon->referencedItem->isBullet)
+        {
+            fmt::println("click bullet");
+            SDL_Rect ButtonRect //Left?
+                    ={
+                            static_cast<int>((screenWidth*0.01)*(currentPage.StartPoint.x -ItemDetailedView.Dimensions.x + ItemDetailedView.EquipRightPos.x)),
+                            static_cast<int>((screenHeight*(currentPage.StartPoint.y )*0.01)+ItemDetailedView.EquipRightPos.y*0.01*screenWidth),
+                            static_cast<int>(ItemDetailedView.ButtonScale.x*0.01*screenWidth),
+                            static_cast<int>(ItemDetailedView.ButtonScale.y*0.01*screenWidth)
+
+                    };
+            if(mouseX >= ButtonRect.x && mouseX < (ButtonRect.x + ButtonRect.w) &&
+               mouseY >= ButtonRect.y && mouseY < (ButtonRect.y + ButtonRect.h))
+            {
+                fmt::println("click left-bullet");
+
+                //is the gun equipped?
+                bool bGunPresent = false;
+                bool bGunWasEquipped = false;
+                bool bGunFirst = false;
+                if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::GUN)
+                {
+                    currentCharacter->UnequipItem(ItemID::GUN);
+                    bGunPresent=true;
+                    bGunWasEquipped=true;
+                    bGunFirst=true;
+                }
+                else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::GUN)
+                {
+                    currentCharacter->UnequipItem(ItemID::GUN);
+                    bGunPresent=true;
+                    bGunWasEquipped=true;
+                    bGunFirst= false;
+                }
+                //is the gun in the inventory?
+                if(!bGunWasEquipped)
+                {
+                    for (Item* i: currentCharacter->GetInventory())
+                    {
+                        if(i->GetItemID()==ItemID::GUN)
+                        {
+                            bGunPresent = true;
+                        }
+                    }
+                }
+                //we have a gun! switch it with the loaded one
+                if (bGunPresent)
+                {
+                    currentCharacter->RemoveFromInventory(ItemID::GUN);
+                    switch (currentPage.MouseOverIcon->referencedItem->GetItemID()) {
+                        case(ItemID::BulletSilver):
+                            fmt::println("loading silver bullet");
+                            currentCharacter->RemoveFromInventory(currentPage.MouseOverIcon->referencedItem->GetItemID());
+
+
+
+                            //prevent 'empty item' being displayed/handled
+                            currentPage.MouseOverIcon = nullptr;
+                            currentPage.bIconHover=false;
+                            currentPage.bIconSelected = false;
+                            //equip or add?
+                            if(bGunWasEquipped)
+                            {
+                                //equip
+                                currentCharacter->EquipItem(itemManager->GetItem(ItemID::LoadedGunSilver));
+                            }
+                            else
+                            {
+                                //add
+                                currentCharacter->AddToInventory(itemManager->GetItem(ItemID::LoadedGunSilver));
+                            }
+
+
+                            RebuildInventory();
+                            currentCharacter->UpdateCurrentStats();
+
+                            break;
+                        default:
+                            fmt::println("loading lead bullet");
+                            if(currentCharacter->leadBulletCount ==1) {
+                                currentCharacter->RemoveFromInventory(
+                                        currentPage.MouseOverIcon->referencedItem->GetItemID());
+                                currentCharacter->leadBulletCount--;
+                            }
+                            else
+                            {
+                                currentCharacter->leadBulletCount--;
+                            }
+
+
+
+                            //prevent 'empty item' being displayed/handled
+                            currentPage.MouseOverIcon = nullptr;
+                            currentPage.bIconHover=false;
+                            currentPage.bIconSelected = false;
+                            //equip or add?
+                            if(bGunWasEquipped)
+                            {
+                                //equip
+                                currentCharacter->EquipItem(itemManager->GetItem(ItemID::LoadedGunLead));
+                            }
+                            else
+                            {
+                                //add
+                                currentCharacter->AddToInventory(itemManager->GetItem(ItemID::LoadedGunLead));
+                            }
+
+
+                            RebuildInventory();
+                            currentCharacter->UpdateCurrentStats();
+
+                            break;
+
+                    }
+                }
+
+
+                return;
+            }
         }
 
 

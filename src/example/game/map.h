@@ -8,6 +8,8 @@ struct Map_Slot {
     SDL_Point position; // X, Y position
     SDL_Rect locationRect = {position.x, position.y, 128, 128};
     LocationID location_id;                             // ID of the location assigned UNASSIGNED_MONSTERID
+    //SDL_Rect locationRect = {position.x, position.y, 128, 128};
+                              // ID of the location assigned UNASSIGNED
     //maybe change vector to unordered_map for better lookup
     std::vector<std::pair<int, bool>> connections; // Connections with status (active/inactive)
     std::vector<SDL_Rect> playerRects; // Up to 3 player character positions

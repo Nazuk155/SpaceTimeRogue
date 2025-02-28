@@ -25,7 +25,7 @@ struct
 
     SDL_Point SkillTextScale {16,3};
 
-    SDL_Point EquippedItemsStart {81,7*SkillTextScale.y};
+    SDL_Point EquippedItemsStart {81,8*SkillTextScale.y};
     SDL_Point InventoryRowScale{18,7};
 
     SDL_Point InventoryScale {18,6*InventoryRowScale.y};
@@ -74,6 +74,12 @@ struct {
     SDL_Point enemyMainPoint = {45,HorizonLine};
     SDL_Point npcBottomPoint = {45,70};
 
+    SDL_Point HealthBarTitleStart {10,62};
+     SDL_FPoint HealthbarTitleScale{4,1.4};
+    SDL_FPoint HealthbarBorderStart{9.5,66.5};
+    SDL_FPoint HealthbarBorderScale{61,2};
+    SDL_Point HealthBarStart {10,67};
+    SDL_Point HealthBarScale {60,1};
 
     SDL_Point DialogueBoxStart = {0,70};
     SDL_Point DialogueBoxEnd = {80,100};
@@ -143,8 +149,20 @@ struct  //TODO PLACEHOLDER for better system, encounter data etc
     const float ScalingvalueWoman1X = woman1_IMG.x/(1920*2.5);
     const float ScalingvalueWoman1Y = woman1_IMG.y/(1080*2.5);
 
+    SDL_Point skeleton_spear_IMG {1636,1250};
+    const float ScalingvalueSkeletonSpearX = skeleton_spear_IMG.x/(1920*2.7);
+    const float ScalingvalueSkeletonSpearY = skeleton_spear_IMG.y/(1080*2.7);
 
+    SDL_Point mercenary_IMG {660,1799};
+    const float ScalingvalueMercX = mercenary_IMG.x/(1920*2.7);
+    const float ScalingvalueMercY = mercenary_IMG.y/(1080*2.7);
+    SDL_Point veteran_IMG {462,1250};
+    const float ScalingvalueVeteranX = veteran_IMG.x/(1920*2.7);
+    const float ScalingvalueVeteranY = veteran_IMG.y/(1080*2.7);
 
+    SDL_Point priest_IMG {615,1250};
+    const float ScalingvaluePriestX = priest_IMG.x/(1920*2.7);
+    const float ScalingvaluePriestY = priest_IMG.y/(1080*2.7);
 
     const SDL_Point Turn_Button = {409, 1040};
 

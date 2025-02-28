@@ -20,6 +20,8 @@
 #include "layout.h"
 
 
+
+
 namespace JanSordid::SDL_Example {
     struct {
 
@@ -58,11 +60,24 @@ namespace JanSordid::SDL_Example {
         Questlog.addQuest(1);
 
 
+
         //Paths for Image Assets
         string forestLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/token_1.png";
         string playerMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/Landsknecht.jpg";
 
         string playerMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/lk_sprite.png";
+
+        //Map icon
+        string monasteryLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/monastery_icon.png";
+        string villageMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/village_mapicon.png";
+        string hermitIconPath  = BasePath "/src/example/game/Ressources/Image_assets/map_icons/hermit_icon.png";
+        string huntersIconPath  = BasePath "/src/example/game/Ressources/Image_assets/map_icons/hunters_mapicon.png";
+
+        //Healthbar
+        string healtbarBGPath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_bg.png";
+        string healthbarRedPath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_red.png";
+        string healthbarEdgePath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_edge.png";
+
 
         //NPCs
         string enemyWereWolfMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/garou_sprite.png";
@@ -78,6 +93,10 @@ namespace JanSordid::SDL_Example {
         string peasant2SpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/peasant_2_sprite.png";
         string hunterSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/hunter_sprite.png";
         string peasantWomanSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/woman_1_sprite.png";
+        string mercenarySpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/mercenary_sprite.png";
+        string enemySkeletonSpearSpriteIMGPath = BasePath "/src/example/game/Ressources/Image_assets/entities/skeleton_spear_sprite.png";
+        string veteranSpritePath =  BasePath "/src/example/game/Ressources/Image_assets/entities/veteran_sprite.png";
+        string priestSpritePath = BasePath "/src/example/game/Ressources/Image_assets/entities/priest_sprite.png";
 
 
         //Backgrounds/Foregrounds
@@ -92,6 +111,8 @@ namespace JanSordid::SDL_Example {
 
         string village2PathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/village_2.png";
 
+        string sheepTreePathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/sheep_tree.png";
+
         string outskirtsPathPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/outskirts_path.png";
         string windmillOutskirtsPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/windmill_outskirts.png";
         string oakPathPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/oak_path.png";
@@ -103,10 +124,14 @@ namespace JanSordid::SDL_Example {
         string forestPathToHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/heart_approach_bg.png";
         string forestPathToHeartPathFG = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/heart_approach_fg.png";
         string forestHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_heart.png";
+        string ravinePathBG= BasePath "/src/example/game/Ressources/Image_assets/backgrounds/ravine_bg.png";
+        string churchBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/church_bg.png";
+        string elswhereBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/elswhere_bg.png";
 
         //Overlay Items
 
         string OverlayForestClearingSkullPath = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/forest_clearing_overlay_skull.png";
+        string OverlayCorpsPilePAth = BasePath "/src/example/game/Ressources/Image_assets/foregrounds/corpses_overlay.png";
 
         //Buttons
 
@@ -141,8 +166,14 @@ namespace JanSordid::SDL_Example {
         String prayerbookIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/prayerbook_icon.png";
         String torchIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/torch_icon.png";
         String gunIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_icon.png";
+        String gunSilverIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_silver_icon.png";
+        String gunLeadIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/gun_lead_icon.png";
         String ritualSkullIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/ritual_skull_icon.png";
-
+        String bulletLeadPath = BasePath "/src/example/game/Ressources/Image_assets/items/bullet_lead.png";
+        String bulletSilverPath = BasePath "/src/example/game/Ressources/Image_assets/items/bullet_silver.png";
+        String relicIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/relic_icon.png";
+        String shortSwordIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/shortsword_icon.png";
+        String honoriusPath = BasePath "/src/example/game/Ressources/Image_assets/items/honorius_icon.png";
 
 
 
@@ -163,6 +194,7 @@ namespace JanSordid::SDL_Example {
 
         village1 = loadFromFile(village1PathBG);
         village2 = loadFromFile(village2PathBG);
+        sheep_treeBG= loadFromFile(sheepTreePathBG);
 
         outskirtsPath= loadFromFile(outskirtsPathPathBG);
         windmillOutskirts= loadFromFile(windmillOutskirtsPathBG);
@@ -175,9 +207,13 @@ namespace JanSordid::SDL_Example {
         forestPathToHeartBG= loadFromFile(forestPathToHeartBGPathBG);
         forestPathToHeartFG= loadFromFile(forestPathToHeartPathFG);
         forestHeartBG= loadFromFile(forestHeartBGPathBG);
+        ravineBG = loadFromFile(ravinePathBG);
+        churchBG = loadFromFile(churchBGPAth);
+        elswhereBG = loadFromFile(elswhereBGPAth);
 
         //Overlay Items
         OverlayForestClearingSkull = loadFromFile(OverlayForestClearingSkullPath);
+        CorpsePileOverlay  = loadFromFile(OverlayCorpsPilePAth);
 
         //NPCs
 
@@ -185,6 +221,7 @@ namespace JanSordid::SDL_Example {
         monsterIDtoTextureMap[MonsterID::Wolf] = loadFromFile(enemyWolfSpritePath);
         monsterIDtoTextureMap[MonsterID::Werewolf] = loadFromFile(enemyWereWolfMainSpritePath);
         monsterIDtoTextureMap[MonsterID::Bear] = loadFromFile(enemyBearSpritePath);
+
 
         //map MonsterID to corresponding MAP ICON texture
         // monsterIDtoIconMap[MonsterID::Wolf] = loadFromFile(enemyWolfIconPath);
@@ -194,6 +231,7 @@ namespace JanSordid::SDL_Example {
         enemyWereWolfMainSprite = loadFromFile(enemyWereWolfMainSpritePath);
         enemyWolfSprite = loadFromFile(enemyWolfSpritePath);
         enemyBearSprite= loadFromFile(enemyBearSpritePath);
+        enemySkeletonSpearSprite = loadFromFile(enemySkeletonSpearSpriteIMGPath);
 
 
         errorIMG = loadFromFile(errorIMGPath);
@@ -205,6 +243,9 @@ namespace JanSordid::SDL_Example {
         peasant2Sprite = loadFromFile(peasant2SpriteIMGPath);
         hunterSprite = loadFromFile(hunterSpriteIMGPath);
         peasantWomanSprite = loadFromFile(peasantWomanSpriteIMGPath);
+        mercenarySprite= loadFromFile(mercenarySpriteIMGPath);
+        veteranSprite= loadFromFile(veteranSpritePath);
+        priestSprite= loadFromFile(priestSpritePath);
 
         //Buttons
         endTurnButtonOn = loadFromFile(endTurnButtonOnPath);
@@ -219,6 +260,12 @@ namespace JanSordid::SDL_Example {
         journalIcon = loadFromFile(journalIconOnPath);
         journalIconMouseover = loadFromFile(journalIconMouseoverPath);
         journalIconOff = loadFromFile(journalIconOffPath);
+
+        //Healthbar
+        healtbarBG = loadFromFile(healtbarBGPath);
+        healtbarRed = loadFromFile(healthbarRedPath);
+        healthbarEdge = loadFromFile(healthbarEdgePath);
+
 
         //DIce Textures
         dice1 = loadFromFile(dice1Path);
@@ -236,8 +283,17 @@ namespace JanSordid::SDL_Example {
         candleIcon = loadFromFile(candleIconPath);
         prayerbookIcon = loadFromFile(prayerbookIconPath);
         gunIcon= loadFromFile(gunIconPath);
+        gunLeadIcon= loadFromFile(gunLeadIconPath);
+        gunSilverIcon = loadFromFile(gunSilverIconPath);
         torchIcon= loadFromFile(torchIconPath);
         ritualSkullIcon = loadFromFile(ritualSkullIconPath);
+
+        shortSwordIcon= loadFromFile(shortSwordIconPath);
+        relicIcon= loadFromFile(relicIconPath);
+        honoriusIcon= loadFromFile(honoriusPath);
+
+        bulletLead= loadFromFile(bulletLeadPath);
+        bulletSilver= loadFromFile(bulletSilverPath);
 
 
         //Icons index!!!
@@ -248,6 +304,14 @@ namespace JanSordid::SDL_Example {
         Icons.push_back(torchIcon); //Torch = 4
         Icons.push_back(gunIcon);//Gun = 5
         Icons.push_back(ritualSkullIcon);//Skull=6
+        Icons.push_back(bulletLead);//Lead = 7
+        Icons.push_back(bulletSilver); //Silver = 8
+        Icons.push_back(gunLeadIcon); //Lead loaded gun = 9
+        Icons.push_back(gunSilverIcon); //Silver loaded gun = 10
+        Icons.push_back(relicIcon); //Relic = 11
+        Icons.push_back(shortSwordIcon); //sword = 12
+        Icons.push_back(honoriusIcon); //honorius 13
+
 
 
 
@@ -268,8 +332,8 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::River].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::River].nameTexture = textToTexture("River");
 
-        locationTextureMap[LocationID::Smith].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Smith].nameTexture = textToTexture("Smith");
+        locationTextureMap[LocationID::Smith].iconTexture = loadFromFile(huntersIconPath);
+        locationTextureMap[LocationID::Smith].nameTexture = textToTexture("HunteeCamp");
 
         locationTextureMap[LocationID::Windmill].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Windmill].nameTexture = textToTexture("Windmill");
@@ -277,10 +341,10 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Crossroads].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Crossroads].nameTexture = textToTexture("Crossroads");
 
-        locationTextureMap[LocationID::Cave].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Cave].nameTexture = textToTexture("Cave");
+        locationTextureMap[LocationID::Hermit].iconTexture = loadFromFile(hermitIconPath);
+        locationTextureMap[LocationID::Hermit].nameTexture = textToTexture("Hermit");
 
-        locationTextureMap[LocationID::Monastery].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Monastery].iconTexture = loadFromFile(monasteryLocationIconPath);
         locationTextureMap[LocationID::Monastery].nameTexture = textToTexture("Monastery");
 
         locationTextureMap[LocationID::Farm].iconTexture = loadFromFile(forestLocationIconPath);
@@ -289,8 +353,8 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Clearing].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Clearing].nameTexture = textToTexture("Clearing");
 
-        locationTextureMap[LocationID::Townhall].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Townhall].nameTexture = textToTexture("Townhall");
+        locationTextureMap[LocationID::Village].iconTexture = loadFromFile(villageMapIconPath);
+        locationTextureMap[LocationID::Village].nameTexture = textToTexture("Village");
 
         locationTextureMap[LocationID::Thicket].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Thicket].nameTexture = textToTexture("Thicket");
@@ -420,6 +484,8 @@ namespace JanSordid::SDL_Example {
              locationManager.AddItem(std::move(church));
              */
 
+        // locations.emplace_back( "Location " + std::to_string(i),i);
+        //map.SetLocation(i, locations.back());
         for (int i = 0; i <= 11; ++i) {
             locationManager.AddItem(std::move(std::make_unique<Location>(static_cast<LocationID>(i))));
             map.SetLocation(i, *locationManager.GetItem(static_cast<LocationID>(i)));
@@ -439,7 +505,7 @@ namespace JanSordid::SDL_Example {
                 }
                 std::cout << "\n";
 
-                map.SetConnectionStatus(2, 0, false);
+                map.SetConnectionStatus(2, 0, true); //todo test
 
                 // Location* loc = &locations[i - 1];
                 std::cout << "  Location: " << locationManager.GetItem(static_cast<LocationID>(i))->name
@@ -487,14 +553,42 @@ namespace JanSordid::SDL_Example {
         abilityManager.AddAbility(std::move(staminaAbility));
 
         // Create and add items
-        auto sword = std::make_unique<Item>(ItemID::Halberd, ItemType::Melee, "Halberd of Valor", 2);
-        sword->SetStats({0, 0, 5, 0, 0, 0}); // Attack 10
+        auto sword = std::make_unique<Item>(ItemID::Halberd, ItemType::Melee, "Halberd", 2);
+        sword->SetStats({0, 0, 5, 0, 0, 0});
         sword->SetAbility(staminaAbilityPtr); // Associate ability with item
         itemManager.AddItem(std::move(sword));
 
+        auto halberdMaster = std::make_unique<Item>(ItemID::HalberdMaster, ItemType::Melee, "Master-crafted Halberd", 2);
+        halberdMaster->SetStats({1, 0, 7, 1, 0, 0});
+        halberdMaster->SetAbility(staminaAbilityPtr); // Associate ability with item
+        itemManager.AddItem(std::move(halberdMaster));
+
+
+        auto shortsword = std::make_unique<Item>(ItemID::Sword, ItemType::Melee, "One-handed Sword", 1);
+        shortsword->SetStats({0, 0, 2, 0, 0, 0});
+       // sword->SetAbility(staminaAbilityPtr); // Associate ability with item
+        itemManager.AddItem(std::move(shortsword));
+
         auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Not so Common Torch",1);
-        torch->SetStats({0, 0, 1, 1, 0, 5}); // Attack 10
+        torch->SetStats({0, 0, 1, 1, 0, 5});
         itemManager.AddItem(std::move(torch));
+
+        auto gun = std::make_unique<Item>(ItemID::GUN, ItemType::Unique,"Unloaded Gun",1);
+        gun->SetStats({0, 0, 1, 0, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(gun));
+
+        auto gunLoadedSilver = std::make_unique<Item>(ItemID::LoadedGunSilver, ItemType::Unique,"Gun - Silver Bullet",1);
+        gunLoadedSilver->SetStats({0, 0, 1, 2, 3, 3}); // Attack 1
+        itemManager.AddItem(std::move(gunLoadedSilver));
+
+        auto gunLoadedLead = std::make_unique<Item>(ItemID::LoadedGunLead, ItemType::Unique,"Gun - Lead Bullet",1);
+        gunLoadedLead->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(gunLoadedLead));
+
+
+        auto honorius = std::make_unique<Item>(ItemID::Honorius, ItemType::Unique,"Grimoire of Honorius",1);
+        honorius->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(honorius));
 
 
         auto prayerBook = std::make_unique<Item>(ItemID::PrayerBook, ItemType::Unique,"Prayer Book of St. Lycon",1);
@@ -505,9 +599,31 @@ namespace JanSordid::SDL_Example {
         talisman->SetStats({2, 5, 2, 0, 2, 0});
         itemManager.AddItem(std::move(talisman));
 
-        auto ritual_skull = std::make_unique<Item>(ItemID::RitualSkull, ItemType::Unique,"Ritual Skull",0);
+        auto ritual_skull = std::make_unique<Item>(ItemID::RitualSkullCursed, ItemType::Unique,"Ritual Skull",0);
         ritual_skull->SetStats({0, 0, 0, 0, 1, -2});
         itemManager.AddItem(std::move(ritual_skull));
+
+        auto ritual_skull_occult = std::make_unique<Item>(ItemID::RitualSkullBound, ItemType::Unique,"Suborned Ritual Skull",0);
+        ritual_skull_occult->SetStats({2, 0, 2, 2, 2, 1});
+        itemManager.AddItem(std::move(ritual_skull_occult));
+
+        auto ritual_skull_faith = std::make_unique<Item>(ItemID::RitualSkullFaith, ItemType::Unique,"Quieted Ritual Skull",0);
+        ritual_skull_faith->SetStats({0, 0, 0, 0, 1, 0});
+        itemManager.AddItem(std::move(ritual_skull_faith));
+
+        auto relic = std::make_unique<Item>(ItemID::Relic, ItemType::Unique,"Relic",0);
+        relic->SetStats({0, 0, 0, 2, 1, 7});
+        itemManager.AddItem(std::move(relic));
+
+        auto bullet_silver = std::make_unique<Item>(ItemID::BulletSilver,ItemType::Magic,"Silver Bullet",0);
+        bullet_silver->isBullet = true;
+        bullet_silver->SetStats({0, 0, 0, 0, 2, 2});
+        itemManager.AddItem(std::move(bullet_silver));
+        auto bullet_lead = std::make_unique<Item>(ItemID::BulletLead,ItemType::Ranged,"Lead Bullet",0);
+        bullet_lead->isBullet = true;
+        bullet_lead->SetStats({0, 0, 0, 0, 0, 0});
+        itemManager.AddItem(std::move(bullet_lead));
+
 
         // Access and use an item
         Item *item = itemManager.GetItem(ItemID::Halberd);
@@ -537,9 +653,13 @@ namespace JanSordid::SDL_Example {
         currentCharacter = new Character(*landsknechtBlueprint);
         currentCharacter->RefillFatePoints();
 
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Sword));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
+        currentCharacter->leadBulletCount++;
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
 
         inventoryScreen = InventoryScreen(currentCharacter);
 
@@ -547,7 +667,7 @@ namespace JanSordid::SDL_Example {
         ske.changeCharacter(currentCharacter);
 
 
-        currentCharacter->SetCurrentLocation(LocationID::Forest);
+        currentCharacter->SetCurrentLocation(LocationID::Village);
         //currentCharacter->EquipItem(currentCharacter->GetInventory().back());
         currentCharacter->UpdateCurrentStats();
 
@@ -561,13 +681,14 @@ namespace JanSordid::SDL_Example {
 
         SpawnMonster(Forest,Wolf);
         SpawnMonster(Thicket,Bear);
-        SpawnMonster(Cave,Bear);
+        SpawnMonster(Hermit,Bear);
         //old version
         //map.increaseMonsterCounter(locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf)));
 
         //Load Music system
 
         musicManager.init();
+        Questlog.setStage(1,80); //TODO
 
 
 
@@ -589,6 +710,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(village1);
 
         SDL_DestroyTexture(village2);
+        SDL_DestroyTexture(sheep_treeBG);
         SDL_DestroyTexture(outskirtsPath);
         SDL_DestroyTexture(windmillOutskirts);
         SDL_DestroyTexture(oakPath);
@@ -599,8 +721,11 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(forestPathToHeartBG);
         SDL_DestroyTexture(forestPathToHeartFG);
         SDL_DestroyTexture(forestHeartBG);
+        SDL_DestroyTexture(ravineBG);
+        SDL_DestroyTexture(elswhereBG);
 
         SDL_DestroyTexture(OverlayForestClearingSkull);
+        SDL_DestroyTexture(CorpsePileOverlay);
 
 
 
@@ -618,6 +743,10 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(journalIcon);
         SDL_DestroyTexture(journalIconMouseover);
         SDL_DestroyTexture(journalIconOff);
+
+        SDL_DestroyTexture(healtbarBG);
+        SDL_DestroyTexture(healtbarRed);
+        SDL_DestroyTexture(healthbarEdge);
 
 
 
@@ -639,6 +768,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(enemyWereWolfMainSprite);
         SDL_DestroyTexture(enemyWolfSprite);
         SDL_DestroyTexture(enemyBearSprite);
+        SDL_DestroyTexture(enemySkeletonSpearSprite);
         //NPCS
         SDL_DestroyTexture(monk1Sprite);
         SDL_DestroyTexture(abbotSprite);
@@ -648,6 +778,8 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(peasant2Sprite);
         SDL_DestroyTexture(hunterSprite);
         SDL_DestroyTexture(peasantWomanSprite);
+        SDL_DestroyTexture(mercenarySprite);
+        SDL_DestroyTexture(veteranSprite);
 
 
 
@@ -667,6 +799,7 @@ namespace JanSordid::SDL_Example {
         monasteryInteriorBG = nullptr;
         village1 = nullptr;
         village2 = nullptr;
+        sheep_treeBG= nullptr;
 
         outskirtsPath= nullptr;
         windmillOutskirts= nullptr;
@@ -679,13 +812,22 @@ namespace JanSordid::SDL_Example {
         forestPathToHeartBG= nullptr;
         forestPathToHeartFG= nullptr;
         forestHeartBG= nullptr;
+        ravineBG= nullptr;
+        elswhereBG= nullptr;
 
         OverlayForestClearingSkull = nullptr;
+        CorpsePileOverlay = nullptr;
 
         enemyWereWolfMainSprite = nullptr;
         enemyWolfSprite = nullptr;
         enemyBearSprite= nullptr;
+        enemySkeletonSpearSprite = nullptr;
         errorIMG = nullptr;
+
+        healtbarBG = nullptr;
+        healthbarEdge = nullptr;
+        healtbarRed = nullptr;
+
 
         monk1Sprite = nullptr;
         abbotSprite= nullptr;
@@ -695,6 +837,8 @@ namespace JanSordid::SDL_Example {
         peasant2Sprite = nullptr;
         hunterSprite = nullptr;
         peasantWomanSprite = nullptr;
+        mercenarySprite = nullptr;
+        veteranSprite= nullptr;
 
         endTurnButtonOff = nullptr;
         endTurnButtonMouseover = nullptr;
@@ -786,7 +930,7 @@ namespace JanSordid::SDL_Example {
                 //int mouseX, mouseY;
                 SDL_GetMouseState(&mouseOverX, &mouseOverY);
 
-                    inventoryScreen.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y);
+                    inventoryScreen.Click(mouseOverX,mouseOverY,windowSize.x,windowSize.y,&itemManager);
                     fmt::println("equip handled?");
                     //inventoryScreen.BuildInventory(); //CTD RIP
 
@@ -1229,7 +1373,6 @@ namespace JanSordid::SDL_Example {
 //            //Play the music
 //            Mix_PlayMusic( villageTheme, -1 );
 //        }
-
 if(currentCharacter->GetStamina() <= 0){
 //TODO make death screen - Max
 }
@@ -1244,7 +1387,6 @@ if(itemInUse){
     activeItem = ItemID::NONE;
     itemInUse = false;
 }
-
 
         if (Phase == GamePhases::UPKEEP) {
 
@@ -1324,6 +1466,7 @@ if(itemInUse){
 
                             }
                             if (eTracker.szene == 5) {
+                                cTracker.monstersInFight -1;
                                 cTracker.RemoveMonster(cTracker.monID);
 
                             }
@@ -1507,7 +1650,6 @@ if(itemInUse){
                 switch (e) {
                     case ExecuteFlags::StartCombat:
                         //save the current event to jump back in after combat
-
                         eTrackerSaver = eTracker;
                         cTracker.encounterTriggeredThis = true;
                         currentEncounterIsOnlyCombat = true;
@@ -1519,9 +1661,8 @@ if(itemInUse){
                         eTracker.bShowPreviousDicerolls = false;
                         cTracker.monID = cTracker.monsters.back().id;
                         cTracker.updateCurrentMonster();
-
+                        //UpdateCombatEncounter();
                         Update_and_ChangeCombatBackground(eTrackerSaver.encounterID);
-
                         eTracker.activeEncounter = encounterManager.GetEncounter(
                                 EncounterID::Combat_Encounter);
                         eTracker.encounterID = EncounterID::Combat_Encounter;
@@ -1582,12 +1723,46 @@ if(itemInUse){
 
                         }
                         break;
+                    case ExecuteFlags::UnloadLeadBullet:
+                        if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunLead)
+                        {
+                            currentCharacter->UnequipItem(ItemID::LoadedGunLead);//unload gun in first
+                            currentCharacter->RemoveFromInventory(ItemID::LoadedGunLead);
+                            currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+
+                        }
+                        else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunLead)//tbh redundant - you need the gun to get here
+                        {
+                            currentCharacter->UnequipItem(ItemID::LoadedGunLead);//unload gun in first
+                            currentCharacter->RemoveFromInventory(ItemID::LoadedGunLead);
+                            currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+                        }
+                        break;
+                    case ExecuteFlags::UnloadSilverBullet:
+                        if(currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunSilver)
+                        {
+                            currentCharacter->UnequipItem(ItemID::LoadedGunSilver);//unload gun in first
+                            currentCharacter->RemoveFromInventory(ItemID::LoadedGunSilver);
+                            currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+
+                        }
+                        else if(currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunSilver)//tbh redundant - you need the gun to get here
+                        {
+                            currentCharacter->UnequipItem(ItemID::LoadedGunSilver);//unload gun in first
+                            currentCharacter->RemoveFromInventory(ItemID::LoadedGunSilver);
+                            currentCharacter->EquipItem(itemManager.GetItem(ItemID::GUN));
+                        }
+                        break;
+
                     case ExecuteFlags::SpawnMonster:
                         //probably use SpawnMonster(locationID,monsterID) and pull relevant location and monster from event
                         break;
                     case ExecuteFlags::RemoveEncounter:
                         //encounter removes itself
                         RemoveEncounter(currentCharacter->GetCurrentLocationID(),eTracker.encounterID);
+                        break;
+                    case ExecuteFlags::LoseItem:
+                        inventoryScreen.RebuildInventory();
                         break;
 
                     default:
@@ -1683,59 +1858,29 @@ if(itemInUse){
             };
     void BeasthoodState::RenderSceneComposition(const std::vector<std::tuple<SceneCompositionEntities,SceneCompositionSlots>>& compositionVector, const EnvironmentType environment)
     {
-        //bypass environment music in important combat
-        //add other Monsters wit || MonsterID::
-        if(cTracker.monID == MonsterID::Werewolf) {
-            musicManager.changeMusic(bgm::battle);
-        }else {
-            switch (environment) {
-                case EnvironmentType::DenseForest:
-                    musicManager.changeMusic(bgm::forest_quiet);
-                    break;
-                case EnvironmentType::MonasteryPath:
-                    musicManager.changeMusic(bgm::main_theme);
-                    break;
-                case EnvironmentType::Village:
-                    musicManager.changeMusic(bgm::village1);
-                    break;
-                case EnvironmentType::Village2:
-                    musicManager.changeMusic(bgm::village1);
-                    break;
-                case EnvironmentType::WindmillOutskirts:
-                    musicManager.changeMusic(bgm::main_theme);
-                    break;
-                case EnvironmentType::HunterCamp:
-                    musicManager.changeMusic(bgm::forest_quiet);
-                    break;
-                case EnvironmentType::ForestOutskirts:
-                    musicManager.changeMusic(bgm::forest_quiet);
-                    break;
-                case EnvironmentType::ForestClearing:
-                    musicManager.changeMusic(bgm::forest_quiet);
-                    break;
-                case EnvironmentType::ForestLake:
-                    musicManager.changeMusic(bgm::forest_quiet);
-                    break;
-                case EnvironmentType::HeartApproach:
-                    musicManager.changeMusic(bgm::forest_quiet);
-                    break;
-                case EnvironmentType::HermitLodge:
-                    musicManager.changeMusic(bgm::forest_quiet);
-                    break;
-                case EnvironmentType::ForestHeart:
-                    musicManager.changeMusic(bgm::battle);
-                    break;
-                case EnvironmentType::MonasteryInterior:
-                    musicManager.changeMusic(bgm::monastery);
-                    break;
-                default:
-                    musicManager.changeMusic(bgm::main_theme);
-                    break;
-            }
+        switch (environment) {
+            case EnvironmentType::DenseForest: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::MonasteryPath: musicManager.changeMusic(bgm::main_theme);break;
+            case EnvironmentType::Village: musicManager.changeMusic(bgm::village1);break;
+            case EnvironmentType::Village2: musicManager.changeMusic(bgm::village1);break;
+            case EnvironmentType::WindmillOutskirts: musicManager.changeMusic(bgm::main_theme);break;
+            case EnvironmentType::HunterCamp: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::ForestOutskirts: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::ForestClearing: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::ForestLake: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::HeartApproach: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::HermitLodge: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::Ravine: musicManager.changeMusic(bgm::forest_quiet);break;
+            case EnvironmentType::ForestHeart: musicManager.changeMusic(bgm::battle);break;
+            case EnvironmentType::MonasteryInterior: musicManager.changeMusic(bgm::monastery);break;
+            case EnvironmentType::VillageChurch: musicManager.changeMusic(bgm::monastery);break;
+            case EnvironmentType::Elsewhere: musicManager.changeMusic(bgm::battle);break;
+            default:musicManager.changeMusic(bgm::main_theme);break;
+
+
+
+
         }
-
-
-
 
 
         SDL_Rect targetRect;
@@ -1876,11 +2021,51 @@ if(itemInUse){
 
                     renderFromSpritesheet(targetRect,enemyBearSprite);
                     break;
+                case SceneCompositionEntities::Mercenary:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueMercY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueMercX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueMercY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,mercenarySprite);
+                    break;
+                case SceneCompositionEntities::SpearSkeleton:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueSkeletonSpearY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueSkeletonSpearX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueSkeletonSpearY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,enemySkeletonSpearSprite);
+                    break;
+                case SceneCompositionEntities::Veteran:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvalueVeteranY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvalueVeteranX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvalueVeteranY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,veteranSprite);
+                    break;
+                case SceneCompositionEntities::Priest:
+                    targetRect.x = windowSize.x * sceneCompositionTarget[get<1>(compElement)].x/100;
+                    targetRect.y = static_cast<int>(windowSize.y*(sceneCompositionTarget[get<1>(compElement)].y )*0.01-(SpriteData.ScalingvaluePriestY*windowSize.y*perspectiveFactor));
+                    targetRect.w = SpriteData.ScalingvaluePriestX*windowSize.x*perspectiveFactor;
+
+                    targetRect.h = static_cast<int>(SpriteData.ScalingvaluePriestY*windowSize.y*perspectiveFactor);
+
+                    renderFromSpritesheet(targetRect,priestSprite);
+                    break;
 
 
                     //Overlays
                 case SceneCompositionEntities::RitualSkullOverlay:
                     renderFromSpritesheet({0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)},OverlayForestClearingSkull);
+                    //SDL_Rect sceneWindow = {0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)};
+                    break;
+                case SceneCompositionEntities::CorpsePileOverlay:
+                    renderFromSpritesheet({0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)},CorpsePileOverlay);
                     //SDL_Rect sceneWindow = {0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)};
                     break;
 
@@ -1899,6 +2084,8 @@ if(itemInUse){
             }
 
         }
+
+
     }
 
 
@@ -2146,37 +2333,45 @@ if(itemInUse){
             SDL_DestroyTexture(DisplayText);
 
 
+            if(!inventoryScreen.currentPage.MouseOverIcon->referencedItem->isBullet){
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT)) + " FIGHT").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.02), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SPEED)) + " SPEED").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.03), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FIGHT)) + " FIGHT").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.02), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SNEAK)) + " SNEAK").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.04), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SPEED)) + " SPEED").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.03), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::WILLPOWER)) +
+                         " WILLPOWER").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.05), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::SNEAK)) + " SNEAK").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.04), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FAITH)) + " FAITH").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.06), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
 
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::WILLPOWER)) + " WILLPOWER").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.05), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
-
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::FAITH)) + " FAITH").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.06), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
-
-            DisplayText = textToTexture(
-                    (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::OCCULT)) + " OCCULT").c_str());
-            renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
-            SDL_DestroyTexture(DisplayText);
+                DisplayText = textToTexture(
+                        (std::to_string(ItemToDisplay->GetStats().GetStat(StatNames::OCCULT)) + " OCCULT").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
+            }
+            else if(inventoryScreen.currentPage.MouseOverIcon->referencedItem->GetItemID() == ItemID::BulletLead)
+            {
+                DisplayText = textToTexture(
+                        (std::to_string(currentCharacter->leadBulletCount) + " Lead Bullets remaining").c_str());
+                renderText({Selection.x, static_cast<int>(Selection.y + screenHeight * 0.07), 10, 10}, DisplayText);
+                SDL_DestroyTexture(DisplayText);
+            }
 
 
             if (ItemToDisplay->GetAbility()) {
@@ -2321,6 +2516,11 @@ if(itemInUse){
     }
 
     void BeasthoodState::Render(const u64 frame, const u64 totalMSec, const f32 deltaT) {
+        if(tempHealth>=1.)
+        {
+            tempHealth=0.;
+        }
+        tempHealth += deltaT*0.05;
 
 
         SDL_GetWindowSize(window(), &windowSize.x, &windowSize.y);//TODO WINDOWSIZE HERE - fix redundancy
@@ -2456,10 +2656,23 @@ if(itemInUse){
                     case EnvironmentType::MonasteryInterior:
                         renderFromSpritesheet(sceneWindow,monasteryInteriorBG);
                         break;
+                    case EnvironmentType::Ravine:
+                        renderFromSpritesheet(sceneWindow,ravineBG);
+                        break;
+                    case EnvironmentType::SheepTree:
+                        renderFromSpritesheet(sceneWindow,sheep_treeBG);
+                        break;
+                    case EnvironmentType::VillageChurch:
+                        renderFromSpritesheet(sceneWindow,churchBG);
+                        break;
+                    case EnvironmentType::Elsewhere:
+                        renderFromSpritesheet(sceneWindow,elswhereBG);
+                        break;
 
 
                     default:SDL_RenderFillRect(renderer(),&sceneWindow);
                 }
+
 
                 RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector,eTracker.activeEncounter->scenes[eTracker.szene].background);
 
@@ -2479,6 +2692,14 @@ if(itemInUse){
                     }
                     default: break;
                 }
+
+               // Render Healthbar
+
+               if(eTracker.activeEncounter->id == EncounterID::Combat_Encounter)
+               {
+                   //
+                  // RenderHealthbar(tempHealth);
+               }
 
 
                 //Render Text Field Background todo Find a Texture
@@ -3122,7 +3343,7 @@ if(itemInUse){
                                                 {},
                                                 11,
                                                 255,
-                                                {ItemID::RitualSkull}, // rewardItemIDs
+                                                {ItemID::RitualSkullCursed}, // rewardItemIDs
                                                 {}  // failureItemIDs
                                         }
                                 },
@@ -3214,7 +3435,57 @@ if(itemInUse){
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
-                                                {{ExecuteFlags::AdvanceQuestStage,6070}}, //set quest 6 to 70%
+                                                {{ExecuteFlags::AdvanceQuestStage, 6070}}, //set quest 6 to 70%
+                                                {},
+                                                15,
+                                                255,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        }
+                                },
+                                {
+                                        {SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                                        {SceneCompositionEntities::Werewolf, SceneCompositionSlots::CharacterFront}
+
+                                }
+                        },
+                        {
+                            "Ravine",
+                            EnvironmentType::Ravine,
+                            {
+
+                                {
+                                                        "Continue",
+                                                        false,
+                                                        StatNames::FIGHT,
+                                                        0,
+                                                        {{ExecuteFlags::AdvanceQuestStage, 6070}}, //set quest 6 to 70%
+                                                        {},
+                                                        16,
+                                                        255,
+                                                        {}, // rewardItemIDs
+                                                        {}  // failureItemIDs
+                                }
+                                },
+                                {
+                                                {SceneCompositionEntities::Character,
+                                                 SceneCompositionSlots::CharacterMain},
+                                                {SceneCompositionEntities::SpearSkeleton,
+                                                 SceneCompositionSlots::CharacterFront}
+                                        }
+
+                        },
+                        {
+                                "Shepherd and Bandit",
+                                EnvironmentType::SheepTree,
+                                {
+
+                                        {
+                                                "Continue",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {{ExecuteFlags::AdvanceQuestStage, 6070}}, //set quest 6 to 70%
                                                 {},
                                                 255,
                                                 255,
@@ -3223,10 +3494,12 @@ if(itemInUse){
                                         }
                                 },
                                 {
-                                        {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                        {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}
-
+                                        {SceneCompositionEntities::Character,
+                                         SceneCompositionSlots::CharacterAtBottomMain},
+                                        {SceneCompositionEntities::Veteran,
+                                         SceneCompositionSlots::NPCAtBottomMain}
                                 }
+
                         }
                 },
                 DialoguePhase::Scene // Starting dialogue phase
@@ -3234,6 +3507,13 @@ if(itemInUse){
         encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
         encounterManager.addEncounter(monasteryMain.id,monasteryMain);
         encounterManager.addEncounter(testingCombat.id,testingCombat);
+
+        encounterManager.addEncounter(VillageMain.id,VillageMain);
+        encounterManager.addEncounter(EncounterID::HermitMain,HermitMain);
+        encounterManager.addEncounter(EncounterID::HunterCamp,HunterCamp);
+        encounterManager.addEncounter(EncounterID::SkullDiscovery,SkullDiscovery);
+        encounterManager.addEncounter(EncounterID::CorpseDiscovery,CorpseDiscovery);
+        encounterManager.addEncounter(EncounterID::RavineMain,RavineMain);
 
         //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
@@ -3284,6 +3564,21 @@ if(itemInUse){
                 AbilityID::NONE,
                 3};
         monsterManager.addMonster(mon1);
+        mon1 = {"Skeleton",
+                LocationID::UNASSIGNED_LOCATION,
+                MonsterID::Skeleton,
+                MonsterType::Undead,
+                MovementType::Stalking,
+                8,
+                8,
+                1,
+                -3,
+                2,
+                -1,
+                3,
+                AbilityID::NONE,
+                3};
+        monsterManager.addMonster(mon1);
     }
 
 
@@ -3291,9 +3586,15 @@ if(itemInUse){
 
         /// TODO add more events
         // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
-        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
+        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::SkullDiscovery);
         locationManager.GetItem(LocationID::Monastery)->related_events.push_back(EncounterID::MonasteryMain); //TODO TESTING ENCOUNTERS
-        locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::Testing_Combat);
+        //locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::Testing_Combat);
+        locationManager.GetItem(LocationID::Village)->related_events.push_back(EncounterID::VillageMain);
+        locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::HunterCamp);
+        locationManager.GetItem(LocationID::Hermit)->related_events.push_back(EncounterID::HermitMain);
+        locationManager.GetItem(LocationID::Clearing)->related_events.push_back(EncounterID::CorpseDiscovery);
+       // locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::RavineMain);
+        locationManager.GetItem(LocationID::River)->related_events.push_back(EncounterID::RavineMain);
 
     }
 
@@ -3402,9 +3703,9 @@ if(itemInUse){
             case StatNames::WILLPOWER:
                 return "Willpower";
             case StatNames::OCCULT:
-                return "Knowledge";
+                return "Occult";
             case StatNames::FAITH:
-                return "Luck";
+                return "Faith";
 
         }
     }
@@ -3420,8 +3721,11 @@ if(itemInUse){
             case MonsterID::Bear:
                 result = SceneCompositionEntities::Bear;
                 break;
+            case MonsterID::Skeleton:
+                result = SceneCompositionEntities::SpearSkeleton;
+                break;
             default:
-                result = SceneCompositionEntities::Character;
+                result = SceneCompositionEntities::PLACEHOLDER;
 
                 //add more as needed
         }
@@ -3517,6 +3821,20 @@ if(itemInUse){
                                                 3,
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
+                                        },
+                                        {
+                                                "Shoot that sucker.",
+                                                false,
+                                                StatNames::FIGHT,
+                                                cTracker.toughness,
+                                                {{ExecuteFlags::UnloadLeadBullet,1}},
+                                                {},
+                                                4,
+                                                3,
+                                                {}, // rewardItemIDs
+                                                {},  // failureItemIDs
+                                                {{RequirementFlags::LeadBulletLoaded,1}},
+                                                true
                                         }
                                 },
                                 {
@@ -3718,7 +4036,7 @@ if(itemInUse){
                 else
                 {return false;}
             case RequirementFlags::occult:
-                if(currentCharacter->GetCurrentStats().GetStat(OCCULT) >=get<1>(requirement))
+                if(currentCharacter->GetCurrentStats().GetStat(OCCULT) >= get<1>(requirement))
                 {return true;}
                 else
                 {return false;}
@@ -3777,7 +4095,13 @@ if(itemInUse){
                     int qID = get<1>(requirement)/1000;
                     int qStage = get<1>(requirement) % 1000;
                     return true;}
+            case RequirementFlags::SilverBulletLoaded:
+                return ((currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunSilver) ||
+                (currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunSilver));
 
+            case RequirementFlags::LeadBulletLoaded:
+                return ((currentCharacter->GetEquipment().first && currentCharacter->GetEquipment().first->GetItemID()==ItemID::LoadedGunLead) ||
+                        (currentCharacter->GetEquipment().second && currentCharacter->GetEquipment().second->GetItemID()==ItemID::LoadedGunLead));
 
             default:
                 return false; //TODO Item and Quest not yet implemented, may need more complex approach
@@ -3835,6 +4159,62 @@ if(itemInUse){
         QuestTitle= nullptr;
 
     }
+//    void BeasthoodState::RenderHealthbar(float currentHealth)
+//    {
+//        //Render Combat Encounter specifics
+//        SDL_Rect HealthBG{
+//                static_cast<int>(EncounterLayout.HealthbarBorderStart.x*0.01*windowSize.x),
+//                static_cast<int>(EncounterLayout.HealthbarBorderStart.y*0.01*windowSize.y),
+//                static_cast<int>(EncounterLayout.HealthbarBorderScale.x*0.01*windowSize.x),
+//                static_cast<int>(EncounterLayout.HealthbarBorderScale.y*0.01*windowSize.y),
+//
+//        };
+//        renderFromSpritesheet(HealthBG,healtbarBG);
+//
+//
+//        //SDL_SetRenderDrawColor(renderer(),200,10,10,0);
+//        SDL_Rect HealthBarVariablePart = {static_cast<int>(EncounterLayout.HealthBarStart.x*0.01*windowSize.x),
+//                                          static_cast<int>(EncounterLayout.HealthBarStart.y*0.01*windowSize.y),
+//                                          static_cast<int>(EncounterLayout.HealthBarScale.x*0.01*windowSize.x*currentHealth),
+//                                          static_cast<int>(EncounterLayout.HealthBarScale.y*0.01*windowSize.y)
+//        };
+//        SDL_Rect HealthbarRedPart {
+//            0,0,
+//            static_cast<int>(1152*currentHealth),
+//            8
+//        };
+//        SDL_RenderCopy(renderer(),healtbarRed,&HealthbarRedPart,&HealthBarVariablePart);
+//        //SDL_RenderFillRect(renderer(),&HealthBarVariablePart);
+//        SDL_Rect HealthbarEdge {
+//                static_cast<int>(EncounterLayout.HealthbarBorderStart.x*0.01*windowSize.x + EncounterLayout.HealthBarScale.x*0.01*windowSize.x*currentHealth),
+//                static_cast<int>(EncounterLayout.HealthbarBorderStart.y*0.01*windowSize.y),
+//                static_cast<int>(0.01*windowSize.x*1),
+//                static_cast<int>(EncounterLayout.HealthbarBorderScale.y*0.01*windowSize.y)
+//
+//        };
+//        if (currentHealth<1.)
+//        {
+////            SDL_SetRenderDrawColor(renderer(),0,0,0,0);
+////            SDL_RenderFillRect(renderer(),&HealthbarEdge);
+//            renderFromSpritesheet(HealthbarEdge,healthbarEdge);
+//        }
+//
+//        TTF_SetFontSize(_font,static_cast<int>(20*windowSize.y/1080));
+//
+//        Texture * enemyName = textToTexture("Wolf"); //Todo find good way to pass name of enemy
+//        SDL_Rect TextTarget {
+//            static_cast<int>(EncounterLayout.HealthBarTitleStart.x*0.01*windowSize.x),
+//            static_cast<int>(EncounterLayout.HealthBarTitleStart.y*0.01*windowSize.y),
+//            static_cast<int>(EncounterLayout.HealthbarTitleScale.x*0.01*windowSize.x),
+//                static_cast<int>(EncounterLayout.HealthbarTitleScale.y*0.01*windowSize.y)
+//
+//
+//        };
+//        renderText(TextTarget,enemyName);
+//        TTF_SetFontSize(_font,static_cast<int>(15*windowSize.y/1080));
+//
+//
+//    }
     void BeasthoodState::CleanupMonsterTextures() {
         for (auto& pair : monsterIDtoTextureMap) {
             SDL_DestroyTexture(pair.second);
@@ -3847,7 +4227,6 @@ if(itemInUse){
             case ItemID::PrayerBook:
                 currentCharacter->AdjustStamina(4);
                 currentCharacter->RemoveFromInventory(id);
-                inventoryScreen.RebuildInventory();
                 break;
             default: break;
         }
@@ -3992,6 +4371,7 @@ if(itemInUse){
         if(locationManager.GetItem(location)->monsters.size() < 3){
             if(monsterManager.GetMonster(monster).spawnLimit > map.getMonsterCount(monster) || map.getMonsterCount(monster) == 0) {
                 map.increaseMonsterCounter( locationManager.GetItem(location)->AddMonster(monsterManager.GetMonster(monster)));
+
             }
         }
     }
@@ -4003,6 +4383,7 @@ if(itemInUse){
     }
     void BeasthoodState::MoveMonster(LocationID origin,LocationID destination,Monster monster){
         if(locationManager.GetItem(destination)->monsters.size() < 3){
+            Monster temp = monster;
             DespawnMonster(origin,monster.id);
             map.increaseMonsterCounter(monster.id);
             locationManager.GetItem(destination)->AddMonster(monster);
@@ -4016,18 +4397,79 @@ if(itemInUse){
     void BeasthoodState::RemoveEncounter(LocationID lID,EncounterID eID){
         locationManager.GetItem(lID)->RemoveEncounter(eID);
     }
-    void BeasthoodState::Update_and_ChangeCombatBackground(EncounterID eID, EnvironmentType envType, LocationID locID) {
-        using
-        enum EncounterID;
-        using
-        enum EnvironmentType;
-        using
-        enum LocationID;
 
-        if (locID == UNASSIGNED_LOCATION || eID != NO_ENCOUNTER_ASSIGNED) {
+    void BeasthoodState::RenderHealthbar(float currentHealth)
+    {
+        //Render Combat Encounter specifics
+        SDL_Rect HealthBG{
+                static_cast<int>(EncounterLayout.HealthbarBorderStart.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthbarBorderStart.y*0.01*windowSize.y),
+                static_cast<int>(EncounterLayout.HealthbarBorderScale.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthbarBorderScale.y*0.01*windowSize.y),
+
+        };
+        renderFromSpritesheet(HealthBG,healtbarBG);
+
+
+        //SDL_SetRenderDrawColor(renderer(),200,10,10,0);
+        SDL_Rect HealthBarVariablePart = {static_cast<int>(EncounterLayout.HealthBarStart.x*0.01*windowSize.x),
+                                          static_cast<int>(EncounterLayout.HealthBarStart.y*0.01*windowSize.y),
+                                          static_cast<int>(EncounterLayout.HealthBarScale.x*0.01*windowSize.x*currentHealth),
+                                          static_cast<int>(EncounterLayout.HealthBarScale.y*0.01*windowSize.y)
+        };
+        SDL_Rect HealthbarRedPart {
+                0,0,
+                static_cast<int>(1152*currentHealth),
+                8
+        };
+        SDL_RenderCopy(renderer(),healtbarRed,&HealthbarRedPart,&HealthBarVariablePart);
+        //SDL_RenderFillRect(renderer(),&HealthBarVariablePart);
+        SDL_Rect HealthbarEdge {
+                static_cast<int>(EncounterLayout.HealthbarBorderStart.x*0.01*windowSize.x + EncounterLayout.HealthBarScale.x*0.01*windowSize.x*currentHealth),
+                static_cast<int>(EncounterLayout.HealthbarBorderStart.y*0.01*windowSize.y),
+                static_cast<int>(0.01*windowSize.x*1),
+                static_cast<int>(EncounterLayout.HealthbarBorderScale.y*0.01*windowSize.y)
+
+        };
+        if (currentHealth<1.)
+        {
+//            SDL_SetRenderDrawColor(renderer(),0,0,0,0);
+//            SDL_RenderFillRect(renderer(),&HealthbarEdge);
+            renderFromSpritesheet(HealthbarEdge,healthbarEdge);
+        }
+
+        TTF_SetFontSize(_font,static_cast<int>(20*windowSize.y/1080));
+
+        Texture * enemyName = textToTexture("Wolf"); //Todo find good way to pass name of enemy
+        SDL_Rect TextTarget {
+                static_cast<int>(EncounterLayout.HealthBarTitleStart.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthBarTitleStart.y*0.01*windowSize.y),
+                static_cast<int>(EncounterLayout.HealthbarTitleScale.x*0.01*windowSize.x),
+                static_cast<int>(EncounterLayout.HealthbarTitleScale.y*0.01*windowSize.y)
+
+
+        };
+        renderText(TextTarget,enemyName);
+        TTF_SetFontSize(_font,static_cast<int>(15*windowSize.y/1080));
+
+
+    }
+    void BeasthoodState::Update_and_ChangeCombatBackground(EncounterID eID, EnvironmentType envType, LocationID locID) {
+//        using
+//        enum EncounterID;
+//        using
+//        enum EnvironmentType;
+//        using
+//        enum LocationID;
+
+
+        if (locID == LocationID::UNASSIGNED_LOCATION || eID !=EncounterID::NO_ENCOUNTER_ASSIGNED || eID ==EncounterID::RavineMain) {
             switch (eID) {
-                case Testing_Combat:
+                case EncounterID::Testing_Combat:
                     UpdateCombatEncounter(EnvironmentType::HunterCamp);
+                    break;
+                case EncounterID::RavineMain:
+                    UpdateCombatEncounter(EnvironmentType::Elsewhere);
                     break;
                 default:
 
@@ -4053,6 +4495,8 @@ if(itemInUse){
             }
         }
     }
+
+
 
 
 }

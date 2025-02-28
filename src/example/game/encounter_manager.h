@@ -182,8 +182,30 @@ Vector<ExecuteFlags> iterateOverOutcomes(const Vector<ItemID>& rewards, const st
                     fmt::println("Adding item");
                     currentCharacter.AddToInventory(iManager->GetItem(e));
                 }
+
+                results.push_back(ExecuteFlags::GainItem);
+                break;
+            case ExecuteFlags::LoseItem:
+                for(auto e : rewards) {
+                    fmt::println("Losing item {}",iManager->GetItem(e)->GetName());
+                    currentCharacter.RemoveFromInventory(iManager->GetItem(e)->GetItemID());
+                }
                 //TODO Ressources
                 results.push_back(ExecuteFlags::GainItem);
+                break;
+            case ExecuteFlags::UnloadSilverBullet:
+                results.push_back(ExecuteFlags::UnloadSilverBullet);break;
+            case ExecuteFlags::UnloadLeadBullet:
+                results.push_back(ExecuteFlags::UnloadLeadBullet);break;
+            case ExecuteFlags::GainBulletLead:
+
+                if (currentCharacter.leadBulletCount == 0)
+                {
+                    currentCharacter.AddToInventory(iManager->GetItem(ItemID::BulletLead));
+
+                }
+                fmt::println("Gaining {} bullets",get<1>(outcome));
+                currentCharacter.leadBulletCount += get<1>(outcome);
                 break;
             case ExecuteFlags::Heal:
                 currentCharacter.AdjustStamina(get<1>(outcome));

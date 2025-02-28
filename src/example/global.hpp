@@ -18,13 +18,17 @@ enum class ExecuteFlags {
     Heal,
     RegainSan,
     GainItem,
+    LoseItem,
     StartQuest,
     AdvanceQuestStage,
     StartCombat,
     FinishedCombatWIN,
     FinishedCombatLOSS,
     SpawnMonster,
-    RemoveEncounter
+    RemoveEncounter,
+    GainBulletLead,
+    UnloadSilverBullet,
+    UnloadLeadBullet //todo one unload function may be enough? the requirement splits the outcmes in the scene
 };
 
 enum class GamePhases
@@ -57,7 +61,19 @@ enum class EncounterID{
     Generic_FindSurvivor,
     Church_HolyWaterConversation,
     //use recognizable names
-    MonasteryMain
+
+    Intro,
+    MonasteryMain,
+    VillageMain,
+    HunterCamp,
+    CorpseDiscovery,
+    SkullDiscovery,
+    FlowerDiscovery,
+    HermitMain,
+    RavineMain,
+    ForestHeartApproach,
+    ForestHeartFinal
+
 };
 enum class EncounterTypeID{
     Tutorial,
@@ -65,11 +81,13 @@ enum class EncounterTypeID{
     Trade,
     Trap,
     Unique,
+    FinalZone
     //etc add as needed
 };
 enum class ItemID {
     NONE,
     Halberd,
+    HalberdMaster,
     Sword,
     BetterSword,
     Torch,
@@ -83,7 +101,14 @@ enum class ItemID {
     Talisman,
     Tome,
 
-    RitualSkull};
+    RitualSkullCursed,
+    RitualSkullBound, //TODO use?
+    RitualSkullFaith,
+    Relic,
+    BulletLead,
+    BulletSilver,
+    LoadedGunLead,
+    LoadedGunSilver};
 
 enum class ItemType {Melee,Ranged,Magic,Unique};
 
@@ -94,12 +119,13 @@ enum class LocationID {
     Smith,
     Windmill,
     Crossroads,
-    Cave,
+    Hermit,
     Monastery,
     Farm,
     Clearing,
-    Townhall,
+    Village,
     Thicket,
+    HunterCamp,
     UNASSIGNED_LOCATION
 };
 
@@ -123,6 +149,7 @@ enum class MonsterID {
     UNASSIGNED_MONSTERID,
     Wolf,
     Bear,
+    Skeleton,
     Ghoul,
     Werewolf,
     Vampire,

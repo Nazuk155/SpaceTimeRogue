@@ -84,4 +84,7 @@ public:
 
 
     Item *FindItem(ItemID id);
+//todo refactor with getters
+    int leadBulletCount = 0;              // current amount of lead bullets
+
 };
