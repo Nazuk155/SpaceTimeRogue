@@ -30,9 +30,9 @@ inline std::vector<Quest> availableQuests
                   {60,"Find the hermit."},
                   {80,"Produce the relic."},
                   {82,"You were rebuked. Return to the Hermit."},
-                  {83,""},
+                  {83,"It seems you will have to rob a grave. Go to the ravine."},
                   {84,""},
-                  {85,"The veteran should be able to make the bullet."},
+                  {85,"You have what you need. The veteran should be able to make the bullet."},
                   {90, "You have your bullet. It is time."},
            {100,"Complete"}
           },

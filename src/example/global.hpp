@@ -149,6 +149,7 @@ enum class MonsterID {
     UNASSIGNED_MONSTERID,
     Wolf,
     Bear,
+    Skeleton,
     Ghoul,
     Werewolf,
     Vampire,

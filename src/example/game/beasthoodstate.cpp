@@ -1864,6 +1864,7 @@ if(itemInUse){
             case EnvironmentType::ForestHeart: musicManager.changeMusic(bgm::battle);break;
             case EnvironmentType::MonasteryInterior: musicManager.changeMusic(bgm::monastery);break;
             case EnvironmentType::VillageChurch: musicManager.changeMusic(bgm::monastery);break;
+            case EnvironmentType::Elsewhere: musicManager.changeMusic(bgm::battle);break;
             default:musicManager.changeMusic(bgm::main_theme);break;
 
 
@@ -2653,6 +2654,9 @@ if(itemInUse){
                         break;
                     case EnvironmentType::VillageChurch:
                         renderFromSpritesheet(sceneWindow,churchBG);
+                        break;
+                    case EnvironmentType::Elsewhere:
+                        renderFromSpritesheet(sceneWindow,elswhereBG);
                         break;
 
 
@@ -3543,6 +3547,21 @@ if(itemInUse){
                 4,
                 1,
                 -1,
+                2,
+                -1,
+                3,
+                AbilityID::NONE,
+                3};
+        monsterManager.addMonster(mon1);
+        mon1 = {"Skeleton",
+                LocationID::UNASSIGNED,
+                MonsterID::Skeleton,
+                MonsterType::Undead,
+                MovementType::Stalking,
+                8,
+                8,
+                1,
+                -3,
                 2,
                 -1,
                 3,

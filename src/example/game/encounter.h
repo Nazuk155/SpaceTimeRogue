@@ -21,6 +21,7 @@ enum class EnvironmentType {
     MonasteryInterior,
     ForestLake,
     Ravine,
+    Elsewhere,
     ForestClearing,
     DenseForest,
     HeartApproach,
@@ -2261,24 +2262,69 @@ inline Encounter RavineMain
     EncounterTypeID::Unique,
     {
             {
-                "A ravine - try not to fall",
-                EnvironmentType::Ravine,
-                {
-                        {
-                            "Journey onwards",
-                            false,
-                            StatNames::FIGHT,
-                            0,
-                            {},{},255,255
+                    "A ravine - try not to fall",
+                    EnvironmentType::Ravine,
+                    {
+                            {
+                                    "Journey onwards",
+                                    false,
+                                    StatNames::FIGHT,
+                                    0,
+                                    {}, {}, 255, 255
 
-                        }
-                }
+                            },
+                            {
+                                    "This must be the place. It is time to dig.",
+                                    false,
+                                    StatNames::FIGHT,
+                                    0,
+                                    {}, {}, 1, 255,
+                                    {}, {},
+                                    {{RequirementFlags::hasQuestOnStage, 83}}, true
+
+                            }
+                    }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}}
+            },
+            {
+                    "As you dig something changes. The world seens to shift.",
+                    EnvironmentType::Elsewhere,
+                    {
+                            {
+                                    "What is happening?",
+                                    false,
+                                    StatNames::FIGHT,
+                                    0,
+                                    {}, {}, 255, 255
+
+                            }
+                    }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}}
             }
-            //TODO Combat with skeleton -> alternatice relic
+            ,
+            {
+                    "The Dead will not give up their relics. They will not lose anything. Not again.",
+                    EnvironmentType::Elsewhere,
+                    {
+                            {
+                                    "What is happening?",
+                                    false,
+                                    StatNames::FIGHT,
+                                    0,
+                                    {{ExecuteFlags::StartCombat,1}}, {}, 255, 255
 
-        }
+                            }
+                    }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
+                        {SceneCompositionEntities::SpearSkeleton,SceneCompositionSlots::EnemyMain}}
+            },
+            {},
+            {}
 
-                ,DialoguePhase::Scene // Starting dialogue phase
+
+
+
+
+        },
+                DialoguePhase::Scene,
+    {},3,4
 
         };
 
