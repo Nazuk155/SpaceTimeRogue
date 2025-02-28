@@ -347,11 +347,11 @@ inline Encounter testingCombat
                                 "The monks are adept keepers of natural magic. Your wounds are cleaned and treated.",
                                 EnvironmentType::MonasteryInterior,
                                 {
-                                        {"The poultices do their work. It is time to move on. [+4 Stamina]",
+                                        {"The poultices do their work. It is time to move on. [+6 Stamina]",
                                          false,
                                          StatNames::FAITH,
                                          0,
-                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::Heal, 4}},
+                                         { {ExecuteFlags::Heal, 6}},
                                          {},
                                          255,
                                          255,
@@ -1042,7 +1042,7 @@ inline Encounter IntroEncounter
 
                 EncounterTypeID::Unique,
                 {
-                 {"You arrive at the village of . Some manner of beast has been killing people in the area, and you - a mercenary - were hired to deal with id.", //todo name
+                 {"You arrive at the village of Wölfingen. Some manner of beast has been killing people in the area, and you - a mercenary - were hired to deal with it.",
                   EnvironmentType::Village,
                   {
                           {
@@ -1050,7 +1050,7 @@ inline Encounter IntroEncounter
                                   false,
                                   StatNames::FAITH,
                                   0,
-                                  {{ExecuteFlags::StartQuest, 2}},
+                                  {{ExecuteFlags::StartQuest, 2},{ExecuteFlags::GainItem,1}},
                                   {},
                                   1, 255,
                                   {ItemID::Sword},
@@ -1090,7 +1090,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::Honorius,ItemID::Halberd},
+                                         {ItemID::Honorius},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1105,7 +1105,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}, {ExecuteFlags::GainBulletLead, 3}},
                                          {},
                                          2, 255,
-                                         {ItemID::LoadedGunLead,ItemID::Halberd},
+                                         {ItemID::LoadedGunLead},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1120,7 +1120,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::Talisman,ItemID::Halberd},
+                                         {ItemID::Talisman},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1134,7 +1134,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::PrayerBook,ItemID::Halberd},
+                                         {ItemID::PrayerBook},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1248,6 +1248,7 @@ inline Encounter VillageMain
                                 {{RequirementFlags::hasQuest,1}}, //
                                 true,
                             },
+
                         {
                                 "Leave",
                                 false,
@@ -1648,6 +1649,19 @@ inline Encounter VillageMain
                                     {},
                                     {},
                                     {{RequirementFlags::isMentallyWounded,1}}, //If skull no corpse
+                                    true,
+                            },
+                            {
+                                    "Rest and recover for a while [Restore 4 Stamina]",
+                                    false,
+                                    StatNames::FAITH,
+                                    3,
+                                    {{ExecuteFlags::Heal,4}},
+                                    {},
+                                    255, 255,
+                                    {},
+                                    {},
+                                    {{RequirementFlags::isPhysicallyWounded,1}}, //If skull no corpse
                                     true,
                             },
                             {

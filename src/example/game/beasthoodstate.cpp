@@ -57,7 +57,7 @@ namespace JanSordid::SDL_Example {
         }
 
         //Set up Intro Quest(s)
-        Questlog.addQuest(1);
+        //Questlog.addQuest(1);
 
 
 
@@ -72,6 +72,7 @@ namespace JanSordid::SDL_Example {
         string villageMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/village_mapicon.png";
         string hermitIconPath  = BasePath "/src/example/game/Ressources/Image_assets/map_icons/hermit_icon.png";
         string huntersIconPath  = BasePath "/src/example/game/Ressources/Image_assets/map_icons/hunters_mapicon.png";
+        string wereWolfMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/wolf_mapicon.png";
 
         //Healthbar
         string healtbarBGPath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_bg.png";
@@ -329,7 +330,7 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Church].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Church].nameTexture = textToTexture("Church");
 
-        locationTextureMap[LocationID::River].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::River].iconTexture = loadFromFile(wereWolfMapIconPath);
         locationTextureMap[LocationID::River].nameTexture = textToTexture("River");
 
         locationTextureMap[LocationID::Smith].iconTexture = loadFromFile(huntersIconPath);
@@ -587,7 +588,7 @@ namespace JanSordid::SDL_Example {
 
 
         auto honorius = std::make_unique<Item>(ItemID::Honorius, ItemType::Unique,"Grimoire of Honorius",1);
-        honorius->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
+        honorius->SetStats({0, 0, 1, 1, 5, 0}); // Attack 1
         itemManager.AddItem(std::move(honorius));
 
 
@@ -645,7 +646,7 @@ namespace JanSordid::SDL_Example {
         std::cout << "Item: " << Landsknecht.GetInventory().back()->GetName();
         std::cout << "\n";
         std::cout.flush();
-        Landsknecht.EquipItem(Landsknecht.GetInventory().back());
+        //Landsknecht.EquipItem(Landsknecht.GetInventory().back());
         Landsknecht.UpdateCurrentStats();
         std::cout << "Stats: " << Landsknecht.GetCurrentStats().GetStat(FIGHT);
         std::cout.flush();
@@ -653,13 +654,15 @@ namespace JanSordid::SDL_Example {
         currentCharacter = new Character(*landsknechtBlueprint);
         currentCharacter->RefillFatePoints();
 
+            /*
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Sword));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
+       currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
         //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
         currentCharacter->leadBulletCount++;
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
+         */
 
         inventoryScreen = InventoryScreen(currentCharacter);
 
@@ -688,7 +691,15 @@ namespace JanSordid::SDL_Example {
         //Load Music system
 
         musicManager.init();
-        Questlog.setStage(1,80); //TODO
+      //  Questlog.setStage(1,80);
+      encounterManager.addEncounter(EncounterID::Intro,IntroEncounter);
+        eTracker.activeEncounter = encounterManager.GetEncounter(
+                EncounterID::Intro);
+        Phase = GamePhases::ENCOUNTER;
+
+
+
+
 
 
 
