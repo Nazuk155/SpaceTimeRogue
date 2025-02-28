@@ -3718,8 +3718,11 @@ if(itemInUse){
             case MonsterID::Bear:
                 result = SceneCompositionEntities::Bear;
                 break;
+            case MonsterID::Skeleton:
+                result = SceneCompositionEntities::SpearSkeleton;
+                break;
             default:
-                result = SceneCompositionEntities::Character;
+                result = SceneCompositionEntities::PLACEHOLDER;
 
                 //add more as needed
         }
@@ -4457,7 +4460,7 @@ if(itemInUse){
 //        enum LocationID;
 
 
-        if (locID == LocationID::UNASSIGNED_LOCATION || eID !=EncounterID::NO_ENCOUNTER_ASSIGNED || eID !=EncounterID::RavineMain) {
+        if (locID == LocationID::UNASSIGNED_LOCATION || eID !=EncounterID::NO_ENCOUNTER_ASSIGNED || eID ==EncounterID::RavineMain) {
             switch (eID) {
                 case EncounterID::Testing_Combat:
                     UpdateCombatEncounter(EnvironmentType::HunterCamp);

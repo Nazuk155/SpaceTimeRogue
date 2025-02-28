@@ -101,6 +101,8 @@ enum class SceneCompositionEntities {
     Mercenary,
     Priest,
 
+    PLACEHOLDER,
+
     //Overlays
     RitualSkullOverlay,
     CorpsePileOverlay
@@ -2342,7 +2344,7 @@ inline Encounter RavineMain
                     EnvironmentType::Elsewhere,
                     {
                             {
-                                    "What is happening?",
+                                    "...",
                                     false,
                                     StatNames::FIGHT,
                                     0,
@@ -2361,7 +2363,7 @@ inline Encounter RavineMain
                                     false,
                                     StatNames::FIGHT,
                                     0,
-                                    {{ExecuteFlags::AdvanceQuestStage,1085}}, {}, 255, 255
+                                    {{ExecuteFlags::AdvanceQuestStage,1085},{ExecuteFlags::Heal,100}}, {}, 255, 255
 
                             }
                     }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}}
