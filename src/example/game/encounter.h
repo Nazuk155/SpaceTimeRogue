@@ -950,7 +950,7 @@ inline Encounter monasteryMain
                         ,
                         {
 
-                                R"(."It will serve an ironic purpose, I trust.", he looks at you shrewdly "Good luck")",
+                                R"(."It will serve an ironic purpose, I trust.", he looks at you shrewdly. "Good luck")",
                                 EnvironmentType::MonasteryInterior,
                                 {
                                         {

@@ -604,7 +604,7 @@ namespace JanSordid::SDL_Example {
         itemManager.AddItem(std::move(ritual_skull));
 
         auto ritual_skull_occult = std::make_unique<Item>(ItemID::RitualSkullBound, ItemType::Unique,"Suborned Ritual Skull",0);
-        ritual_skull_occult->SetStats({2, 0, 2, 2, 2, 1});
+        ritual_skull_occult->SetStats({2, 1, 3, 3, 2, 1});
         itemManager.AddItem(std::move(ritual_skull_occult));
 
         auto ritual_skull_faith = std::make_unique<Item>(ItemID::RitualSkullFaith, ItemType::Unique,"Quieted Ritual Skull",0);
