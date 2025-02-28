@@ -125,6 +125,7 @@ namespace JanSordid::SDL_Example {
         string forestHeartBGPathBG = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/forest_heart.png";
         string ravinePathBG= BasePath "/src/example/game/Ressources/Image_assets/backgrounds/ravine_bg.png";
         string churchBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/church_bg.png";
+        string elswhereBGPAth = BasePath "/src/example/game/Ressources/Image_assets/backgrounds/elswhere_bg.png";
 
         //Overlay Items
 
@@ -207,6 +208,7 @@ namespace JanSordid::SDL_Example {
         forestHeartBG= loadFromFile(forestHeartBGPathBG);
         ravineBG = loadFromFile(ravinePathBG);
         churchBG = loadFromFile(churchBGPAth);
+        elswhereBG = loadFromFile(elswhereBGPAth);
 
         //Overlay Items
         OverlayForestClearingSkull = loadFromFile(OverlayForestClearingSkullPath);
@@ -718,6 +720,7 @@ namespace JanSordid::SDL_Example {
         SDL_DestroyTexture(forestPathToHeartFG);
         SDL_DestroyTexture(forestHeartBG);
         SDL_DestroyTexture(ravineBG);
+        SDL_DestroyTexture(elswhereBG);
 
         SDL_DestroyTexture(OverlayForestClearingSkull);
         SDL_DestroyTexture(CorpsePileOverlay);
@@ -808,6 +811,7 @@ namespace JanSordid::SDL_Example {
         forestPathToHeartFG= nullptr;
         forestHeartBG= nullptr;
         ravineBG= nullptr;
+        elswhereBG= nullptr;
 
         OverlayForestClearingSkull = nullptr;
         CorpsePileOverlay = nullptr;

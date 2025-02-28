@@ -446,6 +446,7 @@ namespace JanSordid::SDL_Example {
         Texture * ravineBG = nullptr;
         Texture * sheep_treeBG = nullptr;
         Texture * churchBG = nullptr;
+        Texture * elswhereBG = nullptr;
 
 
         //Overlay Items
