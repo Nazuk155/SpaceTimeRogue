@@ -978,7 +978,20 @@ inline Encounter VillageMain
                                 {},
                                 {{RequirementFlags::hasQuest,1}}, //
                                 true,
-                            }
+                            },
+                        {
+                                "Leave",
+                                false,
+                                StatNames::OCCULT,
+                                0,
+                                {},
+                                {},
+                                255, 255,
+                                {},
+                                {},
+                                {},
+                                false,
+                        }
                 }
                 ,
                 {
@@ -991,9 +1004,7 @@ inline Encounter VillageMain
                     "\"How goes the hunt?\"",//todo NAME!!!
                     EnvironmentType::Village,
                     {
-                        {
 
-                            },
                             {
                                     //returned from finding 1+ clues
                                     "Describe what you found.",
@@ -1035,6 +1046,19 @@ inline Encounter VillageMain
                                     {},
                                     {{RequirementFlags::hasQuest,9},{RequirementFlags::hasQuest,11}}, //If both clues
                                     true,
+                            },
+                            {
+                                    "Leave",
+                                    false,
+                                    StatNames::OCCULT,
+                                    0,
+                                    {},
+                                    {},
+                                    255, 255,
+                                    {},
+                                    {},
+                                    {},
+                                    false,
                             }
 
 
@@ -1042,8 +1066,8 @@ inline Encounter VillageMain
                     {
                             {
                                     {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                    {SceneCompositionEntities::VillagerCouple,SceneCompositionSlots::CharacterFront},
-                                    {SceneCompositionEntities::Villager1,SceneCompositionSlots::EnemyMain}
+                                    {SceneCompositionEntities::Villager2,SceneCompositionSlots::CharacterFront},
+                                    {SceneCompositionEntities::VillagerCouple,SceneCompositionSlots::EnemyMain}
                             }
                     }
 
@@ -1099,7 +1123,22 @@ inline Encounter VillageMain
                                     {},
                                     {{RequirementFlags::hasQuestOnStage,4010}}, //If not on Quest 3, start quest 3
                                     true,
+                            },
+                            {
+                                    //forge silver bullet?
+                                    "A silver bullet is needed to put the beast down. Could you melt this down? [Hand over Relic]",
+                                    false,
+                                    StatNames::OCCULT,
+                                    0,
+                                    {{ExecuteFlags::GainItem,1},{ExecuteFlags::AdvanceQuestStage,1090} },
+                                    {},
+                                    255, 255,
+                                    {ItemID::BulletSilver},
+                                    {},
+                                    {{RequirementFlags::hasQuestOnStage,1085}}, //If not on Quest 3, start quest 3
+                                    true,
                             }
+
                     }
                     ,
                     {
@@ -1134,7 +1173,7 @@ inline Encounter VillageMain
                             {
                                     {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
                                     {SceneCompositionEntities::VillagerCouple,SceneCompositionSlots::CharacterFront},
-                                    {SceneCompositionEntities::Villager1,SceneCompositionSlots::EnemyMain}
+                                    {SceneCompositionEntities::Villager2,SceneCompositionSlots::EnemyMain}
                             }
                     }
 
@@ -1176,7 +1215,7 @@ inline Encounter VillageMain
                     {
                             {
                                     {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                    {SceneCompositionEntities::Villager1,SceneCompositionSlots::EnemyMain}
+                                    {SceneCompositionEntities::Villager2,SceneCompositionSlots::EnemyMain}
                             }
                     }
 
@@ -1204,7 +1243,7 @@ inline Encounter VillageMain
                     {
                             {
                                     {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                    {SceneCompositionEntities::Villager1,SceneCompositionSlots::EnemyMain}
+                                    {SceneCompositionEntities::Villager2,SceneCompositionSlots::EnemyMain}
                             }
                     }
 
@@ -1232,7 +1271,7 @@ inline Encounter VillageMain
                     {
                             {
                                     {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                    {SceneCompositionEntities::Villager1,SceneCompositionSlots::EnemyMain}
+                                    {SceneCompositionEntities::Villager2,SceneCompositionSlots::EnemyMain}
                             }
                     }
 
@@ -1260,7 +1299,7 @@ inline Encounter VillageMain
                     {
                             {
                                     {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                    {SceneCompositionEntities::Villager1,SceneCompositionSlots::EnemyMain}
+                                    {SceneCompositionEntities::Villager2,SceneCompositionSlots::EnemyMain}
                             }
                     }
 
@@ -1288,7 +1327,7 @@ inline Encounter VillageMain
                     {
                             {
                                     {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain},
-                                    {SceneCompositionEntities::Villager1,SceneCompositionSlots::EnemyMain}
+                                    {SceneCompositionEntities::Villager2,SceneCompositionSlots::EnemyMain}
                             }
                     }
 
@@ -1317,7 +1356,7 @@ inline Encounter VillageMain
                                     true,
                                     StatNames::FAITH,
                                     2,
-                                    {{ExecuteFlags::RegainSan,2}},
+                                    {},
                                     {},
                                     10, 11,
                                     {},
@@ -1353,11 +1392,11 @@ inline Encounter VillageMain
                     EnvironmentType::VillageChurch,
                     {
                             {
-                                    "Leave",
+                                    "Thank you.",
                                     false,
                                     StatNames::OCCULT,
                                     0,
-                                    {{ExecuteFlags::GainItem,1},{ExecuteFlags::AdvanceQuestStage,1085}},
+                                    {{ExecuteFlags::GainItem,1},{ExecuteFlags::AdvanceQuestStage,1085}, {ExecuteFlags::StartQuest,4}},
                                     {},
                                     255, 255,
                                     {/**ItemID::Relic*/},
@@ -1397,7 +1436,7 @@ inline Encounter VillageMain
                                         true,
                                         StatNames::FAITH,
                                         2,
-                                        {},
+                                        {{ExecuteFlags::AdvanceQuestStage,1090}},
                                         {{ExecuteFlags::AdvanceQuestStage,1082}},
                                         10, 255,
                                         {},
@@ -1463,7 +1502,7 @@ inline Encounter HermitMain
                              false,
                              StatNames::OCCULT,
                              0, {}, {},
-                             3, 3,
+                             1, 3,
                              {},{},
                              {{RequirementFlags::hasQuestOnStage,1020}},true  //TODO fix shortcut
                      },
@@ -1474,7 +1513,9 @@ inline Encounter HermitMain
                              StatNames::FAITH,
                              0, {}, {},
                              255,
-                             255
+                             255,
+                             {},{},
+                             {{RequirementFlags::hasQuestOnStage,1082}}, true
                      },
                      {
                              "Leave.",
@@ -1498,23 +1539,24 @@ inline Encounter HermitMain
              "The man eyes you warily. \"Whatever for?\"",
              EnvironmentType::HermitLodge,
              {
-                     {"The beast - the werewolf - is a result of a spell. Brother Albert thinks a silver bullet alone will not suffice.",
-                      false,
-                      StatNames::OCCULT,
-                      0, {}, {},
-                      2, 2,
-                      {},{},{},false
 
-                     },
                      {"We found proof that the beast - the werewolf - is a result of demonic invocation. Do you know of anything that might be used to banish it?",
                       false,
                       StatNames::OCCULT,
                       0, {}, {},
-                      3, 3,
+                      3, 255,
                       {},{},
-                      {{RequirementFlags::occult,10}},true  //TODO only this appears???
+                      {{RequirementFlags::occult,2}},true
 
-                     }
+                     },
+                     {"The beast - the werewolf - is a result of a spell. Brother Albert thinks a silver bullet alone will not suffice.",
+                      false,
+                      StatNames::OCCULT,
+                      0, {}, {},
+                      2, 255,
+                      {},{},{},false
+
+                     },
              },
              {
                      {SceneCompositionEntities::Character,SceneCompositionSlots::CharacterFront},

@@ -542,6 +542,11 @@ namespace JanSordid::SDL_Example {
         sword->SetAbility(staminaAbilityPtr); // Associate ability with item
         itemManager.AddItem(std::move(sword));
 
+        auto shortsword = std::make_unique<Item>(ItemID::Sword, ItemType::Melee, "One-handed Sword", 1);
+        shortsword->SetStats({0, 0, 2, 0, 0, 0});
+       // sword->SetAbility(staminaAbilityPtr); // Associate ability with item
+        itemManager.AddItem(std::move(shortsword));
+
         auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Not so Common Torch",1);
         torch->SetStats({0, 0, 1, 1, 0, 5});
         itemManager.AddItem(std::move(torch));
@@ -610,8 +615,8 @@ namespace JanSordid::SDL_Example {
         currentCharacter = new Character(*landsknechtBlueprint);
         currentCharacter->RefillFatePoints();
 
-        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Torch));
-        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Sword));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
         //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
         //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
         currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
