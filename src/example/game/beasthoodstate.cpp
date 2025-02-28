@@ -60,6 +60,7 @@ namespace JanSordid::SDL_Example {
         Questlog.addQuest(1);
 
 
+
         //Paths for Image Assets
         string forestLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/token_1.png";
         string playerMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/Landsknecht.jpg";
@@ -687,6 +688,7 @@ namespace JanSordid::SDL_Example {
         //Load Music system
 
         musicManager.init();
+        Questlog.setStage(1,80); //TODO
 
 
 
@@ -1659,7 +1661,8 @@ if(itemInUse){
                         eTracker.bShowPreviousDicerolls = false;
                         cTracker.monID = cTracker.monsters.back().id;
                         cTracker.updateCurrentMonster();
-                        UpdateCombatEncounter();
+                        //UpdateCombatEncounter();
+                        Update_and_ChangeCombatBackground(eTrackerSaver.encounterID);
                         eTracker.activeEncounter = encounterManager.GetEncounter(
                                 EncounterID::Combat_Encounter);
                         eTracker.encounterID = EncounterID::Combat_Encounter;
