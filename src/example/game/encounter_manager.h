@@ -196,6 +196,7 @@ Vector<ExecuteFlags> iterateOverOutcomes(const Vector<ItemID>& rewards, const st
                     currentCharacter.AddToInventory(iManager->GetItem(ItemID::BulletLead));
 
                 }
+                fmt::println("Gaining {} bullets",get<1>(outcome));
                 currentCharacter.leadBulletCount += get<1>(outcome);
                 break;
             case ExecuteFlags::Heal:

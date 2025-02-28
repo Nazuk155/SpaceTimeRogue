@@ -486,6 +486,7 @@ class InventoryScreen
                             if(currentCharacter->leadBulletCount ==1) {
                                 currentCharacter->RemoveFromInventory(
                                         currentPage.MouseOverIcon->referencedItem->GetItemID());
+                                currentCharacter->leadBulletCount--;
                             }
                             else
                             {

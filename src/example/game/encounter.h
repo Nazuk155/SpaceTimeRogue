@@ -1160,14 +1160,28 @@ inline Encounter VillageMain
                                     false,
                                     StatNames::OCCULT,
                                     0,
+                                    {{ExecuteFlags::StartQuest,4}},
+                                    {},
+                                    2, 255,
+                                    {},
+                                    {},
+                                    {{RequirementFlags::notOnQuest,4}}, //If no gun
+                                    true,
+                            },
+                            {
+                                    //returned from finding 1+ clues
+                                    "Continue.",
+                                    false,
+                                    StatNames::OCCULT,
+                                    0,
                                     {},
                                     {},
                                     2, 255,
                                     {},
                                     {},
-                                    {}, //If skull no corpse
+                                    {{RequirementFlags::hasQuest,4}}, //If no gun
                                     true,
-                            }
+                            },
                     },
                     {
                             {
@@ -1468,6 +1482,15 @@ inline Encounter SkullDiscovery
                     EnvironmentType::ForestClearing
                     ,
                     {
+                        {
+                             //none
+                             "Leave. Just leave.",
+                             false,
+                             StatNames::FAITH,
+                             3, {}, {},
+                             255, 255,
+                             {},{},{},false
+                     },
                             {
                                     //Occult
                                     "It is clearly a ritual implement. Try to bind it for yourself.",
@@ -1475,7 +1498,7 @@ inline Encounter SkullDiscovery
                                     StatNames::OCCULT,
                                     3, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::AdvanceQuestStage,9010},{ExecuteFlags::GainItem,1}}, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::GainItem,1}},
                                     1, 255,
-                                    {ItemID::RitualSkullBound},{ItemID::RitualSkullCursed},{{RequirementFlags::occult,3}},true
+                                    {ItemID::RitualSkullBound},{ItemID::RitualSkullCursed},{{RequirementFlags::occult,3},{RequirementFlags::notOnStage,1010},{RequirementFlags::notOnStage,1000}},true
 
 
                             },
@@ -1486,7 +1509,7 @@ inline Encounter SkullDiscovery
                                     StatNames::FAITH,
                                     3, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::AdvanceQuestStage,9005},{ExecuteFlags::GainItem,1}}, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::GainItem,1}},
                                     1, 255,
-                                    {ItemID::RitualSkullBound},{ItemID::RitualSkullCursed},{{RequirementFlags::faith,3}},true
+                                    {ItemID::RitualSkullBound},{ItemID::RitualSkullCursed},{{RequirementFlags::faith,3},{RequirementFlags::notOnStage,1010},{RequirementFlags::notOnStage,1000}},true
                             },
                             {
                                     //none
@@ -1495,8 +1518,10 @@ inline Encounter SkullDiscovery
                                     StatNames::FAITH,
                                     3, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::AdvanceQuestStage,9000},{ExecuteFlags::GainItem,1}}, {{ExecuteFlags::StartQuest,9},{ExecuteFlags::GainItem,1}},
                                     1, 255,
-                                    {ItemID::RitualSkullCursed},{ItemID::RitualSkullCursed},{},false
+                                    {ItemID::RitualSkullCursed},{ItemID::RitualSkullCursed},{{RequirementFlags::notOnStage,1010},{RequirementFlags::notOnStage,1000}},true
                             }
+                            ,
+
 
 
 

@@ -3472,6 +3472,7 @@ if(itemInUse){
         encounterManager.addEncounter(VillageMain.id,VillageMain);
         encounterManager.addEncounter(EncounterID::HermitMain,HermitMain);
         encounterManager.addEncounter(EncounterID::HunterCamp,HunterCamp);
+        encounterManager.addEncounter(EncounterID::SkullDiscovery,SkullDiscovery);
 
         //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
@@ -3529,7 +3530,7 @@ if(itemInUse){
 
         /// TODO add more events
         // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
-        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Forest_Thievery);
+        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::SkullDiscovery);
         locationManager.GetItem(LocationID::Monastery)->related_events.push_back(EncounterID::MonasteryMain); //TODO TESTING ENCOUNTERS
         locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::Testing_Combat);
         locationManager.GetItem(LocationID::Village)->related_events.push_back(EncounterID::VillageMain);
