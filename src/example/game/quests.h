@@ -21,7 +21,8 @@ struct Quest
 inline std::vector<Quest> availableQuests
 {
     {"The Hunt","Track down and kill the beast.",1,
-          {{0,"Talk to the Villagers."},
+          {{0,"Pick your starting gear."},
+                  {5,"Talk to the Villagers."},
            {10,"Reach the Hunters' Camp"},
            {20,"Look for clues around the forest."},
                   {30,"You found a first clue."},
@@ -33,7 +34,7 @@ inline std::vector<Quest> availableQuests
                   {83,"It seems you will have to rob a grave. Go to the ravine."},
                   {85,"You have what you need. The veteran should be able to make the bullet."},
                   {90, "You have your bullet. It is time."},
-           {100,"Complete"}
+           {100,"It is done."}
           },
           0},
 

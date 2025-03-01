@@ -347,7 +347,7 @@ inline Encounter testingCombat
                                 "The monks are adept keepers of natural magic. Your wounds are cleaned and treated.",
                                 EnvironmentType::MonasteryInterior,
                                 {
-                                        {"The poultices do their work. It is time to move on. <Fate restored>[+6 Stamina]",
+                                        {"The poultices do their work. It is time to move on. <Fate restored>[Will Points restored, +6 Stamina]",
                                          false,
                                          StatNames::FAITH,
                                          0,
@@ -1042,7 +1042,7 @@ inline Encounter IntroEncounter
 
                 EncounterTypeID::Unique,
                 {
-                 {"You arrive at the village of . Some manner of beast has been killing people in the area, and you - a mercenary - were hired to deal with id.", //todo name
+                 {"You arrive at the village of Wölfingen. Some manner of beast has been killing people in the area, and you - a mercenary - were hired to deal with it.",
                   EnvironmentType::Village,
                   {
                           {
@@ -1050,7 +1050,7 @@ inline Encounter IntroEncounter
                                   false,
                                   StatNames::FAITH,
                                   0,
-                                  {{ExecuteFlags::StartQuest, 2}},
+                                  {{ExecuteFlags::GainItem,1}},
                                   {},
                                   1, 255,
                                   {ItemID::Sword},
@@ -1090,7 +1090,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::Honorius,ItemID::Halberd},
+                                         {ItemID::Honorius},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1105,7 +1105,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}, {ExecuteFlags::GainBulletLead, 3}},
                                          {},
                                          2, 255,
-                                         {ItemID::LoadedGunLead,ItemID::Halberd},
+                                         {ItemID::LoadedGunLead},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1120,7 +1120,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::Talisman,ItemID::Halberd},
+                                         {ItemID::Talisman},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1134,7 +1134,7 @@ inline Encounter IntroEncounter
                                          {{ExecuteFlags::GainItem, 1}},
                                          {},
                                          2, 255,
-                                         {ItemID::PrayerBook,ItemID::Halberd},
+                                         {ItemID::PrayerBook},
                                          {},
                                          {{}}, //If not on Quest 3, start quest 3
                                          false,
@@ -1157,7 +1157,7 @@ inline Encounter IntroEncounter
                                                  false,
                                                  StatNames::OCCULT,
                                                  0,
-                                                 {{ExecuteFlags::StartQuest,1}},
+                                                 {{ExecuteFlags::AdvanceQuestStage,1005}},
                                                  {},
                                                  255, 255,
                                                  {},
@@ -1198,7 +1198,7 @@ inline Encounter VillageMain
                                 4, 255, //TODO
                                 {},
                                 {},
-                                {{RequirementFlags::hasQuestOnStage,1000},{RequirementFlags::notOnStage,1080},{RequirementFlags::notOnStage,1085}}, //
+                                {{RequirementFlags::hasQuestOnStage,1005},{RequirementFlags::notOnStage,1080},{RequirementFlags::notOnStage,1085}}, //
                                 true,
 
 
@@ -1213,7 +1213,7 @@ inline Encounter VillageMain
                                 1, 255,
                                 {},
                                 {},
-                                {{RequirementFlags::hasQuest,1},{RequirementFlags::notOnStage,1000},{RequirementFlags::notOnStage,1080}}, //
+                                {{RequirementFlags::hasQuest,1},{RequirementFlags::notOnStage,1005},{RequirementFlags::notOnStage,1080}}, //
                                 true,
 
 
@@ -2403,7 +2403,7 @@ inline Encounter ForestHeartFinal
     {
         //Approach
             {
-                "You approach the heart of the forest. You know instinctively - a battle awaits. Are you acually ready?",
+                "You approach the heart of the forest. You know instinctively - a battle awaits. Are you actually ready?",
                 EnvironmentType::HeartApproach,
                 {//Start Werewolf fight?  //TODO FIGHT
                         {
@@ -2415,12 +2415,64 @@ inline Encounter ForestHeartFinal
                                 {},
                                 255,
                                 255
-                        }//NOPE
-                }
-            }
+                        },//NOPE
+                        {
+                            "It is time.",
+                            false,
+                            StatNames::FAITH,
+                            0,
+                            {{ExecuteFlags::StartCombat,1}},
+                            {},
+                            2,
+                            255
+                        }
+                },
+
+                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}}
+            },
+            {
+                    "It is done. ",
+                    EnvironmentType::HeartApproach,
+                    {//Start Werewolf fight?
+                            {
+                                    "The End",
+                                    false,
+                                    StatNames::FAITH,
+                                    0,
+                                    {{ExecuteFlags::AdvanceQuestStage,1100}},
+                                    {},
+                                    1,
+                                    255
+                            }
+                    },
+
+                    {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}}
+            },
+            {
+                    "You were a fool.",
+                    EnvironmentType::ForestHeart,
+                    {//Start Werewolf fight?
+                            {
+                                    "Try to escape - futile.",
+                                    false,
+                                    StatNames::FAITH,
+                                    0,
+                                    {{ExecuteFlags::Wound,666}},
+                                    {},
+                                    255,
+                                    255
+                            },//NOPE
+
+                    },
+
+                    {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain},
+                     {SceneCompositionEntities::Werewolf,SceneCompositionSlots::CharacterFront}}
+            },
+
 
     }
-                ,DialoguePhase::Scene // Starting dialogue phase
+                ,DialoguePhase::Scene, // Starting dialogue phase,
+            {MonsterID::Werewolf},1,2
 
 
         };

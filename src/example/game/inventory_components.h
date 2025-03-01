@@ -101,6 +101,10 @@ inline void RenderItemIcon(SDL_Renderer*renderer,const Item* item,SDL_Texture* b
             SDL_RenderCopy(renderer, iconVector[13], &iconScale, &destinationRect
             );
             break;
+        case ItemID::Talisman:
+            SDL_RenderCopy(renderer, iconVector[14], &iconScale, &destinationRect
+            );
+            break;
         default:
             SDL_RenderCopy(renderer, iconVector[0], &iconScale, &destinationRect
             );
@@ -129,7 +133,7 @@ public:
         SDL_Rect window = {static_cast<int>(StartPoint.x*screenWidth*0.01), static_cast<int>(StartPoint.y*screenHeight*0.01),
                            static_cast<int>(Dimensions.x*screenWidth*0.01),static_cast<int>(Dimensions.y*screenHeight*0.01)};
 
-        SDL_SetRenderDrawColor(renderer,200,10,10,0);
+        SDL_SetRenderDrawColor(renderer,2,2,2,0);
         SDL_RenderFillRect(renderer,&window);
         //iterate icons
         SDL_Rect icon {0,

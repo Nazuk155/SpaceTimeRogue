@@ -20,6 +20,8 @@
 #include "layout.h"
 
 
+
+
 namespace JanSordid::SDL_Example {
     struct {
 
@@ -60,6 +62,9 @@ namespace JanSordid::SDL_Example {
 
 
         //Paths for Image Assets
+
+        string mapBasePath =  BasePath "/src/example/game/Ressources/Image_assets/map_icons/map_base_layer.png";
+
         string forestLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/token_1.png";
         string playerMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/Landsknecht.jpg";
 
@@ -70,6 +75,7 @@ namespace JanSordid::SDL_Example {
         string villageMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/village_mapicon.png";
         string hermitIconPath  = BasePath "/src/example/game/Ressources/Image_assets/map_icons/hermit_icon.png";
         string huntersIconPath  = BasePath "/src/example/game/Ressources/Image_assets/map_icons/hunters_mapicon.png";
+        string wereWolfMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/map_icons/wolf_mapicon.png";
 
         //Healthbar
         string healtbarBGPath = BasePath "/src/example/game/Ressources/Image_assets/healthbar/healthbar_bg.png";
@@ -172,6 +178,7 @@ namespace JanSordid::SDL_Example {
         String relicIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/relic_icon.png";
         String shortSwordIconPath = BasePath "/src/example/game/Ressources/Image_assets/items/shortsword_icon.png";
         String honoriusPath = BasePath "/src/example/game/Ressources/Image_assets/items/honorius_icon.png";
+        String panIconPath =  BasePath "/src/example/game/Ressources/Image_assets/items/pan_icon.png";
 
 
 
@@ -289,6 +296,7 @@ namespace JanSordid::SDL_Example {
         shortSwordIcon= loadFromFile(shortSwordIconPath);
         relicIcon= loadFromFile(relicIconPath);
         honoriusIcon= loadFromFile(honoriusPath);
+        panIcon = loadFromFile(panIconPath);
 
         bulletLead= loadFromFile(bulletLeadPath);
         bulletSilver= loadFromFile(bulletSilverPath);
@@ -309,6 +317,7 @@ namespace JanSordid::SDL_Example {
         Icons.push_back(relicIcon); //Relic = 11
         Icons.push_back(shortSwordIcon); //sword = 12
         Icons.push_back(honoriusIcon); //honorius 13
+        Icons.push_back(panIcon); //pan 14
 
 
 
@@ -327,7 +336,7 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Grove].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Grove].nameTexture = textToTexture("Grove");
 
-        locationTextureMap[LocationID::Lair].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Lair].iconTexture = loadFromFile(wereWolfMapIconPath);
         locationTextureMap[LocationID::Lair].nameTexture = textToTexture("Lair");
 
         locationTextureMap[LocationID::Overgrowth].iconTexture = loadFromFile(forestLocationIconPath);
@@ -345,7 +354,7 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Hermit].iconTexture = loadFromFile(hermitIconPath);
         locationTextureMap[LocationID::Hermit].nameTexture = textToTexture("Hermit");
 
-        locationTextureMap[LocationID::MonasteryPath].iconTexture = loadFromFile(monasteryLocationIconPath);
+        locationTextureMap[LocationID::MonasteryPath].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::MonasteryPath].nameTexture = textToTexture("MonasteryPath");
 
         locationTextureMap[LocationID::Monastery].iconTexture = loadFromFile(monasteryLocationIconPath);
@@ -376,6 +385,10 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::UNASSIGNED_LOCATION].nameTexture = textToTexture("UNASSIGNED_MONSTERID");
 
 
+
+        //Load map
+
+        mapBaseLayer= loadFromFile(mapBasePath);
        // font = TTF_OpenFont(BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16);
         TTF_SetFontHinting(font, TTF_HINTING_NONE);
 
@@ -408,7 +421,20 @@ namespace JanSordid::SDL_Example {
         //Load Music system
 
         musicManager.init();
-        Questlog.setStage(1,80); //TODO
+        //Start MSQ
+
+      encounterManager.addEncounter(EncounterID::Intro,IntroEncounter);
+        eTracker.activeEncounter = encounterManager.GetEncounter(
+                EncounterID::Intro);
+        Phase = GamePhases::ENCOUNTER;
+
+
+
+
+
+
+
+
     }
 
     void BeasthoodState::Destroy() {
@@ -504,6 +530,8 @@ namespace JanSordid::SDL_Example {
             SDL_DestroyTexture(e.second.nameTexture);
         }
 
+        SDL_DestroyTexture(mapBaseLayer);
+
         forestLocationIconTexture = nullptr;
         playerMapIconTexture = nullptr;
         playerMainSpite = nullptr;
@@ -577,6 +605,7 @@ namespace JanSordid::SDL_Example {
         dice6 = nullptr;
 
         emptyItem= nullptr;
+        mapBaseLayer= nullptr;
 
 
         Base::Destroy();
@@ -2343,6 +2372,15 @@ if(itemInUse){
         SDL_RenderClear(renderer());
 
         if (Phase == GamePhases::UPKEEP || Phase == GamePhases::MOVEMENT) {
+
+
+            //Render Map Layers
+
+            //Base Layer
+            SDL_Rect MapDims = {0,0,
+                                static_cast<int>(SidebarLayout.SidebarStart.x*windowSize.x*0.01),
+                                windowSize.y};
+            renderFromSpritesheet(MapDims, mapBaseLayer);
 
             //set color for connected path lines
             SDL_SetRenderDrawColor(renderer(), 0x00, 0x7F, 0x00, 0x00);
@@ -4516,13 +4554,13 @@ void BeasthoodState::renderBackground(){
         currentCharacter = new Character(*blueprintManager.GetBlueprintByName("Landsknecht"));
         currentCharacter->RefillFatePoints();
 
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Sword));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Sword));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
         //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
         //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
-        currentCharacter->leadBulletCount++;
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
+        //currentCharacter->leadBulletCount++;
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
 
         inventoryScreen = InventoryScreen(currentCharacter);
 
@@ -4531,7 +4569,8 @@ void BeasthoodState::renderBackground(){
 
 
         currentCharacter->SetCurrentLocation(LocationID::Village);
-        //currentCharacter->EquipItem(currentCharacter->GetInventory().back());
+        currentCharacter->EquipItem(currentCharacter->GetInventory().back());
+        inventoryScreen.RebuildInventory();
         currentCharacter->UpdateCurrentStats();
 
         encounterManager.iManager=&itemManager;//Was missing ctd by add item outcome

@@ -388,6 +388,7 @@ namespace JanSordid::SDL_Example {
         Texture * relicIcon = nullptr;
         Texture * shortSwordIcon = nullptr;
         Texture * honoriusIcon = nullptr;
+        Texture * panIcon = nullptr;
 
         Texture * gunIcon = nullptr;
         Texture * bulletSilver = nullptr;
@@ -453,6 +454,10 @@ namespace JanSordid::SDL_Example {
         Texture* OverlayForestClearingSkull = nullptr;
         Texture * CorpsePileOverlay = nullptr;
 
+
+        //Map Layers
+
+        Texture * mapBaseLayer = nullptr;
 
 
 
