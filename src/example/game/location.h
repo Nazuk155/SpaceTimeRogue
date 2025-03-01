@@ -12,6 +12,7 @@ private:
 public:
     std::string name;
     LocationID id;
+    bool is_Forest_Location = false;
     bool first_visit;
     bool fog_of_war;
     int unique_event_id;

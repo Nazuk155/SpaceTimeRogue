@@ -20,8 +20,6 @@
 #include "layout.h"
 
 
-
-
 namespace JanSordid::SDL_Example {
     struct {
 
@@ -326,14 +324,17 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Forest].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Forest].nameTexture = textToTexture("Forest");
 
-        locationTextureMap[LocationID::Church].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Church].nameTexture = textToTexture("Church");
+        locationTextureMap[LocationID::Grove].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Grove].nameTexture = textToTexture("Grove");
 
-        locationTextureMap[LocationID::River].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::River].nameTexture = textToTexture("River");
+        locationTextureMap[LocationID::Lair].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Lair].nameTexture = textToTexture("Lair");
 
-        locationTextureMap[LocationID::Smith].iconTexture = loadFromFile(huntersIconPath);
-        locationTextureMap[LocationID::Smith].nameTexture = textToTexture("HunteeCamp");
+        locationTextureMap[LocationID::Overgrowth].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Overgrowth].nameTexture = textToTexture("Overgrowth");
+
+        locationTextureMap[LocationID::HunterCamp].iconTexture = loadFromFile(huntersIconPath);
+        locationTextureMap[LocationID::HunterCamp].nameTexture = textToTexture("HunterCamp");
 
         locationTextureMap[LocationID::Windmill].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Windmill].nameTexture = textToTexture("Windmill");
@@ -344,11 +345,14 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Hermit].iconTexture = loadFromFile(hermitIconPath);
         locationTextureMap[LocationID::Hermit].nameTexture = textToTexture("Hermit");
 
+        locationTextureMap[LocationID::MonasteryPath].iconTexture = loadFromFile(monasteryLocationIconPath);
+        locationTextureMap[LocationID::MonasteryPath].nameTexture = textToTexture("MonasteryPath");
+
         locationTextureMap[LocationID::Monastery].iconTexture = loadFromFile(monasteryLocationIconPath);
         locationTextureMap[LocationID::Monastery].nameTexture = textToTexture("Monastery");
 
-        locationTextureMap[LocationID::Farm].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Farm].nameTexture = textToTexture("Farm");
+        locationTextureMap[LocationID::Grove].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Grove].nameTexture = textToTexture("Grove");
 
         locationTextureMap[LocationID::Clearing].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::Clearing].nameTexture = textToTexture("Clearing");
@@ -356,14 +360,23 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::Village].iconTexture = loadFromFile(villageMapIconPath);
         locationTextureMap[LocationID::Village].nameTexture = textToTexture("Village");
 
-        locationTextureMap[LocationID::Thicket].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::Thicket].nameTexture = textToTexture("Thicket");
+        locationTextureMap[LocationID::Lake].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Lake].nameTexture = textToTexture("Lake");
+
+        locationTextureMap[LocationID::ForestOutskirts].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::ForestOutskirts].nameTexture = textToTexture("ForestOutskirts");
+
+        locationTextureMap[LocationID::Ravine].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::Ravine].nameTexture = textToTexture("Ravine");
+
+        locationTextureMap[LocationID::DeepForest].iconTexture = loadFromFile(forestLocationIconPath);
+        locationTextureMap[LocationID::DeepForest].nameTexture = textToTexture("DeepForest");
 
         locationTextureMap[LocationID::UNASSIGNED_LOCATION].iconTexture = loadFromFile(forestLocationIconPath);
         locationTextureMap[LocationID::UNASSIGNED_LOCATION].nameTexture = textToTexture("UNASSIGNED_MONSTERID");
 
 
-        font = TTF_OpenFont(BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16);
+       // font = TTF_OpenFont(BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16);
         TTF_SetFontHinting(font, TTF_HINTING_NONE);
 
         //todo moved windowsize, check for consequences
@@ -371,328 +384,31 @@ namespace JanSordid::SDL_Example {
 
         const Point resolution = windowSize / Scale;
 
-
-
-        /*
-            Map map;
-            // Add 5 slots with arbitrary positions
-            map.AddSlot(1,{100, 100});
-            map.AddSlot(2,{200, 200});
-            map.AddSlot(3,{300, 300});
-            map.AddSlot(4,{400, 400});
-            map.AddSlot(5,{500, 500});
-
-            Location forest("Forest",1);
-
-            // Print out the IDs and positions of all slots
-            for (int i = 1; i <= 5; ++i) {
-                Map_Slot* slot = map.GetSlotByID(i);
-                if (slot) {
-                    std::cout << "Slot ID: " << slot->id << ", Position: ("
-                              << slot->position.x << ", " << slot->position.y << ")\n";
-                    std::cout.flush();
-                }
-            }
-
-
-            Map map;
-
-            // Add 5 slots
-            for (int i = 1; i <= 5; ++i) {
-                map.AddSlot(i,{i * 100, i * 100});
-            }
-
-            // Define locations
-            Location church( "Church",1);
-            Location inn("Inn",2);
-
-            // Assign locations to map slots
-            map.SetLocation(1, church);
-            map.SetLocation(2, inn);
-
-            // Print results
-            for (int i = 1; i <= 5; ++i) {
-                Map_Slot* slot = map.GetSlotByID(i);
-                if (slot) {
-                    std::cout << "Map_Slot ID: " << slot->id
-                              << ", Location ID: " << slot->location_id << "\n";
-                    std::cout.flush();
-                }
-            }
-
-            // Verify Location's map slot pointer
-            if (church.GetMapSlot()) {
-                std::cout << "Church is in Map_Slot ID: "
-                          << church.GetMapSlot()->id << "\n";
-                std::cout.flush();
-            }
-
-            if (inn.GetMapSlot()) {
-                std::cout << "Inn is in Map_Slot ID: "
-                          << inn.GetMapSlot()->id << "\n";
-                std::cout.flush();
-            }
-
-        */
-
-        /// testing everything here for now
-        // Add 12 Map_Slots
-        map.AddSlot(0, {500, 50});
-        for (int i = 1; i <= 5; ++i) {
-            map.AddSlot(i, {i * 140, 200});
-        }
-        map.AddSlot(6, {700, 500});
-        for (int i = 7; i <= 11; ++i) {
-            map.AddSlot(i, {(i - 6) * 140, 700});
-        }
-
-        // Add connections
-
-
-        map.ConnectSlots(0, 1);
-        map.ConnectSlots(0, 2);
-        map.ConnectSlots(0, 3);
-        map.ConnectSlots(0, 4);
-        map.ConnectSlots(0, 5);
-
-        map.ConnectSlots(5, 6);
-
-        map.ConnectSlots(6, 7);
-        map.ConnectSlots(6, 8);
-        map.ConnectSlots(6, 9);
-        map.ConnectSlots(6, 10);
-        map.ConnectSlots(6, 11);
-
-        // Create and assign locations
-
-        /*
-                 auto forest =  std::make_unique<Location>("Forest",LocationID::Forest);
-                 auto church =  std::make_unique<Location>("Church",LocationID::Church);
-                 auto River =  std::make_unique<Location>("River",LocationID::River);
-                 auto Smith =  std::make_unique<Location>("Smith",LocationID::Smith);
-             auto Windmill =  std::make_unique<Location>("Windmill",LocationID::Windmill);
-             auto Crossroads =  std::make_unique<Location>("Crossroads",LocationID::Crossroads);
-             auto Cave =  std::make_unique<Location>("Cave",LocationID::Cave);
-             auto Monastery =  std::make_unique<Location>("Monastery",LocationID::Monastery);
-             auto Farm =  std::make_unique<Location>("Farm",LocationID::Farm);
-             auto Clearing =  std::make_unique<Location>("Clearing",LocationID::Clearing);
-             auto Townhall =  std::make_unique<Location>("Townhall",LocationID::Townhall);
-             auto Thicket =  std::make_unique<Location>("Thicket",LocationID::Thicket);
-
-
-             locationManager.AddItem(std::move(forest));
-             locationManager.AddItem(std::move(church));
-             */
-
-        // locations.emplace_back( "Location " + std::to_string(i),i);
-        //map.SetLocation(i, locations.back());
-        for (int i = 0; i <= 11; ++i) {
-            locationManager.AddItem(std::move(std::make_unique<Location>(static_cast<LocationID>(i))));
-            map.SetLocation(i, *locationManager.GetItem(static_cast<LocationID>(i)));
-        }
-
-        // Verify connections and location setup
-        for (int i = 0; i <= 11; ++i) {
-            Map_Slot *slot = map.GetSlotByID(i);
-            if (slot) {
-                std::cout << "Map_Slot ID: " << slot->id << ", Connections: ";
-                std::cout.flush();
-
-                for (std::pair<int, bool> connected_id: slot->connections) {
-                    std::cout << connected_id.first << " ";
-                    std::cout.flush();
-
-                }
-                std::cout << "\n";
-
-                map.SetConnectionStatus(2, 0, true); //todo test
-
-                // Location* loc = &locations[i - 1];
-                std::cout << "  Location: " << locationManager.GetItem(static_cast<LocationID>(i))->name
-                          << ", Active Connections: ";
-                std::cout.flush();
-
-
-                if (locationManager.GetItem(static_cast<LocationID>(i))->GetMapSlot()) {
-                    for (int connected_id: locationManager.GetItem(
-                            static_cast<LocationID>(i))->GetActiveConnections()) {
-                        std::cout << connected_id << " ";
-                        std::cout.flush();
-
-                    }
-                }
-                std::cout << "\n";
-                std::cout.flush();
-
-            }
-        }
-
-
-
         // Add abilities
-        abilityManager.AddAbility(std::make_unique<ReduceStaminaLossAbility>());
-        abilityManager.AddAbility(std::make_unique<DrawExtraItemAbility>());
+        //abilityManager.AddAbility(std::make_unique<ReduceStaminaLossAbility>());
+        // abilityManager.AddAbility(std::make_unique<DrawExtraItemAbility>());
 
-        // Use abilities
-        Ability *reduceStaminaLoss = abilityManager.GetAbility(AbilityID::ReduceStaminaLoss);
-        if (reduceStaminaLoss) {
-            reduceStaminaLoss->Activate();
-        }
-
-        Ability *drawExtraItem = abilityManager.GetAbility(AbilityID::DrawExtraItem);
-        if (drawExtraItem) {
-            drawExtraItem->Activate();
-        }
-
-
-
-
-        // Create and add an ability
-        auto staminaAbility = std::make_unique<ReduceStaminaLossAbility>();
-        Ability *staminaAbilityPtr = staminaAbility.get();
-        abilityManager.AddAbility(std::move(staminaAbility));
-
-        // Create and add items
-        auto sword = std::make_unique<Item>(ItemID::Halberd, ItemType::Melee, "Halberd", 2);
-        sword->SetStats({0, 0, 5, 0, 0, 0});
-        sword->SetAbility(staminaAbilityPtr); // Associate ability with item
-        itemManager.AddItem(std::move(sword));
-
-        auto halberdMaster = std::make_unique<Item>(ItemID::HalberdMaster, ItemType::Melee, "Master-crafted Halberd", 2);
-        halberdMaster->SetStats({1, 0, 7, 1, 0, 0});
-        halberdMaster->SetAbility(staminaAbilityPtr); // Associate ability with item
-        itemManager.AddItem(std::move(halberdMaster));
-
-
-        auto shortsword = std::make_unique<Item>(ItemID::Sword, ItemType::Melee, "One-handed Sword", 1);
-        shortsword->SetStats({0, 0, 2, 0, 0, 0});
-       // sword->SetAbility(staminaAbilityPtr); // Associate ability with item
-        itemManager.AddItem(std::move(shortsword));
-
-        auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Not so Common Torch",1);
-        torch->SetStats({0, 0, 1, 1, 0, 5});
-        itemManager.AddItem(std::move(torch));
-
-        auto gun = std::make_unique<Item>(ItemID::GUN, ItemType::Unique,"Unloaded Gun",1);
-        gun->SetStats({0, 0, 1, 0, 0, 0}); // Attack 1
-        itemManager.AddItem(std::move(gun));
-
-        auto gunLoadedSilver = std::make_unique<Item>(ItemID::LoadedGunSilver, ItemType::Unique,"Gun - Silver Bullet",1);
-        gunLoadedSilver->SetStats({0, 0, 1, 2, 3, 3}); // Attack 1
-        itemManager.AddItem(std::move(gunLoadedSilver));
-
-        auto gunLoadedLead = std::make_unique<Item>(ItemID::LoadedGunLead, ItemType::Unique,"Gun - Lead Bullet",1);
-        gunLoadedLead->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
-        itemManager.AddItem(std::move(gunLoadedLead));
-
-
-        auto honorius = std::make_unique<Item>(ItemID::Honorius, ItemType::Unique,"Grimoire of Honorius",1);
-        honorius->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
-        itemManager.AddItem(std::move(honorius));
-
-
-        auto prayerBook = std::make_unique<Item>(ItemID::PrayerBook, ItemType::Unique,"Prayer Book of St. Lycon",1);
-        prayerBook->SetStats({0, 0, 1, 2, 2, 6});
-        itemManager.AddItem(std::move(prayerBook));
-
-        auto talisman = std::make_unique<Item>(ItemID::Talisman, ItemType::Unique,"Lead-Sigil of Pan",1);
-        talisman->SetStats({2, 5, 2, 0, 2, 0});
-        itemManager.AddItem(std::move(talisman));
-
-        auto ritual_skull = std::make_unique<Item>(ItemID::RitualSkullCursed, ItemType::Unique,"Ritual Skull",0);
-        ritual_skull->SetStats({0, 0, 0, 0, 1, -2});
-        itemManager.AddItem(std::move(ritual_skull));
-
-        auto ritual_skull_occult = std::make_unique<Item>(ItemID::RitualSkullBound, ItemType::Unique,"Suborned Ritual Skull",0);
-        ritual_skull_occult->SetStats({2, 0, 2, 2, 2, 1});
-        itemManager.AddItem(std::move(ritual_skull_occult));
-
-        auto ritual_skull_faith = std::make_unique<Item>(ItemID::RitualSkullFaith, ItemType::Unique,"Quieted Ritual Skull",0);
-        ritual_skull_faith->SetStats({0, 0, 0, 0, 1, 0});
-        itemManager.AddItem(std::move(ritual_skull_faith));
-
-        auto relic = std::make_unique<Item>(ItemID::Relic, ItemType::Unique,"Relic",0);
-        relic->SetStats({0, 0, 0, 2, 1, 7});
-        itemManager.AddItem(std::move(relic));
-
-        auto bullet_silver = std::make_unique<Item>(ItemID::BulletSilver,ItemType::Magic,"Silver Bullet",0);
-        bullet_silver->isBullet = true;
-        bullet_silver->SetStats({0, 0, 0, 0, 2, 2});
-        itemManager.AddItem(std::move(bullet_silver));
-        auto bullet_lead = std::make_unique<Item>(ItemID::BulletLead,ItemType::Ranged,"Lead Bullet",0);
-        bullet_lead->isBullet = true;
-        bullet_lead->SetStats({0, 0, 0, 0, 0, 0});
-        itemManager.AddItem(std::move(bullet_lead));
-
-
-        // Access and use an item
-        Item *item = itemManager.GetItem(ItemID::Halberd);
-        if (item) {
-            std::cout << "Item: " << item->GetName() << ", Attack: " << item->GetStats().GetStat(FIGHT) << "\n";
-            if (item->GetAbility()) {
-                item->GetAbility()->Activate(); // Activate associated ability
-            }
-        }
-
-        std::cout << "\n";
-        std::cout.flush();
-
-
+        PopulateMap();
+        PopulateItemManager();
         PopulateBlueprints();
-
-        auto landsknechtBlueprint = blueprintManager.GetBlueprintByName("Landsknecht");
-        Character Landsknecht(*landsknechtBlueprint);
-        std::cout << "Item: " << Landsknecht.GetInventory().back()->GetName();
-        std::cout << "\n";
-        std::cout.flush();
-        Landsknecht.EquipItem(Landsknecht.GetInventory().back());
-        Landsknecht.UpdateCurrentStats();
-        std::cout << "Stats: " << Landsknecht.GetCurrentStats().GetStat(FIGHT);
-        std::cout.flush();
-
-        currentCharacter = new Character(*landsknechtBlueprint);
-        currentCharacter->RefillFatePoints();
-
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Sword));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
-        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
-        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
-        currentCharacter->leadBulletCount++;
-        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
-
-        inventoryScreen = InventoryScreen(currentCharacter);
-
-        // get character into SKE
-        ske.changeCharacter(currentCharacter);
-
-
-        currentCharacter->SetCurrentLocation(LocationID::Village);
-        //currentCharacter->EquipItem(currentCharacter->GetInventory().back());
-        currentCharacter->UpdateCurrentStats();
-
-        encounterManager.iManager=&itemManager;//Was missing ctd by add item outcome
-
+        SetupCharacter();
         PopulateMonsterManager();
         PopulateEventManager();
         PopulateLocationEvents();
+
+
     using enum LocationID;
     using enum MonsterID;
 
+        //spawn initial monsters
         SpawnMonster(Forest,Wolf);
-        SpawnMonster(Thicket,Bear);
-        SpawnMonster(Hermit,Bear);
-        //old version
-        //map.increaseMonsterCounter(locationManager.GetItem(LocationID::Forest)->AddMonster(monsterManager.GetMonster(MonsterID::Wolf)));
+        SpawnMonster(Lake, Bear);
+        SpawnMonster(LocationID::Clearing,Bear);
 
         //Load Music system
 
         musicManager.init();
         Questlog.setStage(1,80); //TODO
-
-
-
-
     }
 
     void BeasthoodState::Destroy() {
@@ -1398,6 +1114,72 @@ if(itemInUse){
 
             movementPoints = currentCharacter->GetCurrentStats().GetStat(SPEED);
             cTracker.Reset();
+            switch(Questlog.getQuestStage(1)){
+                case 0:
+                    locationManager.GetItem(LocationID::Village)->quest_marker = true;
+                    break;
+                case 10:
+                    locationManager.GetItem(LocationID::Village)->quest_marker = false;
+                    locationManager.GetItem(LocationID::HunterCamp)->quest_marker = true;
+                    break;
+                case 20:
+                    locationManager.GetItem(LocationID::HunterCamp)->quest_marker = false;
+                    for(auto &e : map.slots){
+                        if(locationManager.GetItem(e.location_id)->is_Forest_Location){
+                            locationManager.GetItem(e.location_id)->quest_marker = true;
+                        }
+                    }
+                    break;
+                case 30:
+                    break;
+                case 40:
+                    locationManager.GetItem(LocationID::Village)->quest_marker = true;
+                    for(auto &e : map.slots){
+                        if(locationManager.GetItem(e.location_id)->is_Forest_Location){
+                            locationManager.GetItem(e.location_id)->quest_marker = false;
+                        }
+                    }
+                    break;
+                case 50:
+                    locationManager.GetItem(LocationID::Village)->quest_marker = false;
+                    locationManager.GetItem(LocationID::Monastery)->quest_marker = true;
+                    break;
+                case 60:
+                    locationManager.GetItem(LocationID::Monastery)->quest_marker = false;
+                    locationManager.GetItem(LocationID::Hermit)->quest_marker = true;
+                    SpawnMonster(LocationID::Lake,MonsterID::Wolf);
+                    SpawnMonster(LocationID::Clearing,MonsterID::Wolf);
+                    SpawnMonster(LocationID::Crossroads,MonsterID::Bear);
+                    break;
+                case 80 :
+                    locationManager.GetItem(LocationID::Hermit)->quest_marker = false;
+                    locationManager.GetItem(LocationID::Village)->quest_marker = true;
+                    break;
+                case 82:
+                    locationManager.GetItem(LocationID::Village)->quest_marker = false;
+                    locationManager.GetItem(LocationID::Hermit)->quest_marker = true;
+                    break;
+                case 83:
+                    locationManager.GetItem(LocationID::Hermit)->quest_marker = false;
+                    locationManager.GetItem(LocationID::Ravine)->quest_marker = true;
+                    break;
+                case 85:
+                    locationManager.GetItem(LocationID::Ravine)->quest_marker = false;
+                    locationManager.GetItem(LocationID::Village)->quest_marker = true;
+
+                    break;
+                case 90:
+                    locationManager.GetItem(LocationID::Village)->quest_marker = false;
+                    locationManager.GetItem(LocationID::Lair)->quest_marker = true;
+
+                    break;
+                case 100:
+                    locationManager.GetItem(LocationID::Lair)->quest_marker = false;
+                    break;
+
+                    default: break;
+
+            }
             Phase = GamePhases::MOVEMENT;
         }
 
@@ -1829,13 +1611,16 @@ if(itemInUse){
 
             ///has a switch with monster movement types to be expanded upon
             MoveMonsters();
-            SpawnMonster(Farm,Wolf);
 
 
+            if(DisasterCounter%3 == 0) {
+                SpawnMonster(LocationID::Overgrowth, Wolf);
+            }
+            if(DisasterCounter%6 == 0){
+                SpawnMonster(LocationID::Forest, Bear);
+            }
 
-
-
-
+            DisasterCounter++;
             Phase = GamePhases::UPKEEP;
 
         }
@@ -2546,7 +2331,13 @@ if(itemInUse){
                         SDL_Texture *name = it->second.nameTexture;
 
                         renderFromSpritesheet(e->GetMapSlot()->locationRect, icon);
-                        renderText(e->GetMapSlot()->locationRect, name);
+
+                        if (e->quest_marker) {
+                            renderText(e->GetMapSlot()->locationRect, name,35);
+                        }else{
+                            renderText(e->GetMapSlot()->locationRect, name,17);
+                        }
+
                         if(currentCharacter->GetCurrentLocationID() == e->GetLocationID()){
                             renderFromSpritesheet(e->GetMapSlot()->playerRects[2],playerMapIconTexture);
                         }
@@ -2559,9 +2350,6 @@ if(itemInUse){
                         }
 
                     }
-                    if (e->quest_marker) {}
-
-
                     //render connections
                     for (auto c: e->GetActiveConnections()) {
                         SDL_RenderDrawLine(renderer(), e->GetMapSlot()->position.x, e->GetMapSlot()->position.y,
@@ -2581,100 +2369,9 @@ if(itemInUse){
                 SDL_Rect sceneWindow = {0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)};
                 //SDL_RenderFillRect(renderer(),&sceneWindow);
 
-                switch(eTracker.activeEncounter->scenes[eTracker.szene].background)//todo make separate once switch bigger
-                {
-                    case EnvironmentType::DenseForest:
-                    {
-                        renderFromSpritesheet(sceneWindow, denseForestBG);
-                        break;
-                    }
-                    case EnvironmentType::MonasteryPath:
-                    {
-                        renderFromSpritesheet(sceneWindow,monasteryPathBG);
-                        break;
-                    }
-                    case EnvironmentType::Village:
-                    {
-                        renderFromSpritesheet(sceneWindow,village1);
-                        break;
-                    }
-                    case EnvironmentType::Village2:
-                    {
-                        renderFromSpritesheet(sceneWindow,village2);
-                        break;
-                    }
-                    case EnvironmentType::HeartApproach:
-                    {
-                        renderFromSpritesheet(sceneWindow,forestPathToHeartBG);
-                        break;
-                    }
-                    case EnvironmentType::ForestHeart:
-                    {
-                        renderFromSpritesheet(sceneWindow,forestHeartBG);
-                        break;
-                    }case EnvironmentType::ForestClearing:
-                    {
-                        renderFromSpritesheet(sceneWindow,forestClearingBG);
-                        break;
-                    }
-                    case EnvironmentType::HermitLodge:
-                    {
-                        renderFromSpritesheet(sceneWindow,forestHermitLodge);
-                        break;
-                    }
-                    case EnvironmentType::ForestLake:
-                    {
-                        renderFromSpritesheet(sceneWindow,forestLakeBG);
-                        break;
-                    }
-                    case EnvironmentType::HunterCamp:
-                    {
-                        renderFromSpritesheet(sceneWindow,hunterCamp);
-                        break;
-                    }
-                    case EnvironmentType::OakPath:
-                    {
-                        renderFromSpritesheet(sceneWindow,oakPath);
-                        break;
-                    }
-                    case EnvironmentType::WindmillOutskirts:
-                    {
-                        renderFromSpritesheet(sceneWindow,windmillOutskirts);
-                        break;
-                    }
-                    case EnvironmentType::ForestOutskirts:
-                    {
-                        renderFromSpritesheet(sceneWindow,outskirtsPath);
-                        break;
-                    }
-                    case EnvironmentType::MonasteryOutside:
-                        renderFromSpritesheet(sceneWindow,monasteryApproachBG);
-                        break;
-                    case EnvironmentType::MonasteryGate:
-                        renderFromSpritesheet(sceneWindow,monasteryGateBG);
-                        break;
-                    case EnvironmentType::MonasteryInterior:
-                        renderFromSpritesheet(sceneWindow,monasteryInteriorBG);
-                        break;
-                    case EnvironmentType::Ravine:
-                        renderFromSpritesheet(sceneWindow,ravineBG);
-                        break;
-                    case EnvironmentType::SheepTree:
-                        renderFromSpritesheet(sceneWindow,sheep_treeBG);
-                        break;
-                    case EnvironmentType::VillageChurch:
-                        renderFromSpritesheet(sceneWindow,churchBG);
-                        break;
-                    case EnvironmentType::Elsewhere:
-                        renderFromSpritesheet(sceneWindow,elswhereBG);
-                        break;
-
-
-                    default:SDL_RenderFillRect(renderer(),&sceneWindow);
-                }
-
-
-                RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector,eTracker.activeEncounter->scenes[eTracker.szene].background);
+                //contains a big switch, made seperate for readability
+               renderBackground();
+               RenderSceneComposition(eTracker.activeEncounter->scenes[eTracker.szene].compositionVector,eTracker.activeEncounter->scenes[eTracker.szene].background);
 
 
                 //Render Foreground //todo decouple from bg, if needed?
@@ -2934,7 +2631,104 @@ if(itemInUse){
     }
 
 
+void BeasthoodState::renderBackground(){
+    SDL_SetRenderDrawColor(renderer(),0,0,0,0);
+    SDL_Rect sceneWindow = {0,0,static_cast<int>(windowSize.x*EncounterLayout.SceneEnd.x*0.01),static_cast<int>(windowSize.y*EncounterLayout.SceneEnd.y*0.01)};
+    //SDL_RenderFillRect(renderer(),&sceneWindow);
 
+    switch(eTracker.activeEncounter->scenes[eTracker.szene].background)
+    {
+        case EnvironmentType::DenseForest:
+        {
+            renderFromSpritesheet(sceneWindow, denseForestBG);
+            break;
+        }
+        case EnvironmentType::MonasteryPath:
+        {
+            renderFromSpritesheet(sceneWindow,monasteryPathBG);
+            break;
+        }
+        case EnvironmentType::Village:
+        {
+            renderFromSpritesheet(sceneWindow,village1);
+            break;
+        }
+        case EnvironmentType::Village2:
+        {
+            renderFromSpritesheet(sceneWindow,village2);
+            break;
+        }
+        case EnvironmentType::HeartApproach:
+        {
+            renderFromSpritesheet(sceneWindow,forestPathToHeartBG);
+            break;
+        }
+        case EnvironmentType::ForestHeart:
+        {
+            renderFromSpritesheet(sceneWindow,forestHeartBG);
+            break;
+        }case EnvironmentType::ForestClearing:
+        {
+            renderFromSpritesheet(sceneWindow,forestClearingBG);
+            break;
+        }
+        case EnvironmentType::HermitLodge:
+        {
+            renderFromSpritesheet(sceneWindow,forestHermitLodge);
+            break;
+        }
+        case EnvironmentType::ForestLake:
+        {
+            renderFromSpritesheet(sceneWindow,forestLakeBG);
+            break;
+        }
+        case EnvironmentType::HunterCamp:
+        {
+            renderFromSpritesheet(sceneWindow,hunterCamp);
+            break;
+        }
+        case EnvironmentType::OakPath:
+        {
+            renderFromSpritesheet(sceneWindow,oakPath);
+            break;
+        }
+        case EnvironmentType::WindmillOutskirts:
+        {
+            renderFromSpritesheet(sceneWindow,windmillOutskirts);
+            break;
+        }
+        case EnvironmentType::ForestOutskirts:
+        {
+            renderFromSpritesheet(sceneWindow,outskirtsPath);
+            break;
+        }
+        case EnvironmentType::MonasteryOutside:
+            renderFromSpritesheet(sceneWindow,monasteryApproachBG);
+            break;
+        case EnvironmentType::MonasteryGate:
+            renderFromSpritesheet(sceneWindow,monasteryGateBG);
+            break;
+        case EnvironmentType::MonasteryInterior:
+            renderFromSpritesheet(sceneWindow,monasteryInteriorBG);
+            break;
+        case EnvironmentType::Ravine:
+            renderFromSpritesheet(sceneWindow,ravineBG);
+            break;
+        case EnvironmentType::SheepTree:
+            renderFromSpritesheet(sceneWindow,sheep_treeBG);
+            break;
+        case EnvironmentType::VillageChurch:
+            renderFromSpritesheet(sceneWindow,churchBG);
+            break;
+        case EnvironmentType::Elsewhere:
+            renderFromSpritesheet(sceneWindow,elswhereBG);
+            break;
+
+
+        default:SDL_RenderFillRect(renderer(),&sceneWindow);
+    }
+
+}
 
     void BeasthoodState::renderFromSpritesheet(int targetX, int targetY, int targetW, int targetH, SDL_Texture *t,
                                                const Rect *clip, double angle,
@@ -3036,6 +2830,139 @@ if(itemInUse){
         SDL_SetTextureColorMod(t, color.r, color.g, color.b);
         const Rect dst_rect = {values.x, values.y +_blendedTextSize.y, _blendedTextSize.x, _blendedTextSize.y};
         SDL_RenderCopy(renderer(), t, EntireRect, &dst_rect);
+
+    }
+
+    void BeasthoodState::PopulateMap(){
+        /*
+         * 1408x , 1080 y total screenspace minus sidebar
+         * x
+         * 1280 -5*128 1152  6
+         * y
+         * 952 - 1* 128 etc.
+         * */
+
+        // Add Map_Slots for each planned Location
+
+        //bottom row forest
+        map.AddSlot(5, {128*8, 128*3});
+        map.AddSlot(0, {128*6, 128*4});
+        map.AddSlot(1, {128*4, 128*4});
+
+        //top row forest
+        map.AddSlot(4, {128*6, 128*2});
+        map.AddSlot(3, {128*4, 128*2});
+        map.AddSlot(2, {128*2, 128*3});
+
+        //add lower nodes
+        map.AddSlot(6, {128*9, 128*5});
+        map.AddSlot(7, {128*6, 128*6});
+        map.AddSlot(8, {128*4, 128*6});
+
+        map.AddSlot(9, {128*2, 128*6});
+        map.AddSlot(10, {128, 128*5});
+        map.AddSlot(11, {0, 128*4});
+
+        // special locations
+
+        map.AddSlot(12, {128*1, 128*2});
+        map.AddSlot(13, {128*5, 0});
+        map.AddSlot(14, {128*8, 128*1});
+        map.AddSlot(15, {128*9, 0});
+
+
+
+
+        // Add connections
+        int slotFiller = 0;
+
+        map.ConnectSlots(slotFiller, 1);
+        map.ConnectSlots(slotFiller, 3);
+        map.ConnectSlots(slotFiller, 4);
+        map.ConnectSlots(slotFiller, 5);
+
+        slotFiller = 1;
+        map.ConnectSlots(slotFiller, 0);
+        map.ConnectSlots(slotFiller, 2);
+        map.ConnectSlots(slotFiller, 3);
+        map.ConnectSlots(slotFiller, 9);
+
+        slotFiller = 2;
+        map.ConnectSlots(slotFiller, 1);
+        map.ConnectSlots(slotFiller, 3);
+        map.ConnectSlots(slotFiller, 12);
+
+
+        slotFiller = 3;
+        map.ConnectSlots(slotFiller, 0);
+        map.ConnectSlots(slotFiller, 1);
+        map.ConnectSlots(slotFiller, 2);
+        map.ConnectSlots(slotFiller, 4);
+        map.ConnectSlots(slotFiller, 12);
+        map.ConnectSlots(slotFiller, 13);
+
+        slotFiller = 4;
+        map.ConnectSlots(slotFiller, 0);
+        map.ConnectSlots(slotFiller, 3);
+        map.ConnectSlots(slotFiller, 5);
+        map.ConnectSlots(slotFiller, 14);
+
+
+        slotFiller = 5;
+        map.ConnectSlots(slotFiller, 4);
+        map.ConnectSlots(slotFiller, 0);
+        map.ConnectSlots(slotFiller, 6);
+
+        slotFiller = 6;
+        map.ConnectSlots(slotFiller, 5);
+        map.ConnectSlots(slotFiller, 7);
+
+        slotFiller = 7;
+        map.ConnectSlots(slotFiller, 6);
+        map.ConnectSlots(slotFiller, 8);
+
+        slotFiller = 8;
+        map.ConnectSlots(slotFiller, 7);
+        map.ConnectSlots(slotFiller, 9);
+
+        slotFiller = 9;
+        map.ConnectSlots(slotFiller, 8);
+        map.ConnectSlots(slotFiller, 10);
+        map.ConnectSlots(slotFiller, 1);
+
+        slotFiller = 10;
+        map.ConnectSlots(slotFiller, 9);
+        map.ConnectSlots(slotFiller, 11);
+
+        slotFiller = 11;
+        map.ConnectSlots(slotFiller, 10);
+
+        slotFiller = 12;
+        map.ConnectSlots(slotFiller, 2);
+        map.ConnectSlots(slotFiller, 3);
+
+        slotFiller =13 ;
+        map.ConnectSlots(slotFiller, 3);
+
+        slotFiller = 14;
+        map.ConnectSlots(slotFiller, 4);
+        map.ConnectSlots(slotFiller, 15);
+
+        slotFiller = 15;
+        map.ConnectSlots(slotFiller, 14);
+
+        //TODO refactor this URGENTLY
+        // Create and assign locations, and tag them as part of the forest or not
+        ///DO NOT TOUCH THIS. It assigns the MapNode <-> Location using the order of the elements in the enum. WHY DID I DO THIS - Max
+        for (int i = 0; i <= 15; ++i) {
+            locationManager.AddItem(std::move(std::make_unique<Location>(static_cast<LocationID>(i))));
+            map.SetLocation(i, *locationManager.GetItem(static_cast<LocationID>(i)));
+            locationManager.GetItem(static_cast<LocationID>(i))->is_Forest_Location = false;
+            if(i < 6 || i >11 ){
+                locationManager.GetItem(static_cast<LocationID>(i))->is_Forest_Location = true;
+            }
+
+        }
 
     }
 
@@ -3553,7 +3480,7 @@ if(itemInUse){
                 LocationID::UNASSIGNED_LOCATION,
                 MonsterID::Bear,
                 MonsterType::Beast,
-                MovementType::Wandering,
+                MovementType::Circling,
                 4,
                 4,
                 1,
@@ -3586,15 +3513,16 @@ if(itemInUse){
 
         /// TODO add more events
         // locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::Combat_Encounter);
-        locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::SkullDiscovery);
+        AddEncounter(LocationID::Forest,EncounterID::SkullDiscovery);
+        //locationManager.GetItem(LocationID::Forest)->related_events.push_back(EncounterID::SkullDiscovery);
         locationManager.GetItem(LocationID::Monastery)->related_events.push_back(EncounterID::MonasteryMain); //TODO TESTING ENCOUNTERS
-        //locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::Testing_Combat);
+        //locationManager.GetItem(LocationID::Overgrowth)->related_events.push_back(EncounterID::Testing_Combat);
         locationManager.GetItem(LocationID::Village)->related_events.push_back(EncounterID::VillageMain);
-        locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::HunterCamp);
+        locationManager.GetItem(LocationID::HunterCamp)->related_events.push_back(EncounterID::HunterCamp);
         locationManager.GetItem(LocationID::Hermit)->related_events.push_back(EncounterID::HermitMain);
         locationManager.GetItem(LocationID::Clearing)->related_events.push_back(EncounterID::CorpseDiscovery);
        // locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::RavineMain);
-        locationManager.GetItem(LocationID::River)->related_events.push_back(EncounterID::RavineMain);
+        locationManager.GetItem(LocationID::Ravine)->related_events.push_back(EncounterID::RavineMain);
 
     }
 
@@ -4129,7 +4057,7 @@ if(itemInUse){
         for(Quest q: Questlog.activeQuests)
         {
             QuestTitle = textToTexture(q.questName.c_str());
-            renderText(TargetRect,QuestTitle);
+            renderText(TargetRect,QuestTitle,17);
             TargetRect.y +=static_cast<int>(2*0.01*windowSize.x);
             QuestDescription = textToTexture(q.description.c_str());
             renderText(TargetRect,QuestDescription);
@@ -4159,6 +4087,7 @@ if(itemInUse){
         QuestTitle= nullptr;
 
     }
+    /*
 //    void BeasthoodState::RenderHealthbar(float currentHealth)
 //    {
 //        //Render Combat Encounter specifics
@@ -4215,6 +4144,7 @@ if(itemInUse){
 //
 //
 //    }
+     */
     void BeasthoodState::CleanupMonsterTextures() {
         for (auto& pair : monsterIDtoTextureMap) {
             SDL_DestroyTexture(pair.second);
@@ -4317,6 +4247,18 @@ if(itemInUse){
                                     }
                                 }
                             }
+                            break;
+                        case MovementType::Circling:
+                            int nextInCircle;
+                            if(!m.alreadyMoved) {
+                                nextInCircle = locationManager.GetItem(m.location)->GetMapSlot()->id+1;
+                                if(nextInCircle >= 6){nextInCircle = 0;}
+                                targetLocation = map.GetSlotByID(nextInCircle)->location_id;
+                                m.alreadyMoved = true;
+                                MoveMonster(m.location, targetLocation, m);
+                            }
+                            break;
+                        case MovementType::Stationary:
                             break;
                             ///add more as needed. Script the Werwolf movement by using MoveMonster in DISASTER Phase
                         default:break;
@@ -4463,7 +4405,7 @@ if(itemInUse){
 //        enum LocationID;
 
 
-        if (locID == LocationID::UNASSIGNED_LOCATION || eID !=EncounterID::NO_ENCOUNTER_ASSIGNED || eID ==EncounterID::RavineMain) {
+        if (locID == LocationID::UNASSIGNED_LOCATION || eID !=EncounterID::NO_ENCOUNTER_ASSIGNED) {
             switch (eID) {
                 case EncounterID::Testing_Combat:
                     UpdateCombatEncounter(EnvironmentType::HunterCamp);
@@ -4483,11 +4425,53 @@ if(itemInUse){
         }else{
             switch(locID)
             {
+                case LocationID::Forest:
+                    UpdateCombatEncounter(EnvironmentType::DenseForest);
+                    break;
                 case LocationID::Crossroads:
                     UpdateCombatEncounter(EnvironmentType::OakPath);
                     break;
-                case LocationID::Church:
+                case LocationID::Clearing:
+                    UpdateCombatEncounter(EnvironmentType::ForestClearing);
+                    break;
+                case LocationID::Lake:
+                    UpdateCombatEncounter(EnvironmentType::ForestLake);
+                    break;
+                case LocationID::Overgrowth:
+                    UpdateCombatEncounter(EnvironmentType::DenseForest);
+                    break;
+                case LocationID::Grove:
+                    UpdateCombatEncounter(EnvironmentType::ForestClearing);
+                    break;
+                case LocationID::HunterCamp:
+                    UpdateCombatEncounter(EnvironmentType::HunterCamp);
+                    break;
+                case LocationID::Windmill:
+                    UpdateCombatEncounter(EnvironmentType::WindmillOutskirts);
+                    break;
+                case LocationID::Village:
+                    UpdateCombatEncounter(EnvironmentType::VillageOutskirts);
+                    break;
+                case LocationID::ForestOutskirts:
+                    UpdateCombatEncounter(EnvironmentType::ForestOutskirts);
+                    break;
+                case LocationID::MonasteryPath:
+                    UpdateCombatEncounter(EnvironmentType::MonasteryPath);
+                    break;
+                case LocationID::Monastery:
                     UpdateCombatEncounter(EnvironmentType::MonasteryGate);
+                    break;
+                case LocationID::Hermit:
+                    UpdateCombatEncounter(EnvironmentType::HermitLodge);
+                    break;
+                case LocationID::Ravine:
+                    UpdateCombatEncounter(EnvironmentType::Ravine);
+                    break;
+                case LocationID::DeepForest:
+                    UpdateCombatEncounter(EnvironmentType::HeartApproach);
+                    break;
+                case LocationID::Lair:
+                    UpdateCombatEncounter(EnvironmentType::ForestHeart);
                     break;
                 default:
                     UpdateCombatEncounter();
@@ -4496,7 +4480,151 @@ if(itemInUse){
         }
     }
 
+    void BeasthoodState::SetupCharacter(){
+        currentCharacter = new Character(*blueprintManager.GetBlueprintByName("Landsknecht"));
+        currentCharacter->RefillFatePoints();
 
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Sword));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::PrayerBook));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::Talisman));
+        //currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletSilver));
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::BulletLead));
+        currentCharacter->leadBulletCount++;
+        currentCharacter->AddToInventory(itemManager.GetItem(ItemID::GUN));
+
+        inventoryScreen = InventoryScreen(currentCharacter);
+
+        // get character into SKE
+        ske.changeCharacter(currentCharacter);
+
+
+        currentCharacter->SetCurrentLocation(LocationID::Village);
+        //currentCharacter->EquipItem(currentCharacter->GetInventory().back());
+        currentCharacter->UpdateCurrentStats();
+
+        encounterManager.iManager=&itemManager;//Was missing ctd by add item outcome
+
+    }
+    void BeasthoodState::PopulateItemManager(){
+
+        // Create and add items
+        auto sword = std::make_unique<Item>(ItemID::Halberd, ItemType::Melee, "Halberd", 2);
+        sword->SetStats({0, 0, 5, 0, 0, 0});
+        itemManager.AddItem(std::move(sword));
+
+        auto halberdMaster = std::make_unique<Item>(ItemID::HalberdMaster, ItemType::Melee, "Master-crafted Halberd", 2);
+        halberdMaster->SetStats({1, 0, 7, 1, 0, 0});
+        itemManager.AddItem(std::move(halberdMaster));
+
+
+        auto shortsword = std::make_unique<Item>(ItemID::Sword, ItemType::Melee, "One-handed Sword", 1);
+        shortsword->SetStats({0, 0, 2, 0, 0, 0});
+
+        itemManager.AddItem(std::move(shortsword));
+
+        auto torch = std::make_unique<Item>(ItemID::Torch, ItemType::Unique,"Not so Common Torch",1);
+        torch->SetStats({0, 0, 1, 1, 0, 5});
+        itemManager.AddItem(std::move(torch));
+
+        auto gun = std::make_unique<Item>(ItemID::GUN, ItemType::Unique,"Unloaded Gun",1);
+        gun->SetStats({0, 0, 1, 0, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(gun));
+
+        auto gunLoadedSilver = std::make_unique<Item>(ItemID::LoadedGunSilver, ItemType::Unique,"Gun - Silver Bullet",1);
+        gunLoadedSilver->SetStats({0, 0, 1, 2, 3, 3}); // Attack 1
+        itemManager.AddItem(std::move(gunLoadedSilver));
+
+        auto gunLoadedLead = std::make_unique<Item>(ItemID::LoadedGunLead, ItemType::Unique,"Gun - Lead Bullet",1);
+        gunLoadedLead->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(gunLoadedLead));
+
+
+        auto honorius = std::make_unique<Item>(ItemID::Honorius, ItemType::Unique,"Grimoire of Honorius",1);
+        honorius->SetStats({0, 0, 1, 1, 0, 0}); // Attack 1
+        itemManager.AddItem(std::move(honorius));
+
+
+        auto prayerBook = std::make_unique<Item>(ItemID::PrayerBook, ItemType::Unique,"Prayer Book of St. Lycon",1);
+        prayerBook->SetStats({0, 0, 1, 2, 2, 6});
+        itemManager.AddItem(std::move(prayerBook));
+
+        auto talisman = std::make_unique<Item>(ItemID::Talisman, ItemType::Unique,"Lead-Sigil of Pan",1);
+        talisman->SetStats({2, 5, 2, 0, 2, 0});
+        itemManager.AddItem(std::move(talisman));
+
+        auto ritual_skull = std::make_unique<Item>(ItemID::RitualSkullCursed, ItemType::Unique,"Ritual Skull",0);
+        ritual_skull->SetStats({0, 0, 0, 0, 1, -2});
+        itemManager.AddItem(std::move(ritual_skull));
+
+        auto ritual_skull_occult = std::make_unique<Item>(ItemID::RitualSkullBound, ItemType::Unique,"Suborned Ritual Skull",0);
+        ritual_skull_occult->SetStats({2, 0, 2, 2, 2, 1});
+        itemManager.AddItem(std::move(ritual_skull_occult));
+
+        auto ritual_skull_faith = std::make_unique<Item>(ItemID::RitualSkullFaith, ItemType::Unique,"Quieted Ritual Skull",0);
+        ritual_skull_faith->SetStats({0, 0, 0, 0, 1, 0});
+        itemManager.AddItem(std::move(ritual_skull_faith));
+
+        auto relic = std::make_unique<Item>(ItemID::Relic, ItemType::Unique,"Relic",0);
+        relic->SetStats({0, 0, 0, 2, 1, 7});
+        itemManager.AddItem(std::move(relic));
+
+        auto bullet_silver = std::make_unique<Item>(ItemID::BulletSilver,ItemType::Magic,"Silver Bullet",0);
+        bullet_silver->isBullet = true;
+        bullet_silver->SetStats({0, 0, 0, 0, 2, 2});
+        itemManager.AddItem(std::move(bullet_silver));
+        auto bullet_lead = std::make_unique<Item>(ItemID::BulletLead,ItemType::Ranged,"Lead Bullet",0);
+        bullet_lead->isBullet = true;
+        bullet_lead->SetStats({0, 0, 0, 0, 0, 0});
+        itemManager.AddItem(std::move(bullet_lead));
+
+    }
+
+void BeasthoodState::TestManyThings(){
+    // Verify connections and location setup
+    for (int i = 0; i <= 15; ++i) {
+        Map_Slot *slot = map.GetSlotByID(i);
+        if (slot) {
+            std::cout << "Map_Slot ID: " << slot->id << ", Connections: ";
+            std::cout.flush();
+
+            for (std::pair<int, bool> connected_id: slot->connections) {
+                std::cout << connected_id.first << " ";
+                std::cout.flush();
+
+            }
+            std::cout << "\n";
+
+            map.SetConnectionStatus(2, 0, true); //todo test
+
+            // Location* loc = &locations[i - 1];
+            std::cout << "  Location: " << locationManager.GetItem(static_cast<LocationID>(i))->name
+                      << ", Active Connections: ";
+            std::cout.flush();
+
+
+            if (locationManager.GetItem(static_cast<LocationID>(i))->GetMapSlot()) {
+                for (int connected_id: locationManager.GetItem(
+                        static_cast<LocationID>(i))->GetActiveConnections()) {
+                    std::cout << connected_id << " ";
+                    std::cout.flush();
+
+                }
+            }
+            std::cout << "\n";
+            std::cout.flush();
+
+        }
+    }
+    auto landsknechtBlueprint = blueprintManager.GetBlueprintByName("Landsknecht");
+    Character Landsknecht(*landsknechtBlueprint);
+    std::cout << "Item: " << Landsknecht.GetInventory().back()->GetName();
+    std::cout << "\n";
+    std::cout.flush();
+    Landsknecht.EquipItem(Landsknecht.GetInventory().back());
+    Landsknecht.UpdateCurrentStats();
+    std::cout << "Stats: " << Landsknecht.GetCurrentStats().GetStat(FIGHT);
+    std::cout.flush();
+    }
 
 
 }

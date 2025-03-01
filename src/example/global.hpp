@@ -112,20 +112,25 @@ enum class ItemID {
 
 enum class ItemType {Melee,Ranged,Magic,Unique};
 
+///DO NOT TOUCH THIS. I assign the MapNode <-> Location using the order of the elements in the enum during Init().
+/// ONLY ADD NEW LocationIDs AT THE END OF THE ENUM - Max
 enum class LocationID {
     Forest,
-    Church,
-    River,
-    Smith,
-    Windmill,
     Crossroads,
-    Hermit,
-    Monastery,
-    Farm,
     Clearing,
-    Village,
-    Thicket,
+    Lake,
+    Overgrowth,
+    Grove,
     HunterCamp,
+    Windmill,
+    Village,
+    ForestOutskirts,
+    MonasteryPath,
+    Monastery,
+    Hermit,
+    Ravine,
+    DeepForest,
+    Lair,
     UNASSIGNED_LOCATION
 };
 
@@ -167,6 +172,8 @@ enum class MonsterType {
 enum class MovementType {
     Stalking,
     Wandering,
+    Circling,
+    Stationary,
     Flying,
     // Add other movement types here
 };
@@ -215,4 +222,33 @@ struct Stats {
     void SetStat(StatNames stat_name, int value) {
         stats[stat_name] = value;
     }
+
+    enum class NamedColorIndex : u8 {
+        Transparent = 0,// In reality this is pink or cyan, but when used as index, the framework will treat it as transparent
+        Black = 1,      // Not totally black
+        Grey10,         // Charcoal,
+        Grey20,         // MidnightBlue,
+        Grey30,         // SteelBlue,
+        Grey40,         // SlateGray,
+        Grey50,         // SlateBlue,
+        Grey62,         // BlueGray,       // BaliHai
+        Grey75,         // LightSteelBlue, // Casper
+        Grey88,         // LightSlateGray, // LinkWater
+        White = 10,
+        Red25, RedWine = Red25,
+        Red50,          // Crimson, Siren
+        Red75,          // Monza
+        Red,            // Scarlet, Vermilion
+        OrangeRed,      // ? BlazeOrange
+        Orange,         // OrangePeel, Goldenrod
+        Gold,           // Gold
+        Yellow,
+        LimeYellow,
+        Lime, LimeGreen = Lime,
+        MalachiteGreen, // Harlequin
+        Green,
+        ForestGreen,
+        DarkForest,
+        Teal = 37,
+    };
 };

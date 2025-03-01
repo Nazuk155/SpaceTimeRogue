@@ -30,8 +30,18 @@ void Map::AddSlot(int id, SDL_Point position) {
 
 // Connects two slots
 void Map::ConnectSlots(int slot1, int slot2, bool is_active) {
-    slots[slot1 ].AddConnection(slot2, is_active);
-    slots[slot2 ].AddConnection(slot1, is_active);
+    // Find the slot with the given ID in the slots vector
+    auto it = std::find_if(slots.begin(), slots.end(), [slot1](const Map_Slot& slot) {
+        return slot.id == slot1;
+    });
+
+    // If found, add the connection
+    if (it != slots.end()) {
+        it->AddConnection(slot2, is_active);
+    } else {
+        std::cerr << "Error: Slot " << slot1 << " not found in map slots!" << std::endl;
+    }
+   // slots[slot2 ].AddConnection(slot1, is_active);
 }
 
 // Sets the connection status between two slots
@@ -42,11 +52,19 @@ void Map::SetConnectionStatus(int slot1, int slot2, bool is_active) {
 
 // Gets a slot by its ID
 Map_Slot* Map::GetSlotByID(int id) {
-    if (id >= 0 && static_cast<size_t>(id) <= slots.size()) {
-        return &slots[id];
+    auto it = std::find_if(slots.begin(), slots.end(), [id](const Map_Slot& slot) {
+        return slot.id == id;
+    });
+
+    // If found, return a pointer to the slot
+    if (it != slots.end()) {
+        return &(*it);
     }
+
+    // If not found, return nullptr
     return nullptr;
 }
+
 
 // Randomizes forest locations
 void Map::RandomizeForestLocations(const std::vector<int>& forest_slot_ids, const std::vector<int>& location_ids) {

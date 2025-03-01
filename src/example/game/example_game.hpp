@@ -733,6 +733,16 @@ namespace JanSordid::SDL_Example {
         void Update_and_ChangeCombatBackground(EncounterID eID = EncounterID::NO_ENCOUNTER_ASSIGNED,
                                                EnvironmentType envType = EnvironmentType::DenseForest,
                                                LocationID locID = LocationID::UNASSIGNED_LOCATION);
+
+        void SetupCharacter();
+
+        void PopulateItemManager();
+
+        void TestManyThings();
+
+        void PopulateMap();
+
+        void renderBackground();
     };
 
 }
