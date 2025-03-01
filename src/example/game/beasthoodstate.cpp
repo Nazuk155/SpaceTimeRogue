@@ -227,7 +227,7 @@ namespace JanSordid::SDL_Example {
         monsterIDtoTextureMap[MonsterID::Wolf] = loadFromFile(enemyWolfSpritePath);
         monsterIDtoTextureMap[MonsterID::Werewolf] = loadFromFile(enemyWereWolfMainSpritePath);
         monsterIDtoTextureMap[MonsterID::Bear] = loadFromFile(enemyBearSpritePath);
-
+        monsterIDtoTextureMap[MonsterID::Skeleton] = loadFromFile(enemySkeletonSpearSpriteIMGPath);
 
         //map MonsterID to corresponding MAP ICON texture
         // monsterIDtoIconMap[MonsterID::Wolf] = loadFromFile(enemyWolfIconPath);
@@ -383,7 +383,7 @@ namespace JanSordid::SDL_Example {
         locationTextureMap[LocationID::DeepForest].nameTexture = textToTexture("DeepForest");
 
         locationTextureMap[LocationID::UNASSIGNED_LOCATION].iconTexture = loadFromFile(forestLocationIconPath);
-        locationTextureMap[LocationID::UNASSIGNED_LOCATION].nameTexture = textToTexture("UNASSIGNED_MONSTERID");
+        locationTextureMap[LocationID::UNASSIGNED_LOCATION].nameTexture = textToTexture("UNASSIGNED_ID");
 
 
 
@@ -1164,6 +1164,9 @@ if(itemInUse){
             //main quest
             switch(Questlog.getQuestStage(1)){
                 case 0:
+                    locationManager.GetItem(LocationID::Village)->quest_marker = true;
+                    break;
+                case 5:
                     locationManager.GetItem(LocationID::Village)->quest_marker = true;
                     break;
                 case 10:
