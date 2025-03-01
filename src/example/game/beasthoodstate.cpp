@@ -67,7 +67,7 @@ namespace JanSordid::SDL_Example {
         string mapPathLayerPath =  BasePath "/src/example/game/Ressources/Image_assets/map_icons/map_path_layer.png";
 
         string forestLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/token_1.png";
-        string playerMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/Landsknecht.png";
+        string playerMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/landsknecht.png";
 
         string playerMainSpritePath = BasePath "/src/example/game/Ressources/Image_assets/lk_sprite.png";
 
