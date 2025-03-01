@@ -458,6 +458,7 @@ namespace JanSordid::SDL_Example {
         //Map Layers
 
         Texture * mapBaseLayer = nullptr;
+        Texture* mapPathLayer = nullptr;
 
 
 

@@ -64,6 +64,7 @@ namespace JanSordid::SDL_Example {
         //Paths for Image Assets
 
         string mapBasePath =  BasePath "/src/example/game/Ressources/Image_assets/map_icons/map_base_layer.png";
+        string mapPathLayerPath =  BasePath "/src/example/game/Ressources/Image_assets/map_icons/map_path_layer.png";
 
         string forestLocationIconPath = BasePath "/src/example/game/Ressources/Image_assets/token_1.png";
         string playerMapIconPath = BasePath "/src/example/game/Ressources/Image_assets/Landsknecht.jpg";
@@ -389,6 +390,7 @@ namespace JanSordid::SDL_Example {
         //Load map
 
         mapBaseLayer= loadFromFile(mapBasePath);
+        mapPathLayer= loadFromFile(mapPathLayerPath);
        // font = TTF_OpenFont(BasePath "asset/font/MonkeyIsland-1991-refined.ttf", _game.scalingFactor() * 16);
         TTF_SetFontHinting(font, TTF_HINTING_NONE);
 
@@ -531,6 +533,7 @@ namespace JanSordid::SDL_Example {
         }
 
         SDL_DestroyTexture(mapBaseLayer);
+        SDL_DestroyTexture(mapPathLayer);
 
         forestLocationIconTexture = nullptr;
         playerMapIconTexture = nullptr;
@@ -606,6 +609,7 @@ namespace JanSordid::SDL_Example {
 
         emptyItem= nullptr;
         mapBaseLayer= nullptr;
+        mapPathLayer= nullptr;
 
 
         Base::Destroy();
@@ -2381,9 +2385,11 @@ if(itemInUse){
                                 static_cast<int>(SidebarLayout.SidebarStart.x*windowSize.x*0.01),
                                 windowSize.y};
             renderFromSpritesheet(MapDims, mapBaseLayer);
+            renderFromSpritesheet(MapDims,mapPathLayer);
+
 
             //set color for connected path lines
-            SDL_SetRenderDrawColor(renderer(), 0x00, 0x7F, 0x00, 0x00);
+           // SDL_SetRenderDrawColor(renderer(), 0x00, 0x7F, 0x00, 0x00);
 
             for (const auto &e: locationManager.GetAllItems()) {
                 //render the locations
@@ -2419,8 +2425,12 @@ if(itemInUse){
                     }
                     //render connections
                     for (auto c: e->GetActiveConnections()) {
-                        SDL_RenderDrawLine(renderer(), e->GetMapSlot()->position.x, e->GetMapSlot()->position.y,
-                                           map.GetSlotByID(c)->position.x, map.GetSlotByID(c)->position.y);
+//                        SDL_RenderDrawLine(renderer(), e->GetMapSlot()->position.x, e->GetMapSlot()->position.y,
+//                                           map.GetSlotByID(c)->position.x, map.GetSlotByID(c)->position.y);
+
+//TODO separate paths
+
+
                     }
                 }
             }
@@ -3519,8 +3529,8 @@ void BeasthoodState::renderBackground(){
                      MonsterID::Werewolf,
                      MonsterType::Beast,
                      MovementType::Wandering,
-                     10,
-                     10,
+                     100,
+                     100,
                      4,
                      -3,
                      2,
