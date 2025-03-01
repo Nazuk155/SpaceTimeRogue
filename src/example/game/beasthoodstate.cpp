@@ -3501,14 +3501,15 @@ void BeasthoodState::renderBackground(){
         encounterManager.addEncounter(FirstEncounter.id,FirstEncounter);
         encounterManager.addEncounter(monasteryMain.id,monasteryMain);
         encounterManager.addEncounter(testingCombat.id,testingCombat);
-
         encounterManager.addEncounter(VillageMain.id,VillageMain);
+
         encounterManager.addEncounter(EncounterID::HermitMain,HermitMain);
         encounterManager.addEncounter(EncounterID::HunterCamp,HunterCamp);
         encounterManager.addEncounter(EncounterID::SkullDiscovery,SkullDiscovery);
         encounterManager.addEncounter(EncounterID::CorpseDiscovery,CorpseDiscovery);
         encounterManager.addEncounter(EncounterID::RavineMain,RavineMain);
 
+        encounterManager.addEncounter(ForestHeartFinal.id,ForestHeartFinal);
         //  encounterManager.addEncounter(CombatEncounter.id,CombatEncounter);
     }
 
@@ -3590,6 +3591,7 @@ void BeasthoodState::renderBackground(){
         locationManager.GetItem(LocationID::Clearing)->related_events.push_back(EncounterID::CorpseDiscovery);
        // locationManager.GetItem(LocationID::Smith)->related_events.push_back(EncounterID::RavineMain);
         locationManager.GetItem(LocationID::Ravine)->related_events.push_back(EncounterID::RavineMain);
+        locationManager.GetItem(LocationID::Lair)->related_events.push_back(EncounterID::ForestHeartFinal);
 
     }
 
