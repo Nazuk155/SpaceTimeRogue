@@ -279,6 +279,9 @@ Vector<ExecuteFlags> iterateOverOutcomes(const Vector<ItemID>& rewards, const st
 
                 results.push_back(ExecuteFlags::RemoveEncounter);
                 break;
+            case ExecuteFlags::RecoverFate:
+                results.push_back(ExecuteFlags::RecoverFate);
+                break;
         }
     }
         return results;

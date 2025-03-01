@@ -28,7 +28,8 @@ enum class ExecuteFlags {
     RemoveEncounter,
     GainBulletLead,
     UnloadSilverBullet,
-    UnloadLeadBullet //todo one unload function may be enough? the requirement splits the outcmes in the scene
+    UnloadLeadBullet, //todo one unload function may be enough? the requirement splits the outcmes in the scene
+    RecoverFate
 };
 
 enum class GamePhases

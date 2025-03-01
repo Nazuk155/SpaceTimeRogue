@@ -564,6 +564,7 @@ namespace JanSordid::SDL_Example {
                      combatDamage = 0;
                      horrorRating = 0;
                      combatRating = 0;
+                     monsters.clear();
                 }
 
             }
@@ -700,7 +701,7 @@ namespace JanSordid::SDL_Example {
 
         void RenderJournal();
 
-        SceneCompositionEntities MatchMonsterIDtoSceneComp(MonsterID target);
+        static SceneCompositionEntities MatchMonsterIDtoSceneComp(MonsterID target);
 
         void ResolveItemUsage(ItemID id);
 

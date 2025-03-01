@@ -1114,6 +1114,21 @@ if(itemInUse){
 
             movementPoints = currentCharacter->GetCurrentStats().GetStat(SPEED);
             cTracker.Reset();
+            //skull quest
+            switch(Questlog.getQuestStage(9)){
+                case 0:
+                    case 5:
+                        case 10:
+                    locationManager.GetItem(LocationID::Monastery)->quest_marker = true;
+                    break;
+                case 100:
+                    locationManager.GetItem(LocationID::Monastery)->quest_marker = false;
+                    break;
+                default:
+                    break;
+
+            }
+            //main quest
             switch(Questlog.getQuestStage(1)){
                 case 0:
                     locationManager.GetItem(LocationID::Village)->quest_marker = true;
@@ -1141,10 +1156,20 @@ if(itemInUse){
                     }
                     break;
                 case 50:
+                    for(auto &e : map.slots){
+                        if(locationManager.GetItem(e.location_id)->is_Forest_Location){
+                            locationManager.GetItem(e.location_id)->quest_marker = false;
+                        }
+                    }
                     locationManager.GetItem(LocationID::Village)->quest_marker = false;
                     locationManager.GetItem(LocationID::Monastery)->quest_marker = true;
                     break;
                 case 60:
+                    for(auto &e : map.slots){
+                        if(locationManager.GetItem(e.location_id)->is_Forest_Location){
+                            locationManager.GetItem(e.location_id)->quest_marker = false;
+                        }
+                    }
                     locationManager.GetItem(LocationID::Monastery)->quest_marker = false;
                     locationManager.GetItem(LocationID::Hermit)->quest_marker = true;
                     SpawnMonster(LocationID::Lake,MonsterID::Wolf);
@@ -1546,6 +1571,9 @@ if(itemInUse){
                     case ExecuteFlags::LoseItem:
                         inventoryScreen.RebuildInventory();
                         break;
+                    case ExecuteFlags::RecoverFate:
+                        currentCharacter->RefillFatePoints();
+                        break;
 
                     default:
                         eTracker.exFlag.clear();
@@ -1862,10 +1890,11 @@ if(itemInUse){
                     targetRect.h = static_cast<int>(SpriteData.ScalingValueGarouY*windowSize.y*perspectiveFactor);
                     //fmt::println("Garou Y: {} = {} * {} * {}", SpriteData.ScalingValueGarouY*windowSize.y,SpriteData.Garou_IMG.y,SpriteData.ScalingValueGarouY,windowSize.y);
                     ///dumb fix to display multiple background enemies without errors popping up in the end of combat - Max
-                    if(eTracker.szene != 4) {
+                    if(!currentEncounterIsOnlyCombat) {
                         renderFromSpritesheet(targetRect, errorIMG);
                     }
                     fmt::println("Scene Element not yet implemented");
+                    break;
             }
 
         }
@@ -3535,12 +3564,12 @@ void BeasthoodState::renderBackground(){
         temp.push_back(itemManager.GetItem(ItemID::Halberd));
         blueprintManager.AddBlueprint(std::make_shared<CharacterBlueprint>(
                 "Landsknecht",
-                8, 6,
+                12, 8,
                 Stats(3, 2, 4, 3, 0, 1),
                 Stats(5, 4, 6, 4, 3, 3),
                 2,
                 abilityManager.GetAbility(AbilityID::ReduceStaminaLoss),
-                "Gain a fate point after defeating a boss",
+                "Gain a fate point after resting",
                 temp
         ));
 
@@ -3654,6 +3683,7 @@ void BeasthoodState::renderBackground(){
                 break;
             default:
                 result = SceneCompositionEntities::PLACEHOLDER;
+                break;
 
                 //add more as needed
         }
@@ -3668,8 +3698,9 @@ void BeasthoodState::renderBackground(){
 
         //matches the monster ID to the correspondig SCE and gets the correct texture this way
         currentEnemy = MatchMonsterIDtoSceneComp(cTracker.monID);
-        if(cTracker.monsters.size() >= 2){additionalEnemy1 = MatchMonsterIDtoSceneComp(cTracker.monsters[1].id);}
-        if(cTracker.monsters.size() >= 3){additionalEnemy2 = MatchMonsterIDtoSceneComp(cTracker.monsters[2].id);}
+        //integer 0 and 1 are the additional monsters as we look at the back monster with monID as the first one
+        if(cTracker.monsters.size() >= 2){additionalEnemy1 = MatchMonsterIDtoSceneComp(cTracker.monsters[0].id);}
+        if(cTracker.monsters.size() >= 3){additionalEnemy2 = MatchMonsterIDtoSceneComp(cTracker.monsters[1].id);}
 
         Encounter CombatEncounter{
                 EncounterID::Combat_Encounter,
@@ -3679,6 +3710,19 @@ void BeasthoodState::renderBackground(){
                                 "You are confronted by a Monster. Its presence chills you to the bone. Do you try to evade it or stand your ground?",
                                 background,
                                 {
+
+                                        {
+                                                "Face the monster head-on. (FIGHT check)",
+                                                false,
+                                                StatNames::FIGHT,
+                                                0,
+                                                {},
+                                                {},
+                                                1,
+                                                1,
+                                                {}, // rewardItemIDs
+                                                {}  // failureItemIDs
+                                        },
                                         {
                                                 "Evade the monster (SNEAK)" ,
                                                 true,
@@ -3688,18 +3732,6 @@ void BeasthoodState::renderBackground(){
                                                 {},
                                                 5,
                                                 7,
-                                                {}, // rewardItemIDs
-                                                {}  // failureItemIDs
-                                        },
-                                        {
-                                                "Face the monster head-on. (FIGHT)",
-                                                false,
-                                                StatNames::FIGHT,
-                                                0,
-                                                {},
-                                                {},
-                                                1,
-                                                1,
                                                 {}, // rewardItemIDs
                                                 {}  // failureItemIDs
                                         }
@@ -3716,7 +3748,7 @@ void BeasthoodState::renderBackground(){
                                 {
 
                                         {
-                                                "Make a Willpower check",
+                                                "Steel your mind (WILL check)",
                                                 true,
                                                 StatNames::WILLPOWER,
                                                 1,
@@ -3739,7 +3771,7 @@ void BeasthoodState::renderBackground(){
                                 {
 
                                         {
-                                                "Make a Fight check",
+                                                "Strike the beast (FIGHT check)",
                                                 true,
                                                 StatNames::FIGHT,
                                                 cTracker.hp,
@@ -3751,7 +3783,7 @@ void BeasthoodState::renderBackground(){
                                                 {}  // failureItemIDs
                                         },
                                         {
-                                                "Shoot that sucker.",
+                                                "Shoot that sucker.[Fire bullet] ",
                                                 false,
                                                 StatNames::FIGHT,
                                                 cTracker.toughness,
@@ -3771,12 +3803,12 @@ void BeasthoodState::renderBackground(){
                                 }
                         },
                         {
-                                "<failed check> Having failed your attempt the Monster takes advantage and strikes you with brutal ferocity.",
+                                "Having failed your attempt the Monster takes advantage and strikes you with brutal ferocity.",
                                 background,
                                 {
 
                                         {
-                                                "Continue fighting (Retry Combat Check)",
+                                                "Continue your assault (FIGHT)",
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
@@ -3788,7 +3820,7 @@ void BeasthoodState::renderBackground(){
                                                 {}  // failureItemIDs
                                         },
                                         {
-                                                "Attempt to Escape (SNEAK)",
+                                                "Attempt to Escape (SNEAK check)",
                                                 true,
                                                 StatNames::SNEAK,
                                                 cTracker.awareness,
@@ -3811,7 +3843,7 @@ void BeasthoodState::renderBackground(){
                                 {
 
                                         {
-                                                "Move on. (If additional Monsters lurk here you must fight or dodge them too)",
+                                                "Move on. (If additional Monsters lurk here you must fight or dodge them as well)",
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
@@ -3835,7 +3867,7 @@ void BeasthoodState::renderBackground(){
                                 {
 
                                         {
-                                                "Move on.",
+                                                "Continue",
                                                 false,
                                                 StatNames::NONE,
                                                 0,

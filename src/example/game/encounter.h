@@ -347,11 +347,11 @@ inline Encounter testingCombat
                                 "The monks are adept keepers of natural magic. Your wounds are cleaned and treated.",
                                 EnvironmentType::MonasteryInterior,
                                 {
-                                        {"The poultices do their work. It is time to move on. [+4 Stamina]",
+                                        {"The poultices do their work. It is time to move on. <Fate restored>[+6 Stamina]",
                                          false,
                                          StatNames::FAITH,
                                          0,
-                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::Heal, 4}},
+                                         {{ExecuteFlags::RecoverFate, 1}, {ExecuteFlags::Heal, 6}},
                                          {},
                                          255,
                                          255,
@@ -405,11 +405,11 @@ inline Encounter testingCombat
                                 "You spend some time in the monastery. The nightmares and exhaustion fade.",
                                 EnvironmentType::MonasteryInterior,
                                 {
-                                        {"It is time to move on. [+1 Stamina +3 San]",
+                                        {"It is time to move on. <Fate recovered>[+2 Stamina +4 San]",
                                          false,
                                          StatNames::FAITH,
                                          0,
-                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 3}},
+                                         {{ExecuteFlags::Heal, 2},{ExecuteFlags::RecoverFate, 1}, {ExecuteFlags::RegainSan, 4}},
                                          {},
                                          255,
                                          255,
@@ -429,11 +429,11 @@ inline Encounter testingCombat
                                 "You spend time in deep prayer. Your soul recovers from its ordeals.",
                                 EnvironmentType::MonasteryInterior,
                                 {
-                                        {"It is time to move on. [+1 Stamina +6 San]",
+                                        {"It is time to move on. <Fate recovered>[+1 Stamina +6 San]",
                                          false,
                                          StatNames::FAITH,
                                          0,
-                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 6}},
+                                         {{ExecuteFlags::RecoverFate, 1},{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 6}},
                                          {},
                                          255,
                                          255,
@@ -543,7 +543,7 @@ inline Encounter monasteryMain
                                    ,
                                    {
 
-                                       "I need your help, I found signs of a great evil in the forest. [Give short explanation] ",
+                                       "I need your help, I found signs of a great evil in the forest. [Give short explanation] [Advances MainQuest] ",
                                                false,
                                                StatNames::FIGHT,
                                                0,
@@ -638,7 +638,7 @@ inline Encounter monasteryMain
                                         },
                                         {
 
-                                                "I need your help, I found signs of a great evil in the forest. [Give short explanation] ",
+                                                "I need your help, I found signs of a great evil in the forest. [Give short explanation] [Advances MainQuest]",
                                                 false,
                                                 StatNames::FIGHT,
                                                 0,
@@ -687,11 +687,11 @@ inline Encounter monasteryMain
                                 "The monks are adept keepers of natural magic. Your wounds are cleaned and treated.",
                                 EnvironmentType::MonasteryInterior,
                                 {
-                                        {"The poultices do their work. It is time to move on. [+4 Stamina]",
+                                        {"The poultices do their work. It is time to move on. <Fate refilled> [+4 Stamina]",
                                          false,
                                          StatNames::FAITH,
                                          0,
-                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::Heal, 4}},
+                                         {{ExecuteFlags::RecoverFate, 1},{ExecuteFlags::Heal, 1}, {ExecuteFlags::Heal, 4}},
                                          {},
                                          255,
                                          255,
@@ -745,11 +745,11 @@ inline Encounter monasteryMain
                                 "You spend some time in the monastery. The nightmares and exhaustion fade.",
                                 EnvironmentType::MonasteryInterior,
                                 {
-                                        {"It is time to move on. [+1 Stamina +3 San]",
+                                        {"It is time to move on. <Fate refilled>[+1 Stamina +3 San]",
                                          false,
                                          StatNames::FAITH,
                                          0,
-                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 3}},
+                                         {{ExecuteFlags::RecoverFate, 1},{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 3}},
                                          {},
                                          255,
                                          255,
@@ -769,11 +769,11 @@ inline Encounter monasteryMain
                                 "You spend time in deep prayer. Your soul recovers from its ordeals.",
                                 EnvironmentType::MonasteryInterior,
                                 {
-                                        {"It is time to move on. [+1 Stamina +6 San]",
+                                        {"It is time to move on. <Fate refilled>[+1 Stamina +6 San]",
                                          false,
                                          StatNames::FAITH,
                                          0,
-                                         {{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 6}},
+                                         {{ExecuteFlags::RecoverFate, 1},{ExecuteFlags::Heal, 1}, {ExecuteFlags::RegainSan, 6}},
                                          {},
                                          255,
                                          255,
@@ -1177,6 +1177,7 @@ inline Encounter IntroEncounter
 
         };
 
+///i added {RequirementFlags::notOnStage,1080} and 1085 to the employer dialogue as this is the most likely step to accidentally break the quest - Max
 //Main encounter fot village, handles quest progress, gun acquisition and church
 inline Encounter VillageMain
         {
@@ -1197,7 +1198,7 @@ inline Encounter VillageMain
                                 4, 255, //TODO
                                 {},
                                 {},
-                                {{RequirementFlags::hasQuestOnStage,1000}}, //
+                                {{RequirementFlags::hasQuestOnStage,1000},{RequirementFlags::notOnStage,1080},{RequirementFlags::notOnStage,1085}}, //
                                 true,
 
 
@@ -1212,7 +1213,7 @@ inline Encounter VillageMain
                                 1, 255,
                                 {},
                                 {},
-                                {{RequirementFlags::hasQuest,1},{RequirementFlags::notOnStage,1000}}, //
+                                {{RequirementFlags::hasQuest,1},{RequirementFlags::notOnStage,1000},{RequirementFlags::notOnStage,1080}}, //
                                 true,
 
 
@@ -1249,7 +1250,7 @@ inline Encounter VillageMain
                                 true,
                             },
                         {
-                                "Leave",
+                                "Leave the Village [EXIT LOCATION]",
                                 false,
                                 StatNames::OCCULT,
                                 0,
@@ -1285,7 +1286,7 @@ inline Encounter VillageMain
                                     3, 255,
                                     {},
                                     {},
-                                    {{RequirementFlags::hasQuest,9},{RequirementFlags::notOnQuest,11}}, //If skull no corpse
+                                    {{RequirementFlags::notOnStage,1080},{RequirementFlags::hasQuest,9},{RequirementFlags::notOnQuest,11}}, //If skull no corpse
                                     true,
                             },
                             {
@@ -1299,7 +1300,7 @@ inline Encounter VillageMain
                                     3, 255,
                                     {},
                                     {},
-                                    {{RequirementFlags::notOnQuest,9},{RequirementFlags::hasQuest,11}}, //If corpse no skull
+                                    {{RequirementFlags::notOnStage,1080},{RequirementFlags::notOnQuest,9},{RequirementFlags::hasQuest,11}}, //If corpse no skull
                                     true,
                             },
                             {
@@ -1313,12 +1314,12 @@ inline Encounter VillageMain
                                     3, 255,
                                     {},
                                     {},
-                                    {{RequirementFlags::hasQuest,9},{RequirementFlags::hasQuest,11}}, //If both clues
+                                    {{RequirementFlags::hasQuest,9},{RequirementFlags::hasQuest,11},{RequirementFlags::notOnStage,1080}}, //If both clues
                                     true,
                             },
                             {
                                     //returned from finding 1+ clues
-                                    "Now, let's talk.",
+                                    "Now, let's talk. [Advances MainQuest]",
                                     false,
                                     StatNames::OCCULT,
                                     0,
@@ -1327,7 +1328,8 @@ inline Encounter VillageMain
                                     12, 255,
                                     {},
                                     {},
-                                    {{RequirementFlags::hasQuest,4},{RequirementFlags::hasQuest,11},{RequirementFlags::hasQuest,9}}, //If both clues
+                                    {{RequirementFlags::hasQuest,4},{RequirementFlags::hasQuest,11},
+                                                {RequirementFlags::hasQuest,9},{RequirementFlags::notOnStage,1080}}, //If both clues
                                     true,
                             },
                             {
@@ -1409,7 +1411,7 @@ inline Encounter VillageMain
                             },
                             {
                                     //forge silver bullet?
-                                    "A silver bullet is needed to put the beast down. Could you melt this down? [Hand over Relic]",
+                                    "A silver bullet is needed to put the beast down. Could you melt this down? [Hand over Relic][Advances MainQuest]",
                                     false,
                                     StatNames::OCCULT,
                                     0,
@@ -1610,7 +1612,7 @@ inline Encounter VillageMain
                     {
 
                             {
-                                    "Anything new you can tell me about my quarry?",
+                                    "I shall seek them out [Leave] [Advances MainQuest]",
                                     false,
                                     StatNames::OCCULT,
                                     0,
@@ -1638,7 +1640,7 @@ inline Encounter VillageMain
                     {
 
                             {
-                                    "Pray [Restore 1+ sanity]",
+                                    "Pray [Restore 1+ sanity] [FAITH CHECK]",
                                     true,
                                     StatNames::FAITH,
                                     3,
@@ -1651,7 +1653,7 @@ inline Encounter VillageMain
                                     true,
                             },
                             {
-                                    "Ask the priest for the relic.",
+                                    "Ask the priest for the relic. [FAITH CHECK] [Advances MainQuest]",
                                     true,
                                     StatNames::FAITH,
                                     2,
@@ -1664,13 +1666,13 @@ inline Encounter VillageMain
                                     true,
                             },
                             {
-                                    "Leave",
+                                    "Head back into the Village",
                                     false,
                                     StatNames::OCCULT,
                                     0,
-                                    {{ExecuteFlags::RegainSan,2}},
                                     {},
-                                    255, 255,
+                                    {},
+                                    0, 255,
                                     {},
                                     {},
                                     {},
@@ -1691,14 +1693,14 @@ inline Encounter VillageMain
                     EnvironmentType::VillageChurch,
                     {
                             {
-                                    "Thank you.",
+                                    "Thank you. [Advances MainQuest]",
                                     false,
                                     StatNames::OCCULT,
                                     0,
                                     {{ExecuteFlags::GainItem,1},{ExecuteFlags::AdvanceQuestStage,1085}, {ExecuteFlags::StartQuest,4}},
                                     {},
                                     255, 255,
-                                    {/**ItemID::Relic*/},
+                                    {ItemID::Relic},
                                     {},
                                     {}, //If skull no corpse
                                     false,
@@ -1717,7 +1719,7 @@ inline Encounter VillageMain
                     EnvironmentType::VillageChurch,
                     {
                             {
-                                    "Leave",
+                                    "Leave [Advances MainQuest - Alternative Path]",
                                     false,
                                     StatNames::OCCULT,
                                     0,
@@ -1731,14 +1733,14 @@ inline Encounter VillageMain
                             },
 
                             {
-                                "Try to reason with him - surely this is a worthy cause.",
+                                "Try to reason with him - surely this is a worthy cause. [Advances MainQuest]",
                                         true,
                                         StatNames::FAITH,
                                         2,
-                                        {{ExecuteFlags::AdvanceQuestStage,1090}},
+                                        {{ExecuteFlags::AdvanceQuestStage,1090},{ExecuteFlags::GainItem,1}},
                                         {{ExecuteFlags::AdvanceQuestStage,1082}},
                                         10, 255,
-                                        {},
+                                        {ItemID::Relic},
                                         {},
                                         {{RequirementFlags::hasQuestOnStage,1080}}, //If skull no corpse
                                         true,
@@ -1762,7 +1764,7 @@ inline Encounter VillageMain
                     {
                             {
                                     {
-                                            "That is true, I know them to be good, pious men. I will go at once.",
+                                            "That is true, I know them to be good, pious men. I will go at once.[Advances MainQuest]",
                                             false,
                                             StatNames::FAITH,
                                             2,
@@ -1775,7 +1777,7 @@ inline Encounter VillageMain
                                             true,
                                     },
                                     {
-                                            "I have heard of the monastery. It seems wise to go there.",
+                                            "I have heard of the monastery. It seems wise to go there. [Advances MainQuest]",
                                             false,
                                             StatNames::FAITH,
                                             2,
@@ -1819,7 +1821,7 @@ inline Encounter CorpseDiscovery
                      },
                      {
                              //none
-                             "A sign of the evil at work here. A clue towards the vile nature of your quarry.",
+                             "A sign of the evil at work here. A clue towards the vile nature of your quarry.[Advances MainQuest]",
                              false,
                              StatNames::FAITH,
                              3, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1},{ExecuteFlags::StartQuest,11}}, {},
@@ -1828,7 +1830,7 @@ inline Encounter CorpseDiscovery
                      },
                      {
                              //none
-                             "A sign of the evil at work here. You have your second clue",
+                             "A sign of the evil at work here. You have your second clue [Advances MainQuest]",
                              false,
                              StatNames::FAITH,
                              3, {{ExecuteFlags::AdvanceQuestStage,1040},{ExecuteFlags::RemoveEncounter,1},{ExecuteFlags::StartQuest,11}}, {},
@@ -1919,7 +1921,7 @@ inline Encounter SkullDiscovery
                     {//check whether first or second
                             {
                                     //first
-                                    "Leave. You have your first clue.",
+                                    "Leave. You have your first clue. [Advances MainQuest]",
                                     false,
                                     StatNames::OCCULT,
                                     4, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
@@ -1930,7 +1932,7 @@ inline Encounter SkullDiscovery
                             },
                             {
                                     //Second Clue
-                                    "Leave. You have your second clue.",
+                                    "Leave. You have your second clue. [Advances MainQuest]",
                                     false,
                                     StatNames::OCCULT,
                                     4, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
@@ -1941,7 +1943,7 @@ inline Encounter SkullDiscovery
                             },
                             {
                                     //Sequence break
-                                    "Leave. Though you are getting ahead of yourself, this is important.",
+                                    "Leave. Though you are getting ahead of yourself, this is important. [Advances MainQuest]",
                                     false,
                                     StatNames::OCCULT,
                                     4, {{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
@@ -1953,7 +1955,7 @@ inline Encounter SkullDiscovery
                             ,
                             {
                                     //Sequence break 2
-                                    "Leave. Though you are getting VERY ahead of yourself, this is important.",
+                                    "Leave. Though you are getting VERY ahead of yourself, this is important. [Advances MainQuest]",
                                     false,
                                     StatNames::OCCULT,
                                     4, {{ExecuteFlags::StartQuest,1},{ExecuteFlags::AdvanceQuestStage,1030},{ExecuteFlags::RemoveEncounter,1}}, {},
@@ -1987,7 +1989,7 @@ inline Encounter HermitMain
 
                      {
                              //MSQ 1 - what do we need?
-                             "Brother Kasimir? Brother Albert sends me, Kasimir. We need your advice.",
+                             "Brother Kasimir? Brother Albert sends me, Kasimir. We need your advice.[Advances MainQuest]",
                              false,
                              StatNames::OCCULT,
                              0, {}, {},
@@ -1997,7 +1999,7 @@ inline Encounter HermitMain
                      },
                      {
                              //MSQ 2 - failed to get silver?
-                             "You mentioned another way?", //TODO TEMP
+                             "You mentioned another way? [Advances MainQuest - Alternative Path]", //TODO TEMP
                              false,
                              StatNames::FAITH,
                              0, {}, {},
@@ -2132,7 +2134,7 @@ inline Encounter HermitMain
      {R"("I believe so." The hermit thinks for a moment. "Should you be refused there might be another, worse option. Return to me, should it come to that")",
       EnvironmentType::HermitLodge, {
               {
-                      "Very well. Thank you. [Leave.]",
+                      "Very well. Thank you. [Leave.] [Advances MainQuest]",
                       false,
                       StatNames::OCCULT,
                       0,
@@ -2154,7 +2156,7 @@ inline Encounter HermitMain
      {R"("I did, yes. It involves grave-robbing and apostasy. In the ravine a pagan warlord lies buried. He bears a silver idol of his gods. It will suffice.")",
       EnvironmentType::HermitLodge, {
               {
-                      "A grim path that must be walked. I will go. [Leave.]",
+                      "A grim path that must be walked. I will go. [Leave.][Advances MainQuest - Alternative Path]",
                       false,
                       StatNames::OCCULT,
                       0,
@@ -2185,7 +2187,7 @@ inline Encounter HunterCamp
                 EnvironmentType::HunterCamp,
                 {
                         {
-                                "I was hired to hunt down the beast. I was told you might know something.",
+                                "I was hired to hunt down the beast. I was told you might know something. [Advances MainQuest]",
                                 false,
                                 StatNames::FIGHT,
                                 0,
@@ -2194,7 +2196,7 @@ inline Encounter HunterCamp
 
                         },
                         {
-                                "Journey onwards",
+                                "Journey onwards [Leave]",
                                 false,
                                 StatNames::FIGHT,
                                 0,
@@ -2211,7 +2213,7 @@ inline Encounter HunterCamp
                 }
             },
             {
-                    R"("Trying to die?" He shakes his head. "Sure, your funeral - if even that. FineI can tell you what I actually know to be true.")",
+                    R"("Trying to die?" He shakes his head. "Sure, your funeral - if even that. Fine, I can tell you what I actually know to be true.")",
                     EnvironmentType::HunterCamp,
                     {
                         {
@@ -2277,7 +2279,7 @@ Good luck.")",
                     EnvironmentType::HunterCamp,
                     {
                             {
-                                    "I see.",
+                                    "I see. [Advances MainQuest]",
                                     false,
                                     StatNames::FIGHT,
                                     0,
@@ -2305,7 +2307,7 @@ inline Encounter RavineMain
                     EnvironmentType::Ravine,
                     {
                             {
-                                    "Journey onwards",
+                                    "Journey onwards [Leave]",
                                     false,
                                     StatNames::FIGHT,
                                     0,
@@ -2313,7 +2315,7 @@ inline Encounter RavineMain
 
                             },
                             {
-                                    "This must be the place. It is time to dig.",
+                                    "This must be the place. It is time to dig. [Advances MainQuest]",
                                     false,
                                     StatNames::FIGHT,
                                     0,
@@ -2359,11 +2361,11 @@ inline Encounter RavineMain
                     EnvironmentType::Ravine,
                     {
                             {
-                                    "Take the idol and do not linger.",
+                                    "Take the idol and do not linger. <Recover FatePoints> [Advances MainQuest]",
                                     false,
                                     StatNames::FIGHT,
                                     0,
-                                    {{ExecuteFlags::AdvanceQuestStage,1085},{ExecuteFlags::Heal,100}}, {}, 255, 255
+                                    {{ExecuteFlags::AdvanceQuestStage,1085},{ExecuteFlags::Heal,100},{ExecuteFlags::RecoverFate,1}}, {}, 255, 255
 
                             }
                     }, {{SceneCompositionEntities::Character,SceneCompositionSlots::CharacterMain}}
