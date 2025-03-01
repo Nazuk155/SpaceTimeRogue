@@ -6,7 +6,8 @@
 struct Map_Slot {
     int id;                                      // Unique identifier
     SDL_Point position; // X, Y position
-    SDL_Rect locationRect = {position.x, position.y, 128, 128};
+    SDL_Rect locationRect = {position.x, position.y, 884/4, 654/4};
+    //SDL_Rect locationRect = {position.x, position.y, 128, 128};  //884, 654
     LocationID location_id;                             // ID of the location assigned UNASSIGNED_MONSTERID
     //SDL_Rect locationRect = {position.x, position.y, 128, 128};
                               // ID of the location assigned UNASSIGNED
@@ -24,7 +25,8 @@ struct Map_Slot {
     // Initialize player and enemy rects
     void initializeRects() {
         // Constants for offsets
-        const int rectSize = 32;  // Size of each player/enemy rect
+        //const int rectSize = 32;
+        const int rectSize = 64;  // Size of each player/enemy rect
         const int radius = 72;    // Distance from the center of the location icon to the player/enemy rects
 
         // Calculate the center of the location icon

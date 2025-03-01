@@ -691,7 +691,7 @@ inline Encounter monasteryMain
                                          false,
                                          StatNames::FAITH,
                                          0,
-                                         {{ExecuteFlags::RecoverFate, 1},{ExecuteFlags::Heal, 1}, {ExecuteFlags::Heal, 4}},
+                                         {{ExecuteFlags::RecoverFate, 1},{ExecuteFlags::Heal, 1}, {ExecuteFlags::Heal, 6}},
                                          {},
                                          255,
                                          255,
@@ -1235,7 +1235,7 @@ inline Encounter VillageMain
 
                         },
                         {
-                            //visit the priest at the local church
+                                //visit the priest at the local church
 
                                 "Visit the church.",
                                 false,
@@ -1248,7 +1248,23 @@ inline Encounter VillageMain
                                 {},
                                 {{RequirementFlags::hasQuest,1}}, //
                                 true,
-                            },
+                        },
+
+                        {
+                                //visit the priest at the local church
+
+                                "Tend to your wounds [Recover 4 Stamina].",
+                                false,
+                                StatNames::OCCULT,
+                                0,
+                                {{ExecuteFlags::Heal,4}},
+                                {},
+                                255, 255,
+                                {},
+                                {},
+                                {{RequirementFlags::isPhysicallyWounded,1}}, //
+                                true,
+                        },
                         {
                                 "Leave the Village [EXIT LOCATION]",
                                 false,
@@ -2428,7 +2444,7 @@ inline Encounter ForestHeartFinal
                         }
                 },
 
-                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}}
+                {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterAtBottomMain}}
             },
             {
                     "It is done. ",
@@ -2446,7 +2462,7 @@ inline Encounter ForestHeartFinal
                             }
                     },
 
-                    {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterMain}}
+                    {{SceneCompositionEntities::Character, SceneCompositionSlots::CharacterFront}}
             },
             {
                     "You were a fool.",
