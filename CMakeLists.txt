@@ -141,36 +141,12 @@ add_executable( sor-example
         src/sor/core.cpp
         src/sor/sdl_core.cpp
         src/sor/sdl_game.cpp
-        src/example/game/beasthoodstate.cpp
-        src/example/game/map.cpp
-        src/example/game/map.h
-        src/example/game/location.cpp
-        src/example/game/location.h
-        src/example/game/character.cpp
-        src/example/game/character.h
-        src/example/game/character_blueprint.h
-        src/example/game/blueprint_manager.cpp
-        src/example/game/blueprint_manager.h
-        src/example/game/ability.cpp
-        src/example/game/ability.h
-        src/example/game/ability_manager.h
-        src/example/game/ability_ReduceStaminaLoss.h
-        src/example/game/ability_DrawExtraItem.h
-        src/example/game/ability_WerwolfCorruptionEffects.h
-        src/example/game/ability_WolfPackAttack.h
-        src/example/game/item.h
-        src/example/game/item_manager.h
-        src/example/game/character_blueprint.cpp
-        src/example/game/location_manager.h
-        src/example/game/encounter.h
-        src/example/game/skillCheckEngine.h
-        src/example/game/encounter_manager.h
-        src/example/game/diceRoller.h
-        src/example/game/layout.h
-        src/example/game/inventory_components.h
-        src/example/game/quests.h
-        src/example/game/music.h
-        src/example/game/music.cpp
+        src/example/game/str_state.cpp
+        src/example/game/grid.h
+        src/example/game/animatedEntity.cpp
+        src/example/game/animatedEntity.h
+        src/example/game/AnimationManager.cpp
+        src/example/game/AnimationManager.h
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC

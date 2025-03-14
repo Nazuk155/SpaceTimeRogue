@@ -11,6 +11,40 @@
 
 using namespace JanSordid::Core;
 
+static int ANIMATION_ENDED = 7;
+
+//denotes the specific sheet in its EntityType
+enum class EntityAnimations{
+    Idle,
+    Aim,
+    Fire,
+
+};
+
+//EntityType denotes the category of needed spritesheet
+enum class EntityType{
+    EnemyType1,
+    Turret,
+    Hazard,
+    Environment
+};
+
+enum class PlayerState{
+    Idle,
+    Idle_Flip,
+    Walk,
+    Walk_Flip,
+    Damage,
+    Damage_Flip,
+    KnockdownDamage,
+    Grounded,
+    GetUp,
+    KnockdownDamage_Flip,
+    Grounded_Flip,
+    GetUp_Flip
+
+};
+
 enum class ExecuteFlags {
     NONE,
     Wound,

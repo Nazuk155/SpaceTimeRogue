@@ -9,7 +9,7 @@ namespace JanSordid::SDL_Example
     //   1.0f for "no" scaling,
     //  integer floating point values for pixel perfect scaling
 	MyGame::MyGame()
-		: Base( "Example SDL Game", -1.0f, Point { 1920, 1080 }, !doBenchmark )
+		: Base( "Example SDL Game", -1.0f, Point { 480*4, 270 *4}, !doBenchmark )
 	//	: Base( "Example SDL Game", 1.0f, Point { 1280, 960 }, !doBenchmark )
 	{
 
@@ -21,7 +21,7 @@ namespace JanSordid::SDL_Example
                     CameraState,
                     ShooterState,
                  */
-            BeasthoodState>( *this );
+            STR_State>( *this );
 
 		// Set initial State
 		PushState( MyGS::Intro );
