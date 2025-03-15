@@ -28,16 +28,16 @@ namespace JanSordid::SDL_Example
         }
 
         //texture strings
-        string playerIdlePath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Idol.png";
-        string playerIdleFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Idol_Flip.png";
-        string playerWalkPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Walk_Cycle.png";
-        string playerWalkFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Walk_Cycle_Flip.png";
-        string playerDamagePath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Player_Damage-Sheet.png";
-        string playerDamageFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Player_Damage_flip-Sheet.png";
-        string playerDamageKnockdownPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Player_Damage_Knockout-Sheet.png";
-        string playerDamageKnockdownFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Player_Damage_Knockout_flip-Sheet.png";
-        string playerKnockdownGetupPath = BasePath "/src/example/game/Ressources/Image_assets/entities/player/Player_Knockout_JumpUp-Sheet.png";
-        string playerKnockdownGetupFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/player/Player_Knockout_JumpUp_Flip-Sheet.png";
+        string playerIdlePath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Idol.png";
+        string playerIdleFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Idol_Flip.png";
+        string playerWalkPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Walk_Cycle.png";
+        string playerWalkFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Walk_Cycle_Flip.png";
+        string playerDamagePath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Damage-Sheet.png";
+        string playerDamageFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Damage_flip-Sheet.png";
+        string playerDamageKnockdownPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Damage_Knockout-Sheet.png";
+        string playerDamageKnockdownFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Damage_Knockout_flip-Sheet.png";
+        string playerKnockdownGetupPath = BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Knockout_JumpUp-Sheet.png";
+        string playerKnockdownGetupFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Knockout_JumpUp_Flip-Sheet.png";
 
 
 
@@ -65,7 +65,7 @@ namespace JanSordid::SDL_Example
 
 
         playerRect = grid.getTile(3,3).rect;
-       // playerRect.y = playerRect.y - playerRect.h/4;
+        playerRect.y = playerRect.y - playerRect.h/4;
     }
 
     void STR_State::Enter( bool stacking )
@@ -146,11 +146,15 @@ namespace JanSordid::SDL_Example
                 }
                 else if( what_key.scancode == SDL_SCANCODE_D && event.key.repeat == 0 )
                 {
-                    SwitchPlayerAnimation(PlayerState::Walk);
+
+                    grid.updateTileSize(zoomOut);
+                    playerRect = grid.getTile(3,3).rect;
+
                 }
-                else if( what_key.scancode == SDL_SCANCODE_F4 && event.key.repeat == 0 )
+                else if( what_key.scancode == SDL_SCANCODE_A && event.key.repeat == 0 )
                 {
-                    _textmode = (_textmode + 1) % 2;
+                    grid.updateTileSize(zoomIn);
+                    playerRect = grid.getTile(3,3).rect;
                 }
                 else if( what_key.scancode == SDL_SCANCODE_F9 )
                 {
@@ -186,6 +190,7 @@ namespace JanSordid::SDL_Example
 
 
         if(playerSwitchedState) {
+            //if animation finished or playerCharacter in idle go to next animation
             if (animationFrame >= 7 || state == PlayerState::Idle || state == PlayerState::Idle_Flip) {
                 SwitchPlayerAnimation(static_cast<PlayerState>(count));
                 playerSwitchedState = false;
@@ -254,7 +259,7 @@ namespace JanSordid::SDL_Example
     }
 
 //result should be saved in a texture related to a object within MortalFlawState.
-// Surface Width/Height should match player width/height otherwise texture needs to be scaled.
+// Surface Width/Height should match playerCharacter width/height otherwise texture needs to be scaled.
     Texture *STR_State::loadFromFile(const std::string &path) {
 
         Texture *newTexture = nullptr;

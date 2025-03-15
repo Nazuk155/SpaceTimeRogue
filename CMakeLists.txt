@@ -147,6 +147,8 @@ add_executable( sor-example
         src/example/game/animatedEntity.h
         src/example/game/AnimationManager.cpp
         src/example/game/AnimationManager.h
+        src/example/game/playerCharacter.cpp
+        src/example/game/playerCharacter.h
 )
 target_include_directories( sor-example PUBLIC src/ )
 target_link_libraries(      sor-example PUBLIC

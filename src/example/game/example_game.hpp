@@ -11,6 +11,7 @@
 
 #include "grid.h"
 #include "AnimationManager.h"
+#include "playerCharacter.h"
 
 namespace JanSordid::SDL_Example {
     using namespace JanSordid;
@@ -358,6 +359,8 @@ namespace JanSordid::SDL_Example {
         Vector<AnimationTarget> tar = {};
         AnimationManager aManager = tar;
         Rect target;
+        int zoomOut = 64;
+        int zoomIn = 128;
 
     public:
         /// Ctors & Dtor
