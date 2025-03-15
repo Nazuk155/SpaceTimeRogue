@@ -10,6 +10,7 @@ struct AnimationTarget {
     u64 animationFrame = 0;
 
     SDL_Rect target;
+    SDL_Point gridPos;
     int id;
     EntityType type;
     EntityAnimations currentAnimation;
@@ -17,9 +18,10 @@ struct AnimationTarget {
     bool loop = true;
 
     SDL_Rect getTarget(){return target;}
+    void updatePosition(SDL_Rect newPos){ target = newPos;}
 
-    AnimationTarget(SDL_Rect t,int id,EntityType type,EntityAnimations current, EntityAnimations next)
-    :target(t), id(id),type(type),currentAnimation(current),nextAnimation(next){}
+    AnimationTarget(SDL_Rect t,SDL_Point gridPos,int id,EntityType type,EntityAnimations current, EntityAnimations next)
+    :target(t),gridPos(gridPos), id(id),type(type),currentAnimation(current),nextAnimation(next){}
 
 };
 

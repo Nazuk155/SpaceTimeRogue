@@ -347,26 +347,29 @@ namespace JanSordid::SDL_Example {
         PlayerState nextState = PlayerState::Idle;
         //testing
         int count = 0;
-        SDL_Rect playerRect;
+       // SDL_Rect playerRect;
 
 
 
         //text size for all text for now
         int fontsize = 18;
-        PlayerState state = PlayerState::Idle;
+       // PlayerState state = PlayerState::Idle;
         bool knockdown = false;
 
         Vector<AnimationTarget> tar = {};
         AnimationManager aManager = tar;
         Rect target;
-        int zoomOut = 64;
-        int zoomIn = 128;
+
+        int scale = 32;
 
     public:
         /// Ctors & Dtor
         using Base::Base;
 
         Grid grid;
+        SDL_Point gridStartingPoint = {0,0};
+
+        playerCharacter pChar;
 
         /// Getters & Setters: non-virtual first, followed by (pure) virtual/override
         [[nodiscard]] constexpr Color clearColor() const noexcept override {
@@ -419,6 +422,12 @@ namespace JanSordid::SDL_Example {
         SDL_Texture *GetAnimation(EntityType type, EntityAnimations animation);
 
         SDL_Texture *GetAnimation(AnimationTarget &a);
+
+        void ZoomOut();
+
+        void ZoomIn();
+
+        void CameraMoveBy1Tile(Directions direction);
     };
 
 }

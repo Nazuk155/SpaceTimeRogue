@@ -55,8 +55,7 @@ namespace JanSordid::SDL_Example
 
 
     playerAnimation = playerIdleSheet;
-    target = grid.getTile(7,3).rect;
-    aManager.addTarget({target,0,EntityType::EnemyType1,EntityAnimations::Aim,EntityAnimations::Fire});
+    grid.updateTileSize(scale);
 
 
         for(int i = 0; i<8;i++){
@@ -64,8 +63,20 @@ namespace JanSordid::SDL_Example
         }
 
 
-        playerRect = grid.getTile(3,3).rect;
-        playerRect.y = playerRect.y - playerRect.h/4;
+
+
+
+
+
+        gridStartingPoint.x = -(scale *grid.getGridTilesXY().x/2);
+        gridStartingPoint.y = -(scale* grid.getGridTilesXY().y/2);
+        grid.setOrigin(gridStartingPoint.x,gridStartingPoint.y);
+
+        target = grid.getTile(62,34).rect;
+        aManager.addTarget({target,{62,34},0,EntityType::EnemyType1,EntityAnimations::Aim,EntityAnimations::Fire});
+
+        pChar.rect = grid.getTile(60,40).rect;
+        pChar.updatePosition({60,34},grid.getTile(60,34).rect);
     }
 
     void STR_State::Enter( bool stacking )
@@ -144,26 +155,33 @@ namespace JanSordid::SDL_Example
                     if(count >= 12){count = 0;}
 
                 }
-                else if( what_key.scancode == SDL_SCANCODE_D && event.key.repeat == 0 )
+                else if( what_key.scancode == SDL_SCANCODE_KP_PLUS && event.key.repeat == 0 )
                 {
 
-                    grid.updateTileSize(zoomOut);
-                    playerRect = grid.getTile(3,3).rect;
+                    ZoomIn();
 
                 }
-                else if( what_key.scancode == SDL_SCANCODE_A && event.key.repeat == 0 )
+                else if( what_key.scancode == SDL_SCANCODE_KP_MINUS && event.key.repeat == 0 )
                 {
-                    grid.updateTileSize(zoomIn);
-                    playerRect = grid.getTile(3,3).rect;
+                    ZoomOut();
                 }
-                else if( what_key.scancode == SDL_SCANCODE_F9 )
+                else if( what_key.scancode == SDL_SCANCODE_RIGHT && event.key.repeat == 0 )
                 {
-                    // crash/shutdown, since State #6 does not exist
-                    _game.ReplaceState( MyGS::Invalid );
+                    CameraMoveBy1Tile(Directions::RIGHT);
+
                 }
-                else if( what_key.scancode == SDL_SCANCODE_ESCAPE )
+                else if( what_key.scancode ==SDL_SCANCODE_LEFT && event.key.repeat == 0  )
                 {
-                    _game.ReplaceState( MyGS::Intro );
+                    CameraMoveBy1Tile(Directions::LEFT);
+
+                }
+                else if( what_key.scancode ==SDL_SCANCODE_UP && event.key.repeat == 0  )
+                {
+                    CameraMoveBy1Tile(Directions::UP);
+                }
+                else if( what_key.scancode ==SDL_SCANCODE_DOWN && event.key.repeat == 0  )
+                {
+                    CameraMoveBy1Tile(Directions::DOWN);
                 }
                 else
                 {
@@ -191,7 +209,7 @@ namespace JanSordid::SDL_Example
 
         if(playerSwitchedState) {
             //if animation finished or playerCharacter in idle go to next animation
-            if (animationFrame >= 7 || state == PlayerState::Idle || state == PlayerState::Idle_Flip) {
+            if (animationFrame >= 7 || pChar.state == PlayerState::Idle || pChar.state == PlayerState::Idle_Flip) {
                 SwitchPlayerAnimation(static_cast<PlayerState>(count));
                 playerSwitchedState = false;
                 startAnim = 0;
@@ -200,8 +218,8 @@ namespace JanSordid::SDL_Example
 
             }
         }
-        if(state == PlayerState::Walk) {
-            playerRect.x = playerRect.x + 4;
+        if(pChar.state == PlayerState::Walk) {
+            pChar.rect.x = pChar.rect.x + 4;
 
         }
 
@@ -231,15 +249,15 @@ namespace JanSordid::SDL_Example
     void STR_State::RenderPlayer(){
 
 
-                if(state == PlayerState::Grounded || state == PlayerState::Grounded_Flip) {
+                if(pChar.state == PlayerState::Grounded || pChar.state == PlayerState::Grounded_Flip) {
 
-                    renderFromSpritesheet(playerRect, playerAnimation, &clips32[7]);
+                    renderFromSpritesheet(pChar.rect, playerAnimation, &clips32[7]);
                     animationFrame = 7;
 
                 }else{
 
 
-                    animationFrame = RenderPlayerAnimation(playerRect, playerAnimation, clips32);
+                    animationFrame = RenderPlayerAnimation(pChar.rect, playerAnimation, clips32);
 
                 }
 
@@ -356,7 +374,7 @@ namespace JanSordid::SDL_Example
         }
         if(!loopAnimation && phase >= 8){
             SwitchPlayerAnimation(nextState);
-            state = nextState;
+            pChar.state = nextState;
             startAnim = 29;
             phase = 7;
             result = 7;
@@ -405,7 +423,7 @@ namespace JanSordid::SDL_Example
 
     void STR_State::SwitchPlayerAnimation(PlayerState sheet){
         using enum PlayerState;
-        state = sheet;
+        pChar.state = sheet;
 
 
 
@@ -424,6 +442,72 @@ namespace JanSordid::SDL_Example
             case Grounded: playerAnimation = playerDamageKnockdownSheet;loopAnimation = false; knockdown =true; nextState = Grounded;break;
             case Grounded_Flip: playerAnimation = playerDamageKnockdownSheetFlip;loopAnimation = false; knockdown = true; nextState = Grounded_Flip;break;
             default: playerAnimation = playerIdleSheet;loopAnimation = true;break;
+
+        }
+    }
+
+    void STR_State::ZoomOut(){
+        scale = scale/2;
+        gridStartingPoint.x = gridStartingPoint.x/2;
+        gridStartingPoint.y = gridStartingPoint.y/2;
+
+
+
+        grid.updateTileSize(scale);
+        grid.setOrigin(gridStartingPoint.x,gridStartingPoint.y);
+        pChar.updatePosition(grid.getTileRect(pChar.gridPosition));
+        for(auto &e : aManager.targets){
+            e.updatePosition(grid.getTileRect(e.gridPos));
+        }
+    }
+    void STR_State::ZoomIn(){
+        scale = scale*2;
+        gridStartingPoint.x = gridStartingPoint.x*2;
+        gridStartingPoint.y = gridStartingPoint.y*2;
+
+        grid.updateTileSize(scale);
+        grid.setOrigin(gridStartingPoint.x,gridStartingPoint.y);
+        pChar.updatePosition(grid.getTileRect(pChar.gridPosition));
+        for(auto &e : aManager.targets){
+            e.updatePosition(grid.getTileRect(e.gridPos));
+        }
+    }
+    void STR_State::CameraMoveBy1Tile(Directions direction){
+
+        switch(direction){
+            case Directions::UP: gridStartingPoint.y = gridStartingPoint.y-scale;
+                grid.setOrigin(gridStartingPoint.x,gridStartingPoint.y);
+                pChar.updatePosition(grid.getTileRect(pChar.gridPosition));
+                for(auto &e : aManager.targets){
+                    e.updatePosition(grid.getTileRect(e.gridPos));
+                }
+                break;
+            case Directions::RIGHT: gridStartingPoint.x = gridStartingPoint.x+scale;
+
+                grid.setOrigin(gridStartingPoint.x,gridStartingPoint.y);
+                // playerRect = grid.getTile(3,3).rect;
+                pChar.updatePosition(grid.getTileRect(pChar.gridPosition));
+                for(auto &e : aManager.targets){
+                    e.updatePosition(grid.getTileRect(e.gridPos));
+                }
+                break;
+            case Directions::DOWN: gridStartingPoint.y = gridStartingPoint.y+scale;
+                grid.setOrigin(gridStartingPoint.x,gridStartingPoint.y);
+                pChar.updatePosition(grid.getTileRect(pChar.gridPosition));
+                for(auto &e : aManager.targets){
+                    e.updatePosition(grid.getTileRect(e.gridPos));
+                }
+                break;
+            case Directions::LEFT:  gridStartingPoint.x = gridStartingPoint.x-scale;
+                grid.setOrigin(gridStartingPoint.x,gridStartingPoint.y);
+
+                // playerRect = grid.getTile(3,3).rect;
+                pChar.updatePosition(grid.getTileRect(pChar.gridPosition));
+                for(auto &e : aManager.targets){
+                    e.updatePosition(grid.getTileRect(e.gridPos));
+                }
+                break;
+            default: break;
 
         }
     }

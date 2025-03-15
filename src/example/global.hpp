@@ -13,6 +13,13 @@ using namespace JanSordid::Core;
 
 static int ANIMATION_ENDED = 7;
 
+enum class Directions{
+    UP,
+    RIGHT,
+    DOWN,
+    LEFT
+};
+
 //denotes the specific sheet in its EntityType
 enum class EntityAnimations{
     Idle,
