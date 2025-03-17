@@ -14,13 +14,13 @@ namespace JanSordid::SDL_Example
 	{
 
 		AddStates<
-                /*
-                 * IntroState,
-                    PlasmaState,
-                    SortState,
-                    CameraState,
-                    ShooterState,
-                 */
+
+                /* IntroState,
+                 PlasmaState,
+                 SortState,
+                 CameraState,
+                 ShooterState,
+              */
             STR_State>( *this );
 
 		// Set initial State

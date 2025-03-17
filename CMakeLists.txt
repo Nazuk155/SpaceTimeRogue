@@ -142,6 +142,7 @@ add_executable( sor-example
         src/sor/sdl_core.cpp
         src/sor/sdl_game.cpp
         src/example/game/str_state.cpp
+        src/example/game/introstate.cpp
         src/example/game/grid.h
         src/example/game/animatedEntity.cpp
         src/example/game/animatedEntity.h

@@ -28,6 +28,7 @@ namespace JanSordid::SDL_Example
         }
 
         //texture strings
+        //Player Character
         string playerIdlePath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Idol.png";
         string playerIdleFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Idol_Flip.png";
         string playerWalkPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Walk_Cycle.png";
@@ -38,10 +39,19 @@ namespace JanSordid::SDL_Example
         string playerDamageKnockdownFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Damage_Knockout_flip-Sheet.png";
         string playerKnockdownGetupPath = BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Knockout_JumpUp-Sheet.png";
         string playerKnockdownGetupFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Knockout_JumpUp_Flip-Sheet.png";
+        //tiles
+        string tileTestingPath = BasePath "/src/example/game/Ressources/Image_assets/tiles/Tiles/Tiles.png";
+        string tileStandardPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Standard_Floor_Tile-Sheet.png";
+        string tileCirclePath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Circle-Sheet.png";
+        string tileWallsPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Walls.png";
+        string tileDoorsPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Walls_Blue-Sheet.png";
+        //objects
+        string objectShotPath = BasePath "/src/example/game/Ressources/Image_assets/items/Shoot-Sheet.png";
 
 
 
         //load textures
+        //player
     playerIdleSheet = loadFromFile(playerIdlePath);
     playerIdleSheetFlip = loadFromFile(playerIdleFlipPath);
     playerWalkSheet = loadFromFile(playerWalkPath);
@@ -52,31 +62,85 @@ namespace JanSordid::SDL_Example
     playerDamageKnockdownSheetFlip = loadFromFile(playerDamageKnockdownFlipPath);
     playerGetUpSheet = loadFromFile(playerKnockdownGetupPath);
     playerGetUpSheetFlip = loadFromFile(playerKnockdownGetupFlipPath);
+    //tiles
+    tileTest = loadFromFile(tileTestingPath);
+    tileStandard = loadFromFile(tileStandardPath);
+    tileCircle = loadFromFile(tileCirclePath);
+    tilesWalls = loadFromFile(tileWallsPath);
+    tilesDoors = loadFromFile(tileDoorsPath);
+    //items
+    objectShot = loadFromFile(objectShotPath);
 
+    floorTiles.push_back(tileStandard);
+    floorTiles.push_back(tileCircle);
+    objectSprites.push_back(objectShot);
 
     playerAnimation = playerIdleSheet;
     grid.updateTileSize(scale);
 
+        mode = Mode::TilePlacer;
 
-        for(int i = 0; i<8;i++){
-            clips32.push_back({i*32,0,32,32});
+/*
+        for(int i = 0; i<17;i++){
+            clips32.push_back({i*32,0*32,32,32});
+        }
+        */
+        for(int j = 0; j<3;j++) {
+            for (int i = 0; i < 17; i++) {
+                clips32.push_back({i * 32, j * 32, 32, 32});
+            }
+        }
+        for(int j = 0; j<3;j++) {
+            for (int i = 0; i < 17; i++) {
+                clips32x4.push_back({i * 32, j * 32, 32, 4});
+            }
         }
 
 
+        if(mode == Mode::Game) {
+
+
+            gridStartingPoint.x = -(scale * grid.getGridTilesXY().x / 2);
+            gridStartingPoint.y = -(scale * grid.getGridTilesXY().y / 2);
+            grid.setOrigin(gridStartingPoint.x, gridStartingPoint.y);
+
+            target = grid.getTile(62, 36).rect;
+
+
+            for (int j = 0; j < 9; j++) {
+                for (int i = 0; i < 9; i++) {
+                    grid.getTile(62 + i, 36 + j).style = FloorTileStyles::Standard;
+                    grid.getTile(62 + i, 36 + j).isTop = true;
+                    grid.getTile(62 + i, 36 + j).walls = 1;
+                }
+            }
+
+            grid.getTile(62, 36).style = FloorTileStyles::Standard;
+            grid.getTile(63, 36).style = FloorTileStyles::Standard;
+            grid.getTile(64, 36).style = FloorTileStyles::Standard;
+            grid.getTile(62, 36).isTop = true;
+            grid.getTile(63, 36).isTop = true;
+            grid.getTile(64, 36).isTop = true;
+
+
+            grid.getTile(62, 37).isTop = true;
+            grid.getTile(62, 37).style = FloorTileStyles::Standard;
 
 
 
+            aManager.addTarget(
+                    {target, {62, 36}, 0, EntityType::EnemyType1, EntityAnimations::Aim, EntityAnimations::Fire});
 
+            // pChar.rect = grid.getTile(60,40).rect;
+            pChar.updatePosition({60+59, 34+31}, grid.getTile(60+59, 34+31).rect);
+        }
+        if(mode == Mode::TilePlacer){
+            gridStartingPoint.x = 0;
+            gridStartingPoint.y = 0;
+            grid.setOrigin(gridStartingPoint.x, gridStartingPoint.y);
+            startingScale = scale;
 
-        gridStartingPoint.x = -(scale *grid.getGridTilesXY().x/2);
-        gridStartingPoint.y = -(scale* grid.getGridTilesXY().y/2);
-        grid.setOrigin(gridStartingPoint.x,gridStartingPoint.y);
-
-        target = grid.getTile(62,34).rect;
-        aManager.addTarget({target,{62,34},0,EntityType::EnemyType1,EntityAnimations::Aim,EntityAnimations::Fire});
-
-        pChar.rect = grid.getTile(60,40).rect;
-        pChar.updatePosition({60,34},grid.getTile(60,34).rect);
+        }
     }
 
     void STR_State::Enter( bool stacking )
@@ -119,8 +183,12 @@ namespace JanSordid::SDL_Example
         SDL_DestroyTexture(playerDamageKnockdownSheetFlip);
         SDL_DestroyTexture(playerGetUpSheet);
         SDL_DestroyTexture(playerGetUpSheetFlip);
-
-
+        SDL_DestroyTexture(tileTest);
+        SDL_DestroyTexture(tileStandard);
+        SDL_DestroyTexture(tileCircle);
+        SDL_DestroyTexture(tilesWalls);
+        SDL_DestroyTexture(tilesDoors);
+        SDL_DestroyTexture(objectShot);
 
         playerIdleSheet = nullptr;
         playerIdleSheetFlip = nullptr;
@@ -132,97 +200,418 @@ namespace JanSordid::SDL_Example
         playerDamageKnockdownSheetFlip = nullptr;
         playerGetUpSheet = nullptr;
         playerGetUpSheetFlip= nullptr;
+        tileTest = nullptr;
+        tileStandard = nullptr;
+        tileCircle = nullptr;
+        tilesWalls = nullptr;
+        tilesDoors = nullptr;
+        objectShot = nullptr;
 
         Base::Destroy();
     }
 
-    bool STR_State::HandleEvent( const Event & event )
-    {
-        switch( event.type )
-        {
-            case SDL_KEYDOWN:
-            {
-                const Keysym & what_key = event.key.keysym;
+    bool STR_State::HandleEvent( const Event & event ) {
 
-                if( what_key.scancode == SDL_SCANCODE_G && event.key.repeat == 0 )
-                {
-                    if(showGrid){showGrid = false;}else{showGrid = true;}
-                }
-                else if( what_key.scancode == SDL_SCANCODE_P && event.key.repeat == 0 )
-                {
-                    playerSwitchedState = true;
-                    count++;
-                    if(count >= 12){count = 0;}
+        mouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
 
-                }
-                else if( what_key.scancode == SDL_SCANCODE_KP_PLUS && event.key.repeat == 0 )
-                {
+        if (mode == Mode::Game) {
+            switch (event.type) {
+                case SDL_KEYDOWN: {
+                    const Keysym &what_key = event.key.keysym;
 
-                    ZoomIn();
+                    if (what_key.scancode == SDL_SCANCODE_G && event.key.repeat == 0) {
+                        if (showGrid) { showGrid = false; } else { showGrid = true; }
+                    } else if (what_key.scancode == SDL_SCANCODE_P && event.key.repeat == 0) {
+                        playerSwitchedState = true;
+                        count++;
+                        if (count >= 12) { count = 0; }
+                        tileswitch++;
+                        if (tileswitch >= 17) { tileswitch = 0; }
 
-                }
-                else if( what_key.scancode == SDL_SCANCODE_KP_MINUS && event.key.repeat == 0 )
-                {
-                    ZoomOut();
-                }
-                else if( what_key.scancode == SDL_SCANCODE_RIGHT && event.key.repeat == 0 )
-                {
-                    CameraMoveBy1Tile(Directions::RIGHT);
+                    } else if (what_key.scancode == SDL_SCANCODE_KP_PLUS && event.key.repeat == 0) {
 
-                }
-                else if( what_key.scancode ==SDL_SCANCODE_LEFT && event.key.repeat == 0  )
-                {
-                    CameraMoveBy1Tile(Directions::LEFT);
+                        ZoomIn();
 
-                }
-                else if( what_key.scancode ==SDL_SCANCODE_UP && event.key.repeat == 0  )
-                {
-                    CameraMoveBy1Tile(Directions::UP);
-                }
-                else if( what_key.scancode ==SDL_SCANCODE_DOWN && event.key.repeat == 0  )
-                {
-                    CameraMoveBy1Tile(Directions::DOWN);
-                }
-                else
-                {
-                    return false; // Not handled
+                    } else if (what_key.scancode == SDL_SCANCODE_KP_MINUS && event.key.repeat == 0) {
+                        ZoomOut();
+                    } else if (what_key.scancode == SDL_SCANCODE_RIGHT && event.key.repeat == 0) {
+                        CameraMoveBy1Tile(Directions::RIGHT);
+
+                    } else if (what_key.scancode == SDL_SCANCODE_LEFT && event.key.repeat == 0) {
+                        CameraMoveBy1Tile(Directions::LEFT);
+
+                    } else if (what_key.scancode == SDL_SCANCODE_UP && event.key.repeat == 0) {
+                        CameraMoveBy1Tile(Directions::UP);
+                    } else if (what_key.scancode == SDL_SCANCODE_DOWN && event.key.repeat == 0) {
+                        CameraMoveBy1Tile(Directions::DOWN);
+                    } else {
+                        return false; // Not handled
+                    }
+
+                    return true; // Confusing control flow: Handled by all but the else case
+
+                    break;
                 }
 
-                return true; // Confusing control flow: Handled by all but the else case
+                case SDL_MOUSEBUTTONDOWN:
+                    //game.SetNextState( 1 );
+                    break;
 
-                break;
+                default:
+                    break;
             }
 
-            case SDL_MOUSEBUTTONDOWN:
-                //game.SetNextState( 1 );
-                break;
-
-            default: break;
+            return false;
         }
+        if(mode == Mode::TilePlacer){
 
+            switch (event.type) {
+                case SDL_KEYDOWN: {
+                    const Keysym &what_key = event.key.keysym;
+
+                    if (what_key.scancode == SDL_SCANCODE_G && event.key.repeat == 0) {
+
+                        if (showGrid) { showGrid = false; } else { showGrid = true; }
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_Y && event.key.repeat == 0) {
+
+                        if (tTracker.manageWallsMode  ) { tTracker.manageWallsMode = false; tTracker.manageDoorsMode = true;
+                        }
+                        else { tTracker.manageWallsMode = true;tTracker.manageDoorsMode = false; }
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_U && event.key.repeat == 0) {
+
+                        if (tTracker.manageDoorsMode ) { tTracker.manageDoorsMode = false;tTracker.manageWallsMode = true;
+                        }
+                        else { tTracker.manageDoorsMode = true; tTracker.manageWallsMode = false;}
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_O && event.key.repeat == 0) {
+
+                        if (tTracker.placeObjectMode ) { tTracker.placeObjectMode = false;tTracker.placeTileMode = true;
+                        }
+                        else { tTracker.placeObjectMode = true; tTracker.placeTileMode = false;
+                            tTracker.manageWallsMode = false;tTracker.manageDoorsMode = false;
+                            tTracker.ResetWallDoorPlacer(); }
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_W && event.key.repeat == 0) {
+                        if(tTracker.manageWallsMode ) {
+                            if (tTracker.wallUpAdded) {
+                                tTracker.selectedWalls= tTracker.selectedWalls - 1;
+                                tTracker.wallUpAdded = false;
+                            } else {
+                                tTracker.selectedWalls= tTracker.selectedWalls + 1;
+                                tTracker.wallUpAdded = true;
+                                if (tTracker.doorUpAdded) {
+                                    tTracker.selectedDoors = tTracker.selectedDoors - 1;
+                                    tTracker.doorUpAdded = false;
+                                }
+                            }
+                        }
+                        if(tTracker.manageDoorsMode) {
+                            if (tTracker.doorUpAdded) {
+                                tTracker.selectedDoors= tTracker.selectedDoors - 1;
+                                tTracker.doorUpAdded = false;
+                            } else {
+                                tTracker.selectedDoors= tTracker.selectedDoors + 1;
+                                tTracker.doorUpAdded = true;
+                                if (tTracker.wallUpAdded) {
+                                    tTracker.selectedWalls= tTracker.selectedWalls - 1;
+                                    tTracker.wallUpAdded = false;
+                                }
+                            }
+                        }
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_D && event.key.repeat == 0) {
+                        if(tTracker.manageWallsMode                       ) {
+                            if (tTracker.wallRightAdded) {
+                                tTracker.selectedWalls= tTracker.selectedWalls - 2;
+                                tTracker.wallRightAdded= false;
+                            } else {
+                                tTracker.selectedWalls= tTracker.selectedWalls + 2;
+                                tTracker.wallRightAdded= true;
+                                if (tTracker.doorRightAdded) {
+                                    tTracker.selectedDoors= tTracker.selectedDoors - 2;
+                                    tTracker.doorRightAdded= false;
+                                }
+                            }
+                        }
+
+                        if(tTracker.manageDoorsMode) {
+                            if (tTracker.doorRightAdded) {
+                                tTracker.selectedDoors= tTracker.selectedDoors - 2;
+                                tTracker.doorRightAdded= false;
+                            } else {
+                                tTracker.selectedDoors= tTracker.selectedDoors + 2;
+                                tTracker.doorRightAdded= true;
+                                if (tTracker.wallRightAdded) {
+                                    tTracker.selectedWalls= tTracker.selectedWalls - 2;
+                                    tTracker.wallRightAdded= false;
+                                }
+                            }
+                        }
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_S && event.key.repeat == 0) {
+                        if(tTracker.manageWallsMode                       ) {
+                            if (tTracker.wallDownAdded) {
+                                tTracker.selectedWalls= tTracker.selectedWalls - 4;
+                                tTracker.wallDownAdded = false;
+                            } else {
+                                tTracker.selectedWalls= tTracker.selectedWalls + 4;
+                                tTracker.wallDownAdded = true;
+                                if (tTracker.doorDownAdded) {
+                                    tTracker.selectedDoors= tTracker.selectedDoors - 4;
+                                    tTracker.doorDownAdded = false;
+                                }
+                            }
+                        }
+
+                        if(tTracker.manageDoorsMode) {
+                            if (tTracker.doorDownAdded) {
+                                tTracker.selectedDoors= tTracker.selectedDoors - 4;
+                                tTracker.doorDownAdded = false;
+                            } else {
+                                tTracker.selectedDoors= tTracker.selectedDoors + 4;
+                                tTracker.doorDownAdded = true;
+                                if (tTracker.wallDownAdded) {
+                                    tTracker.selectedWalls= tTracker.selectedWalls - 4;
+                                    tTracker.wallDownAdded = false;
+                                }
+                            }
+                        }
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_A && event.key.repeat == 0) {
+                        if (tTracker.manageWallsMode) {
+                            if (tTracker.wallLeftAdded) {
+                                tTracker.selectedWalls = tTracker.selectedWalls - 8;
+                                tTracker.wallLeftAdded = false;
+                            } else {
+                                tTracker.selectedWalls = tTracker.selectedWalls + 8;
+                                tTracker.wallLeftAdded = true;
+                                if (tTracker.doorLeftAdded) {
+                                    tTracker.selectedDoors = tTracker.selectedDoors - 8;
+                                    tTracker.doorLeftAdded = false;
+                                }
+                            }
+                        }
+                        if (tTracker.manageDoorsMode) {
+                            if (tTracker.doorLeftAdded) {
+                                tTracker.selectedDoors = tTracker.selectedDoors - 8;
+                                tTracker.doorLeftAdded = false;
+                            } else {
+                                tTracker.selectedDoors = tTracker.selectedDoors + 8;
+                                tTracker.doorLeftAdded = true;
+                                    if (tTracker.wallLeftAdded) {
+                                        tTracker.selectedWalls = tTracker.selectedWalls - 8;
+                                        tTracker.wallLeftAdded = false;
+                                    }
+
+                            }
+                        }
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_RETURN && event.key.repeat == 0) {
+                        tTracker.confirm = true;
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_KP_PLUS && event.key.repeat == 0) {
+
+                        ZoomIn();
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_KP_MINUS && event.key.repeat == 0) {
+                        if(scale != startingScale) {
+                            ZoomOut();
+                        }
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_T && event.key.repeat == 0) {
+                        if(tTracker.placeTileMode){
+                            tTracker.placeTileMode = false;
+                        }else{tTracker.placeTileMode = true;}
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_RIGHT && event.key.repeat == 0) {
+                        CameraMoveBy1Tile(Directions::RIGHT);
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_LEFT && event.key.repeat == 0) {
+                        CameraMoveBy1Tile(Directions::LEFT);
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_UP && event.key.repeat == 0) {
+                        CameraMoveBy1Tile(Directions::UP);
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_DOWN && event.key.repeat == 0) {
+                        CameraMoveBy1Tile(Directions::DOWN);
+                    }
+                    else {
+                        return false; // Not handled
+                    }
+
+                    return true; // Confusing control flow: Handled by all but the else case
+
+                    break;
+                }
+
+                case SDL_MOUSEMOTION:
+                        SDL_Point  temp;
+                        temp = mousePosition;
+                        for (auto& a: grid.tiles) {
+                            for (auto &b: a) {
+                                if (SDL_PointInRect(&temp,&b.rect)){
+                                    b.hover = true;
+                                }else{ b.hover = false;}
+                            }
+                        }
+                        break;
+                case SDL_MOUSEBUTTONDOWN:
+
+                    if(tTracker.placeTileMode) {
+                        if (event.button.button == (SDL_BUTTON_LEFT)) {
+                             temp = mousePosition;
+                            for (auto &a: grid.tiles) {
+                                for (auto &b: a) {
+                                    b.selected = false;
+                                    if (SDL_PointInRect(&temp, &b.rect)) {
+                                        b.selected = true;
+                                        tTracker.currentFloorSprite = b.style;
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(tTracker.placeObjectMode) {
+                        if (event.button.button == (SDL_BUTTON_LEFT)) {
+                            SDL_Point temp = mousePosition;
+                            for (auto &a: grid.tiles) {
+                                for (auto &b: a) {
+                                    b.selected = false;
+                                    if (SDL_PointInRect(&temp, &b.rect)) {
+                                        b.selected = true;
+                                        tTracker.currentObject = b.object;
+
+                                    }
+                                }
+                            }
+                        }
+                        if (event.button.button == (SDL_BUTTON_RIGHT)) {
+                            SDL_Point temp = mousePosition;
+                            for (auto &a: grid.tiles) {
+                                for (auto &b: a) {
+                                    b.placed = false;
+                                    if (SDL_PointInRect(&temp, &b.rect)) {
+                                        //last placed tile set to true
+                                        b.placed = true;
+                                        //update the tiles object
+                                        ///TODO objets in space need to be allowed later
+                                        if(b.onGrid) {
+                                            b.object = tTracker.currentObject;
+                                            b.occupied = true;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (event.button.button == (SDL_BUTTON_RIGHT)) {
+                        if (!tTracker.placeObjectMode) {
+                            SDL_Point temp = mousePosition;
+                            for (auto &a: grid.tiles) {
+                                for (auto &b: a) {
+                                    b.placed = false;
+                                    if (SDL_PointInRect(&temp, &b.rect)) {
+                                        //last placed tile set to true
+                                        b.placed = true;
+                                        //update the tiles style
+                                        b.style = tTracker.currentFloorSprite;
+                                        //if NONE selected remove from grid
+                                        if (tTracker.currentFloorSprite == FloorTileStyles::NONE) {
+                                            b.onGrid = false;
+                                            b.object = Objects::NONE;
+                                        } else { b.onGrid = true; }
+
+                                        //if not in wall/door mode only replace style of tile
+                                        if (tTracker.manageDoorsMode || tTracker.manageWallsMode) {
+                                            b.doors = tTracker.selectedDoors;
+                                            b.walls = tTracker.selectedWalls;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }break;
+
+                default:
+                    break;
+            }
+
+            return false;
+        }
         return false;
     }
 
-    void STR_State::Update( const u64 frame, const u64 totalMSec, const f32 deltaT )
-    {
+    void STR_State::Update( const u64 frame, const u64 totalMSec, const f32 deltaT ) {
+
+        if (mode == Mode::Game) {
 
 
-        if(playerSwitchedState) {
-            //if animation finished or playerCharacter in idle go to next animation
-            if (animationFrame >= 7 || pChar.state == PlayerState::Idle || pChar.state == PlayerState::Idle_Flip) {
-                SwitchPlayerAnimation(static_cast<PlayerState>(count));
-                playerSwitchedState = false;
-                startAnim = 0;
-                phase = 0;
-                animationFrame = 0;
+            if (playerSwitchedState) {
+                //if animation finished or playerCharacter in idle go to next animation
+                if (animationFrame >= 7 || pChar.state == PlayerState::Idle || pChar.state == PlayerState::Idle_Flip) {
+                    SwitchPlayerAnimation(static_cast<PlayerState>(count));
+                    playerSwitchedState = false;
+                    startAnim = 0;
+                    phase = 0;
+                    animationFrame = 0;
+
+                }
+            }
+            if (pChar.state == PlayerState::Walk) {
+                pChar.rect.x = pChar.rect.x + 4;
 
             }
-        }
-        if(pChar.state == PlayerState::Walk) {
-            pChar.rect.x = pChar.rect.x + 4;
 
+
+            for (auto &a: grid.tiles) {
+                for (auto &b: a) {
+                    if (b.style != FloorTileStyles::NONE && b.walls == 1) {
+                        if (grid.tiles[b.y + 1][b.x].isTop && grid.tiles[b.y + 1][b.x].walls == 1) {
+                            grid.tiles[b.y + 1][b.x].isTop = false;
+                            b.isTop = true;
+                        }
+                    }
+                }
+            }
         }
 
+
+        if (mode == Mode::TilePlacer) {
+            if (tTracker.placeTileMode) {
+                int j = 0; // next y pos
+                for (auto a: floorTiles) {
+                    grid.tiles[j][0].style = static_cast<FloorTileStyles>(j + 1);
+                    j++;
+                }
+
+            }
+            if (tTracker.placeObjectMode) {
+                int j = 0; // next y pos
+                for (auto a: objectSprites) {
+                    grid.tiles[j][0].object = static_cast<Objects>(j + 1);
+                    j++;
+                }
+
+            }
+
+            //finish selecting modes
+            if (tTracker.confirm) {
+                tTracker.confirm = false;
+                tTracker.manageDoorsMode = false;
+                tTracker.manageWallsMode = false;
+                tTracker.ResetWallDoorPlacer();
+            }
+        }
     }
 
     void STR_State::Render( const u64 frame, const u64 totalMSec, const f32 deltaTNeeded )
@@ -230,20 +619,112 @@ namespace JanSordid::SDL_Example
         Point windowSize;
         SDL_GetWindowSize( window(), &windowSize.x, &windowSize.y );
 
-        SDL_SetRenderDrawColor(renderer(), 0, 0, 255, 255);
+        SDL_SetRenderDrawColor(renderer(), 50, 50, 50, 255);
 
         SDL_RenderClear(renderer());
+        if(mode == Mode::TilePlacer) {
 
-        if(showGrid) {
-            grid.render(renderer());
+            if(tTracker.manageWallsMode           ){
+                SDL_SetRenderDrawColor(renderer(), 255, 0, 0, 255);
+                SDL_RenderClear(renderer());
+                Texture * t = textToTexture("WALL SELECT MODE\n Activate Wall placement with WASD \n Press U to Switch to DOOR Select \n CONFIRM to go back to tile only mode");
+                renderText(grid.tiles[0][4].rect,t );
+                SDL_DestroyTexture(t);
+                t = nullptr;
+
+            }
+            if(tTracker.manageDoorsMode){
+                SDL_SetRenderDrawColor(renderer(), 0, 255, 0, 255);
+                SDL_RenderClear(renderer());
+                Texture * t = textToTexture("DOOR SELECT MODE\n Activate DOOR placement with WASD \n Press U to Switch to WALL Select \n CONFIRM to go back to tile only mode");
+                renderText(grid.tiles[0][4].rect,t );
+                SDL_DestroyTexture(t);
+                t = nullptr;
+            }
+            if(tTracker.placeObjectMode){
+                SDL_SetRenderDrawColor(renderer(), 100, 100, 150, 255);
+                SDL_RenderClear(renderer());
+                Texture * t = textToTexture("OBJECT SELECT MODE\n  Press O to Return to Tile Placer Mode \n Leftclick to Select Rightclickt to place \n");
+                renderText(grid.tiles[0][4].rect,t );
+                SDL_DestroyTexture(t);
+                t = nullptr;
+            }
+            if (showGrid) {
+                grid.render(renderer());
+            }
+
+            if (tTracker.placeTileMode) {
+                int j = 0; // next y pos
+                for (auto a: floorTiles) {
+                    for (int i = 0; i < 1; i++) {
+                        renderFromSpritesheet(grid.tiles[j][i].rect, a, &clips32[i]);
+                    }
+                    j++;
+                }
+            }
+            if (tTracker.placeObjectMode) {
+                int j = 0; // next y pos
+                for (auto a: objectSprites) {
+                    for (int i = 0; i < 1; i++) {
+                        renderFromSpritesheet(grid.tiles[j][i].rect, a, &clips32[1]);
+                    }
+                    j++;
+                }
+            }
+                grid.hover(renderer());
+
+
+            for (auto a: grid.tiles) {
+                for (auto b: a) {
+                    if (b.style != FloorTileStyles::NONE && b.onGrid) {
+                        RenderFloorTile(b.style, b.rect);
+                        RenderWalls(b.rect,b.walls);
+                        RenderDoors(b.rect,b.doors);
+                        RenderObjectSprites(b.object,b.rect);
+                    }
+                }
+            }
+
+            SDL_Rect selectionVisualizer = {mousePosition.x, mousePosition.y, 64, 64};
+
+            renderFromSpritesheet(selectionVisualizer, tilesDoors, &clips32[tTracker.selectedDoors]);
+            renderFromSpritesheet(selectionVisualizer, tilesWalls, &clips32[tTracker.selectedWalls]);
+
+            selectionVisualizer.x = selectionVisualizer.x + 64;
+            if(!tTracker.placeObjectMode) {
+                RenderFloorTile(tTracker.currentFloorSprite, selectionVisualizer);
+            }else{
+                RenderObjectSprites(tTracker.currentObject, selectionVisualizer);
+            }
+
+
         }
+        if(mode == Mode::Game) {
 
 
+            for (auto a: grid.tiles) {
+                for (auto b: a) {
+                    if (b.style != FloorTileStyles::NONE) {
+                        renderFromSpritesheet(b.rect, tileStandard, &clips32[tileswitch]);
+                    }
+                    if (b.isTop && b.walls == 1) {
+                        renderFromSpritesheet(grid.tiles[b.y - 1][b.x].rect, tileTest, &clips32[4]);
+                    }
+                    if (b.walls == 1) {
+                        // renderFromSpritesheet(b.wallUp,tileTest,&clips32x4[1]);
+                    }
 
-        RenderPlayer();
+                }
+            }
+            if (showGrid) {
+                grid.render(renderer());
+            }
 
-        AnimateTargets();
 
+            RenderPlayer();
+
+            AnimateTargets();
+        }
     }
 
     void STR_State::RenderPlayer(){
@@ -512,6 +993,35 @@ namespace JanSordid::SDL_Example
         }
     }
 
+    void STR_State::RenderFloorTile(FloorTileStyles s, SDL_Rect t){
+        using enum FloorTileStyles;
+        switch(s){
+            case NONE:
+                break;
+            case Standard:
+                renderFromSpritesheet(t,tileStandard,&clips32[0]);break;
+            case Round:
+                renderFromSpritesheet(t,tileCircle,&clips32[0]);break;
+        }
+
+    }
+    void STR_State::RenderObjectSprites(Objects o, SDL_Rect t){
+        using enum Objects;
+        switch(o) {
+            case Shot:
+                renderFromSpritesheet(t, objectShot, &clips32[1]);
+                break;
+
+            default:
+                break;
+        }
+    }
+    void STR_State::RenderWalls(SDL_Rect t,int walls) {
+        renderFromSpritesheet(t, tilesWalls, &clips32[walls]);
+    }
+    void STR_State::RenderDoors(SDL_Rect t,int doors) {
+        renderFromSpritesheet(t, tilesDoors, &clips32[doors]);
+    }
 
 
 /*

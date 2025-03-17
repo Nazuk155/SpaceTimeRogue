@@ -316,7 +316,7 @@ int mainx( int argc, char * argv [] )
 
 		if( flash )	SDL_SetRenderDrawColor( renderer, 127, 127, 127, 255 );
 		else		SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
-		// Clear the screen with the selected DrawColor
+		// Clear the screen with the hover DrawColor
 		SDL_RenderClear( renderer );
 
 		// Walls

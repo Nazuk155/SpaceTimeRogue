@@ -4,23 +4,38 @@
 
 const int TILE_SIZE = 32;
 const int SCALE_FACTOR = 4;
-const int GRID_WIDTH = 480*8 / TILE_SIZE;  // 15 tiles wide
-const int GRID_HEIGHT = 270*8 / TILE_SIZE; // 8 tiles high
+const int GRID_WIDTH = 480*8 / TILE_SIZE;  // 15*8 tiles wide
+const int GRID_HEIGHT = 270*8 / TILE_SIZE; // 8*8 tiles high
 
 
 struct Tile {
     int x, y;       // Grid coordinates
     SDL_Rect rect;  // Screen position and size
     bool occupied = false;
+    Objects object = Objects::NONE;
+    bool isTop = false;
+    bool onGrid = false;
+    int walls = 0;
+    int doors = 0;
+    bool hover = false;
+    bool selected = false;
+    bool placed = false;
+    FloorTileStyles style = FloorTileStyles::NONE;
+
+
+    SDL_Rect wallRect;
+
 
     Tile(int gridX, int gridY, int tileSize)
             : x(gridX), y(gridY),
-              rect{(gridX * tileSize)*SCALE_FACTOR, (gridY * tileSize)*SCALE_FACTOR, tileSize*SCALE_FACTOR, tileSize*SCALE_FACTOR} {}
+              rect{(gridX * tileSize)*SCALE_FACTOR, (gridY * tileSize)*SCALE_FACTOR, tileSize*SCALE_FACTOR, tileSize*SCALE_FACTOR},
+              wallRect{(gridX * tileSize)*SCALE_FACTOR, (gridY * tileSize)*SCALE_FACTOR, tileSize*SCALE_FACTOR, tileSize*SCALE_FACTOR}{}
 
     void updateRect(int newX, int newY, int originX, int originY, int newSize) {
         x = newX;
         y = newY;
         rect = {originX + x * newSize, originY + y * newSize, newSize, newSize}; // Update screen position with origin
+        wallRect = {originX + x * newSize, originY + y * newSize, newSize, newSize};
     }
 };
 class Grid {
@@ -72,10 +87,35 @@ public:
     }
 
     void render(SDL_Renderer* renderer) {
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         for (int y = 0; y < GRID_HEIGHT; y++) {
             for (int x = 0; x < GRID_WIDTH; x++) {
-                SDL_RenderDrawRect(renderer, &tiles[y][x].rect);
+                if(tiles[y][x].rect.x >= 0 && tiles[y][x].rect.x <= WINDOWSIZE_X
+                && tiles[y][x].rect.y >= -32 && tiles[y][x].rect.y <= WINDOWSIZE_Y) {
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                    SDL_RenderDrawRect(renderer, &tiles[y][x].rect);
+
+                  //  SDL_RenderDrawRect(renderer, &tiles[y][x].wallUp);
+                }
+            }
+        }
+    }
+    void hover(SDL_Renderer* renderer) {
+        for (int y = 0; y < GRID_HEIGHT; y++) {
+            for (int x = 0; x < GRID_WIDTH; x++) {
+                if(tiles[y][x].rect.x >= 0 && tiles[y][x].rect.x <= WINDOWSIZE_X
+                   && tiles[y][x].rect.y >= -32 && tiles[y][x].rect.y <= WINDOWSIZE_Y) {
+                    if(tiles[y][x].hover){
+                        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+                        SDL_RenderDrawRect(renderer, &tiles[y][x].rect);
+                    }
+                    if(tiles[y][x].selected){
+                        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                        SDL_RenderDrawRect(renderer, &tiles[y][x].rect);
+                    }
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+                    //  SDL_RenderDrawRect(renderer, &tiles[y][x].wallUp);
+                }
             }
         }
     }

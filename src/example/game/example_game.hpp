@@ -324,35 +324,95 @@ namespace JanSordid::SDL_Example {
         Texture * playerIdleSheetFlip;
         Texture * playerWalkSheet;
         Texture * playerWalkSheetFlip;
-
         Texture * playerDamageSheet;
         Texture * playerDamageSheetFlip;
         Texture * playerDamageKnockdownSheet;
         Texture * playerDamageKnockdownSheetFlip;
         Texture * playerGetUpSheet;
         Texture * playerGetUpSheetFlip;
+        Texture * tileTest;
+        Texture * tileStandard;
+        Texture * tileCircle;
+        Texture * tilesWalls;
+        Texture * tilesDoors;
+        Texture * objectShot;
 
 
-        Texture * playerAnimation = nullptr;
+        //stuff for tile placer
+        Vector<Texture*> floorTiles;
+        Vector<Texture*> objectSprites;
+        SDL_Point mousePosition;
+        u32 mouseState;
+
+        //tracks stuff during tile placer mode
+        struct tileModeTracker{
+            //currently picked floor tile style
+            FloorTileStyles currentFloorSprite = FloorTileStyles::NONE;
+            Objects currentObject = Objects::NONE;
+            //opens/closes the tile style select on top left
+            bool placeTileMode = true;
+            bool manageWallsMode = false;
+            bool manageDoorsMode = false;
+            bool placeObjectMode = false;
+            //adds 1 for up 2 for right 4 for down 8 for left as code adding up to 15
+            int selectedWalls = 0;
+            int selectedDoors = 0;
+            bool wallUpAdded = false;
+            bool wallRightAdded = false;
+            bool wallLeftAdded = false;
+            bool wallDownAdded = false;
+            bool doorUpAdded = false;
+            bool doorRightAdded= false;
+            bool doorDownAdded = false;
+            bool doorLeftAdded = false;
+            bool confirm = false;
+
+
+            void ResetWallDoorPlacer(){
+                wallUpAdded = false;
+                 wallRightAdded = false;
+                 wallLeftAdded = false;
+                 wallDownAdded = false;
+                 doorUpAdded = false;
+                 doorRightAdded= false;
+                 doorDownAdded = false;
+                 doorLeftAdded = false;
+                selectedWalls = 0;
+                selectedDoors = 0;
+            }
+        };
+        tileModeTracker tTracker;
 
 
         bool showGrid = true;
+
+
+
+
+        Mode mode = Mode::TilePlacer;
+
         //animation clipper for 32x32 sprites
         Vector<SDL_Rect> clips32;
+        Vector<SDL_Rect> clips32x4;
+        //player animators
         u64 animationFrame = 0;
         u64 startAnim = 0;
         u64 phase = 0;
         bool loopAnimation = true;
         bool playerSwitchedState = false;
         PlayerState nextState = PlayerState::Idle;
+        Texture * playerAnimation = nullptr;
+
         //testing
         int count = 0;
-       // SDL_Rect playerRect;
+        //to iterate through tiles
+        int tileswitch = 0;
+
 
 
 
         //text size for all text for now
-        int fontsize = 18;
+        int fontsize = 30;
        // PlayerState state = PlayerState::Idle;
         bool knockdown = false;
 
@@ -361,6 +421,7 @@ namespace JanSordid::SDL_Example {
         Rect target;
 
         int scale = 32;
+        int startingScale = 32;
 
     public:
         /// Ctors & Dtor
@@ -428,6 +489,14 @@ namespace JanSordid::SDL_Example {
         void ZoomIn();
 
         void CameraMoveBy1Tile(Directions direction);
+
+        void RenderFloorTile(FloorTileStyles s, SDL_Rect t);
+
+        void RenderWalls(SDL_Rect t, int walls);
+
+        void RenderDoors(SDL_Rect t, int walls);
+
+        void RenderObjectSprites(Objects o, SDL_Rect t);
     };
 
 }
