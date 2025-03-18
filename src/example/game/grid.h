@@ -12,7 +12,9 @@ struct Tile {
     int x, y;       // Grid coordinates
     SDL_Rect rect;  // Screen position and size
     bool occupied = false;
-    Objects object = Objects::NONE;
+    ObjectIDs object = ObjectIDs::NONE;
+    CharacterIDs character = CharacterIDs::NONE;
+    bool isPlayerShipTile = false;
     bool isTop = false;
     bool onGrid = false;
     int walls = 0;
@@ -20,7 +22,7 @@ struct Tile {
     bool hover = false;
     bool selected = false;
     bool placed = false;
-    FloorTileStyles style = FloorTileStyles::NONE;
+    FloorTileIDs style = FloorTileIDs::NONE;
 
 
     SDL_Rect wallRect;
@@ -91,7 +93,10 @@ public:
             for (int x = 0; x < GRID_WIDTH; x++) {
                 if(tiles[y][x].rect.x >= 0 && tiles[y][x].rect.x <= WINDOWSIZE_X
                 && tiles[y][x].rect.y >= -32 && tiles[y][x].rect.y <= WINDOWSIZE_Y) {
-                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                    if(x > 89){
+                        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                    }else{SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);}
+
                     SDL_RenderDrawRect(renderer, &tiles[y][x].rect);
 
                   //  SDL_RenderDrawRect(renderer, &tiles[y][x].wallUp);

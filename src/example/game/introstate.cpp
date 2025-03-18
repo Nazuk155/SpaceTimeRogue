@@ -335,6 +335,7 @@ namespace JanSordid::SDL_Example
 
 			if( result == NFD::Result::NFD_OKAY )
 				print( "Success! Path is {0}\n", path.get() );
+            
 		}
 		ImGui::SameLine();
 		if( ImGui::Button( "PickFolder" ) )

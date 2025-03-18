@@ -18,14 +18,33 @@ enum class Mode{
     Game,
     TilePlacer
 };
-enum class Objects{
+enum class ObjectIDs{
     NONE,
     Shot
 };
-enum class FloorTileStyles{
+enum class FloorTileIDs{
     NONE,
     Standard,
-    Round
+    Round,
+    Grass0,
+    Grass1,
+    Grass2,
+    Grass3,
+    Grass4,
+    Grass5,
+    Grass6,
+    Grass7,
+    Grass8,
+    TopWalls0,
+    TopWalls1,
+    TopWalls2,
+    TopWalls3,
+    TopWalls4,
+    TopWalls5,
+    Floor0,
+    Floor1,
+    Floor2
+
 };
 enum class Directions{
     UP,
@@ -34,21 +53,19 @@ enum class Directions{
     LEFT
 };
 
-//denotes the specific sheet in its EntityType
-enum class EntityAnimations{
+//denotes the specific sheet in its CharacterIDs
+enum class CharacterAnimations{
     Idle,
     Aim,
     Fire,
 
 };
 
-//EntityType denotes the category of needed spritesheet
-enum class EntityType{
-    EnemyType1,
+//CharacterIDs denotes the category of needed spritesheet
+enum class CharacterIDs{
+    NONE,
+    PlayerCharacter,
     Orc,
-    Turret,
-    Hazard,
-    Environment
 };
 
 enum class PlayerState{

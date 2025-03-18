@@ -12,15 +12,15 @@ struct AnimationTarget {
     SDL_Rect target;
     SDL_Point gridPos;
     int id;
-    EntityType type;
-    EntityAnimations currentAnimation;
-    EntityAnimations nextAnimation;
+    CharacterIDs type;
+    CharacterAnimations currentAnimation;
+    CharacterAnimations nextAnimation;
     bool loop = true;
 
     SDL_Rect getTarget(){return target;}
     void updatePosition(SDL_Rect newPos){ target = newPos;}
 
-    AnimationTarget(SDL_Rect t,SDL_Point gridPos,int id,EntityType type,EntityAnimations current, EntityAnimations next)
+    AnimationTarget(SDL_Rect t, SDL_Point gridPos, int id, CharacterIDs type, CharacterAnimations current, CharacterAnimations next)
     :target(t),gridPos(gridPos), id(id),type(type),currentAnimation(current),nextAnimation(next){}
 
 };

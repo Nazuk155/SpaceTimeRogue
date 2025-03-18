@@ -7,7 +7,10 @@
 #include <map>
 //#include <autocast_ptr.h>
 //#include <sor/tiles.h>
-
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
 
 #include "grid.h"
 #include "AnimationManager.h"
@@ -320,6 +323,8 @@ namespace JanSordid::SDL_Example {
         static constexpr const int Scale = 8;
 
         ///own stuff
+        //textures
+        //player
         Texture * playerIdleSheet;
         Texture * playerIdleSheetFlip;
         Texture * playerWalkSheet;
@@ -330,30 +335,54 @@ namespace JanSordid::SDL_Example {
         Texture * playerDamageKnockdownSheetFlip;
         Texture * playerGetUpSheet;
         Texture * playerGetUpSheetFlip;
+        //characters
+        Texture * characterOrcIdleSheet;
+        Texture * characterOrcIdleSheetFlip;
+        Texture * characterOrcShootSheet;
+        Texture * characterOrcShootSheetFlip;
+        Texture * characterOrkWalkSheet;
+        Texture * characterOrkWalkSheetFlip;
+
+
         Texture * tileTest;
         Texture * tileStandard;
         Texture * tileCircle;
         Texture * tilesWalls;
         Texture * tilesDoors;
+        Texture * tileGrassSheet;
+        Texture * tileTopWallsSheet;
+        Texture * tileFloor2Sheet;
+
+        Texture * backgroundSpace;
+
+        Texture * uiHealthbarsSheet;
+        Texture * uiSkillsBackground;
+
         Texture * objectShot;
 
 
+
+
         //stuff for tile placer
-        Vector<Texture*> floorTiles;
+        Vector<Texture*> floorTileSprites;
         Vector<Texture*> objectSprites;
+        Vector<Texture*> characterSprites;
         SDL_Point mousePosition;
         u32 mouseState;
 
         //tracks stuff during tile placer mode
         struct tileModeTracker{
             //currently picked floor tile style
-            FloorTileStyles currentFloorSprite = FloorTileStyles::NONE;
-            Objects currentObject = Objects::NONE;
+            FloorTileIDs currentFloorSprite = FloorTileIDs::NONE;
+            ObjectIDs currentObject = ObjectIDs::NONE;
+            CharacterIDs currentCharacter = CharacterIDs::NONE;
+            bool isPlayerShipTile = false;
             //opens/closes the tile style select on top left
             bool placeTileMode = true;
             bool manageWallsMode = false;
             bool manageDoorsMode = false;
             bool placeObjectMode = false;
+            bool placeCharacterMode = false;
             //adds 1 for up 2 for right 4 for down 8 for left as code adding up to 15
             int selectedWalls = 0;
             int selectedDoors = 0;
@@ -366,6 +395,7 @@ namespace JanSordid::SDL_Example {
             bool doorDownAdded = false;
             bool doorLeftAdded = false;
             bool confirm = false;
+            bool infoToggle = true;
 
 
             void ResetWallDoorPlacer(){
@@ -384,10 +414,15 @@ namespace JanSordid::SDL_Example {
         tileModeTracker tTracker;
 
 
-        bool showGrid = true;
+        bool showGrid = false;
 
+        String testingMap   = "/home/max/CLionProjects/SpaceTimeRogue/src/example/game/Tilemaps/Testingmap";
+        String startingShip = "/home/max/CLionProjects/SpaceTimeRogue/src/example/game/Tilemaps/startingShip.txt";
+        String currentShip  = "/home/max/CLionProjects/SpaceTimeRogue/src/example/game/Tilemaps/currentShip.txt";
+        String enemyShipOrc = "/home/max/CLionProjects/SpaceTimeRogue/src/example/game/Tilemaps/enemyShipOrc.txt";
+        String startingMap  = "/home/max/CLionProjects/SpaceTimeRogue/src/example/game/Tilemaps/startingMap.txt";
 
-
+        bool load = false;
 
         Mode mode = Mode::TilePlacer;
 
@@ -480,7 +515,7 @@ namespace JanSordid::SDL_Example {
 
         void AnimateTargets();
 
-        SDL_Texture *GetAnimation(EntityType type, EntityAnimations animation);
+        SDL_Texture *GetAnimation(CharacterIDs type, CharacterAnimations animation);
 
         SDL_Texture *GetAnimation(AnimationTarget &a);
 
@@ -490,13 +525,27 @@ namespace JanSordid::SDL_Example {
 
         void CameraMoveBy1Tile(Directions direction);
 
-        void RenderFloorTile(FloorTileStyles s, SDL_Rect t);
+        void RenderFloorTile(FloorTileIDs s, SDL_Rect t);
 
         void RenderWalls(SDL_Rect t, int walls);
 
         void RenderDoors(SDL_Rect t, int walls);
 
-        void RenderObjectSprites(Objects o, SDL_Rect t);
+        void RenderObjectSprites(ObjectIDs o, SDL_Rect t);
+
+        void RenderCharacterSprites(SDL_Rect t, CharacterIDs c);
+
+        String SaveMap(std::vector<std::vector<Tile>> &t);
+
+        std::vector<std::vector<Tile>> LoadTileMap(String mapstring);
+
+        Grid loadTilemap(const std::string &filename);
+
+        std::vector<int> processTileString(std::string str);
+
+        Grid loadOffsetMap(const std::string &filename, int offsetX, int offsetY);
+
+        String SavePlayerShip(std::vector<std::vector<Tile>> &t);
     };
 
 }

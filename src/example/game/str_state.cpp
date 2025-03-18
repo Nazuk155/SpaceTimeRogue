@@ -8,7 +8,7 @@ namespace JanSordid::SDL_Example
 {
 
 
-
+///TODO make enemy ship and starting map; add player logic and skills; load player ship after enemy with offsetload;
 
     void STR_State::Init()
     {
@@ -39,14 +39,33 @@ namespace JanSordid::SDL_Example
         string playerDamageKnockdownFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Damage_Knockout_flip-Sheet.png";
         string playerKnockdownGetupPath = BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Knockout_JumpUp-Sheet.png";
         string playerKnockdownGetupFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Knockout_JumpUp_Flip-Sheet.png";
+        //other characters
+        string characterOrcIdlePath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Idle-Sheet.png";
+        string charactersOrcIdleFlipPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Idle_flip-Sheet.png";
+        string charactersOrcShootPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Shoot-Sheet.png";
+        string characterOrcShootFlipPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Shoot_Flip-Sheet.png";
+        string characterOrcWalkPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Walk_Cycle-Sheet.png";
+        string characterOrcWalkFlipPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Walk_Cycle_Flip-Sheet.png";
         //tiles
         string tileTestingPath = BasePath "/src/example/game/Ressources/Image_assets/tiles/Tiles/Tiles.png";
         string tileStandardPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Standard_Floor_Tile-Sheet.png";
         string tileCirclePath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Circle-Sheet.png";
         string tileWallsPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Walls.png";
         string tileDoorsPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Walls_Blue-Sheet.png";
+        string tileGrassPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Grass_1.png";
+        string tileFloor2Path = BasePath"/src/example/game/Ressources/Image_assets/tiles/Floor_2-Sheet.png";
+        string tileTopWallsPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Walls1.png";
+
         //objects
         string objectShotPath = BasePath "/src/example/game/Ressources/Image_assets/items/Shoot-Sheet.png";
+
+        //backgrounds
+        string backgroundSpacePath = BasePath"/src/example/game/Ressources/Image_assets/backgrounds/Space.png";
+
+        //ui
+        string uiHealthbarSheetPath = BasePath"/src/example/game/Ressources/Image_assets/ui/UI-export.png";
+        string uiSkillsBackgroundPath = BasePath"/src/example/game/Ressources/Image_assets/ui/Skills_Background_ui.png";
+
 
 
 
@@ -62,18 +81,38 @@ namespace JanSordid::SDL_Example
     playerDamageKnockdownSheetFlip = loadFromFile(playerDamageKnockdownFlipPath);
     playerGetUpSheet = loadFromFile(playerKnockdownGetupPath);
     playerGetUpSheetFlip = loadFromFile(playerKnockdownGetupFlipPath);
+    //other characters
+    characterOrcIdleSheet = loadFromFile(characterOrcIdlePath);
+    characterOrcIdleSheetFlip = loadFromFile(charactersOrcIdleFlipPath);
+    characterOrcShootSheet = loadFromFile(charactersOrcShootPath);
+    characterOrcShootSheetFlip = loadFromFile(characterOrcShootFlipPath);
+    characterOrkWalkSheet = loadFromFile(characterOrcWalkPath);
+    characterOrkWalkSheetFlip = loadFromFile(characterOrcWalkFlipPath);
+
     //tiles
     tileTest = loadFromFile(tileTestingPath);
     tileStandard = loadFromFile(tileStandardPath);
     tileCircle = loadFromFile(tileCirclePath);
     tilesWalls = loadFromFile(tileWallsPath);
     tilesDoors = loadFromFile(tileDoorsPath);
+    tileGrassSheet = loadFromFile(tileGrassPath);
+    tileFloor2Sheet = loadFromFile(tileFloor2Path);
+    tileTopWallsSheet = loadFromFile(tileTopWallsPath);
     //items
     objectShot = loadFromFile(objectShotPath);
+    //backgrounds
+    backgroundSpace = loadFromFile(backgroundSpacePath);
+    //ui
+    uiHealthbarsSheet = loadFromFile(uiHealthbarSheetPath);
+    uiSkillsBackground = loadFromFile(uiSkillsBackgroundPath);
 
-    floorTiles.push_back(tileStandard);
-    floorTiles.push_back(tileCircle);
+    floorTileSprites.push_back(tileStandard);
+    floorTileSprites.push_back(tileCircle);
+    floorTileSprites.push_back(tileGrassSheet);
+    floorTileSprites.push_back(tileTopWallsSheet);
     objectSprites.push_back(objectShot);
+    characterSprites.push_back(playerIdleSheet);
+    characterSprites.push_back(characterOrcIdleSheet);
 
     playerAnimation = playerIdleSheet;
     grid.updateTileSize(scale);
@@ -109,34 +148,41 @@ namespace JanSordid::SDL_Example
 
             for (int j = 0; j < 9; j++) {
                 for (int i = 0; i < 9; i++) {
-                    grid.getTile(62 + i, 36 + j).style = FloorTileStyles::Standard;
+                    grid.getTile(62 + i, 36 + j).style = FloorTileIDs::Standard;
                     grid.getTile(62 + i, 36 + j).isTop = true;
                     grid.getTile(62 + i, 36 + j).walls = 1;
                 }
             }
 
-            grid.getTile(62, 36).style = FloorTileStyles::Standard;
-            grid.getTile(63, 36).style = FloorTileStyles::Standard;
-            grid.getTile(64, 36).style = FloorTileStyles::Standard;
+            grid.getTile(62, 36).style = FloorTileIDs::Standard;
+            grid.getTile(63, 36).style = FloorTileIDs::Standard;
+            grid.getTile(64, 36).style = FloorTileIDs::Standard;
             grid.getTile(62, 36).isTop = true;
             grid.getTile(63, 36).isTop = true;
             grid.getTile(64, 36).isTop = true;
 
 
             grid.getTile(62, 37).isTop = true;
-            grid.getTile(62, 37).style = FloorTileStyles::Standard;
+            grid.getTile(62, 37).style = FloorTileIDs::Standard;
 
 
 
             aManager.addTarget(
-                    {target, {62, 36}, 0, EntityType::EnemyType1, EntityAnimations::Aim, EntityAnimations::Fire});
+                    {target, {62, 36}, 0, CharacterIDs::PlayerCharacter, CharacterAnimations::Aim, CharacterAnimations::Fire});
 
             // pChar.rect = grid.getTile(60,40).rect;
             pChar.updatePosition({60+59, 34+31}, grid.getTile(60+59, 34+31).rect);
         }
         if(mode == Mode::TilePlacer){
+/*
             gridStartingPoint.x = 0;
             gridStartingPoint.y = 0;
+            grid.setOrigin(gridStartingPoint.x, gridStartingPoint.y);
+            startingScale = scale;
+*/
+
+            gridStartingPoint.x = -(scale * grid.getGridTilesXY().x / 2);
+            gridStartingPoint.y = -(scale * grid.getGridTilesXY().y / 2);
             grid.setOrigin(gridStartingPoint.x, gridStartingPoint.y);
             startingScale = scale;
 
@@ -163,15 +209,6 @@ namespace JanSordid::SDL_Example
 
     void STR_State::Destroy()
     {
-        // Keep everything loaded/allocated is also an option
-        /*
-        TTF_CloseFont( font );
-        SDL_DestroyTexture( image );
-        SDL_DestroyTexture( _blendedText );
-        font = nullptr;
-        image = nullptr;
-        _blendedText = nullptr;
-        */
         //destroy all textures
         SDL_DestroyTexture(playerIdleSheet);
         SDL_DestroyTexture(playerIdleSheetFlip);
@@ -183,12 +220,29 @@ namespace JanSordid::SDL_Example
         SDL_DestroyTexture(playerDamageKnockdownSheetFlip);
         SDL_DestroyTexture(playerGetUpSheet);
         SDL_DestroyTexture(playerGetUpSheetFlip);
+        //characters
+        SDL_DestroyTexture(characterOrcIdleSheet);
+        SDL_DestroyTexture(characterOrcIdleSheetFlip);
+        SDL_DestroyTexture(characterOrcShootSheet);
+        SDL_DestroyTexture(characterOrcShootSheetFlip);
+        SDL_DestroyTexture(characterOrkWalkSheet);
+        SDL_DestroyTexture(characterOrkWalkSheetFlip);
+        //tiles
         SDL_DestroyTexture(tileTest);
         SDL_DestroyTexture(tileStandard);
         SDL_DestroyTexture(tileCircle);
         SDL_DestroyTexture(tilesWalls);
         SDL_DestroyTexture(tilesDoors);
+        SDL_DestroyTexture(tileGrassSheet);
+        SDL_DestroyTexture(tileFloor2Sheet);
+        SDL_DestroyTexture(tileTopWallsSheet);
+        //objects
         SDL_DestroyTexture(objectShot);
+
+        SDL_DestroyTexture(backgroundSpace);
+        SDL_DestroyTexture(uiHealthbarsSheet);
+        SDL_DestroyTexture(uiSkillsBackground);
+
 
         playerIdleSheet = nullptr;
         playerIdleSheetFlip = nullptr;
@@ -205,7 +259,24 @@ namespace JanSordid::SDL_Example
         tileCircle = nullptr;
         tilesWalls = nullptr;
         tilesDoors = nullptr;
+        tileGrassSheet = nullptr;
+        tileFloor2Sheet = nullptr;
+        tileTopWallsSheet = nullptr;
+
         objectShot = nullptr;
+
+        characterOrcIdleSheet = nullptr;
+        characterOrcIdleSheetFlip = nullptr;
+        characterOrcShootSheet = nullptr;
+        characterOrcShootSheetFlip = nullptr;
+        characterOrkWalkSheet = nullptr;
+        characterOrkWalkSheetFlip = nullptr;
+
+        backgroundSpace = nullptr;
+
+        uiHealthbarsSheet = nullptr;
+        uiSkillsBackground = nullptr;
+
 
         Base::Destroy();
     }
@@ -221,7 +292,9 @@ namespace JanSordid::SDL_Example
 
                     if (what_key.scancode == SDL_SCANCODE_G && event.key.repeat == 0) {
                         if (showGrid) { showGrid = false; } else { showGrid = true; }
-                    } else if (what_key.scancode == SDL_SCANCODE_P && event.key.repeat == 0) {
+                    }
+
+                    else if (what_key.scancode == SDL_SCANCODE_P && event.key.repeat == 0) {
                         playerSwitchedState = true;
                         count++;
                         if (count >= 12) { count = 0; }
@@ -274,17 +347,47 @@ namespace JanSordid::SDL_Example
                         if (showGrid) { showGrid = false; } else { showGrid = true; }
 
                     }
-                    else if (what_key.scancode == SDL_SCANCODE_Y && event.key.repeat == 0) {
+                    else if (what_key.scancode == SDL_SCANCODE_K && event.key.repeat == 0) {
+
+                        if (tTracker.isPlayerShipTile){
+                            tTracker.isPlayerShipTile = false; }else { tTracker.isPlayerShipTile = true; }
+
+                    }
+                    else  if (what_key.scancode == SDL_SCANCODE_H && event.key.repeat == 0) {
+
+                        if (tTracker.infoToggle) { tTracker.infoToggle = false; } else { tTracker.infoToggle = true; }
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_L && event.key.repeat == 0) {
+
+                        load = true;
+
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_T && event.key.repeat == 0) {
+                        if(tTracker.placeTileMode){
+                            tTracker.placeTileMode = false;
+                        }else{tTracker.placeTileMode = true; tTracker.placeObjectMode = false; tTracker.placeCharacterMode = false;
+                            tTracker.manageWallsMode = false;tTracker.manageDoorsMode = false;
+                            tTracker.ResetWallDoorPlacer();}
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_C && event.key.repeat == 0) {
+                        if(tTracker.placeCharacterMode){
+                            tTracker.placeCharacterMode = false;
+                        }else{
+                            tTracker.placeCharacterMode = true;
+
+                            tTracker.placeObjectMode = false; tTracker.placeTileMode = false;
+                            tTracker.manageWallsMode = false;tTracker.manageDoorsMode = false;
+                            tTracker.ResetWallDoorPlacer();}
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_U && event.key.repeat == 0) {
 
                         if (tTracker.manageWallsMode  ) { tTracker.manageWallsMode = false; tTracker.manageDoorsMode = true;
                         }
                         else { tTracker.manageWallsMode = true;tTracker.manageDoorsMode = false; }
-                    }
-                    else if (what_key.scancode == SDL_SCANCODE_U && event.key.repeat == 0) {
-
-                        if (tTracker.manageDoorsMode ) { tTracker.manageDoorsMode = false;tTracker.manageWallsMode = true;
-                        }
-                        else { tTracker.manageDoorsMode = true; tTracker.manageWallsMode = false;}
                     }
                     else if (what_key.scancode == SDL_SCANCODE_O && event.key.repeat == 0) {
 
@@ -412,6 +515,7 @@ namespace JanSordid::SDL_Example
                     }
                     else if (what_key.scancode == SDL_SCANCODE_RETURN && event.key.repeat == 0) {
                         tTracker.confirm = true;
+
                     }
                     else if (what_key.scancode == SDL_SCANCODE_KP_PLUS && event.key.repeat == 0) {
 
@@ -423,12 +527,7 @@ namespace JanSordid::SDL_Example
                             ZoomOut();
                         }
                     }
-                    else if (what_key.scancode == SDL_SCANCODE_T && event.key.repeat == 0) {
-                        if(tTracker.placeTileMode){
-                            tTracker.placeTileMode = false;
-                        }else{tTracker.placeTileMode = true;}
 
-                    }
                     else if (what_key.scancode == SDL_SCANCODE_RIGHT && event.key.repeat == 0) {
                         CameraMoveBy1Tile(Directions::RIGHT);
                     }
@@ -462,6 +561,8 @@ namespace JanSordid::SDL_Example
                             }
                         }
                         break;
+
+                        ///terrible code, rework tTracker Modes into enum to switch between modes with switches later
                 case SDL_MOUSEBUTTONDOWN:
 
                     if(tTracker.placeTileMode) {
@@ -506,6 +607,42 @@ namespace JanSordid::SDL_Example
                                         if(b.onGrid) {
                                             b.object = tTracker.currentObject;
                                             b.occupied = true;
+                                            b.character = CharacterIDs::NONE;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(tTracker.placeCharacterMode) {
+                        if (event.button.button == (SDL_BUTTON_LEFT)) {
+                            SDL_Point temp = mousePosition;
+                            for (auto &a: grid.tiles) {
+                                for (auto &b: a) {
+                                    b.selected = false;
+                                    if (SDL_PointInRect(&temp, &b.rect)) {
+                                        b.selected = true;
+                                        tTracker.currentCharacter = b.character;
+
+                                    }
+                                }
+                            }
+                        }
+                        if (event.button.button == (SDL_BUTTON_RIGHT)) {
+                            SDL_Point temp = mousePosition;
+                            for (auto &a: grid.tiles) {
+                                for (auto &b: a) {
+                                    b.placed = false;
+                                    if (SDL_PointInRect(&temp, &b.rect)) {
+                                        //last placed tile set to true
+                                        b.placed = true;
+                                        //update the tiles object
+                                        ///TODO objets in space need to be allowed later
+                                        if(b.onGrid) {
+                                            b.character = tTracker.currentCharacter;
+                                            b.occupied = true;
+                                            b.object = ObjectIDs::NONE;
                                         }
 
                                     }
@@ -514,7 +651,7 @@ namespace JanSordid::SDL_Example
                         }
                     }
                     if (event.button.button == (SDL_BUTTON_RIGHT)) {
-                        if (!tTracker.placeObjectMode) {
+                        if (!tTracker.placeObjectMode && !tTracker.placeCharacterMode) {
                             SDL_Point temp = mousePosition;
                             for (auto &a: grid.tiles) {
                                 for (auto &b: a) {
@@ -524,10 +661,16 @@ namespace JanSordid::SDL_Example
                                         b.placed = true;
                                         //update the tiles style
                                         b.style = tTracker.currentFloorSprite;
+                                        //if placing player ship parts
+                                        if(tTracker.isPlayerShipTile){
+                                            b.isPlayerShipTile = true;
+                                        }
                                         //if NONE selected remove from grid
-                                        if (tTracker.currentFloorSprite == FloorTileStyles::NONE) {
+                                        if (tTracker.currentFloorSprite == FloorTileIDs::NONE) {
                                             b.onGrid = false;
-                                            b.object = Objects::NONE;
+                                            b.object = ObjectIDs::NONE;
+                                            b.character = CharacterIDs::NONE;
+                                            b.isPlayerShipTile = false;
                                         } else { b.onGrid = true; }
 
                                         //if not in wall/door mode only replace style of tile
@@ -575,7 +718,7 @@ namespace JanSordid::SDL_Example
 
             for (auto &a: grid.tiles) {
                 for (auto &b: a) {
-                    if (b.style != FloorTileStyles::NONE && b.walls == 1) {
+                    if (b.style != FloorTileIDs::NONE && b.walls == 1) {
                         if (grid.tiles[b.y + 1][b.x].isTop && grid.tiles[b.y + 1][b.x].walls == 1) {
                             grid.tiles[b.y + 1][b.x].isTop = false;
                             b.isTop = true;
@@ -589,8 +732,8 @@ namespace JanSordid::SDL_Example
         if (mode == Mode::TilePlacer) {
             if (tTracker.placeTileMode) {
                 int j = 0; // next y pos
-                for (auto a: floorTiles) {
-                    grid.tiles[j][0].style = static_cast<FloorTileStyles>(j + 1);
+                for (int i =0;i<static_cast<int>(FloorTileIDs::Floor2);i++) {
+                    grid.tiles[j][0].style = static_cast<FloorTileIDs>(j);
                     j++;
                 }
 
@@ -598,7 +741,15 @@ namespace JanSordid::SDL_Example
             if (tTracker.placeObjectMode) {
                 int j = 0; // next y pos
                 for (auto a: objectSprites) {
-                    grid.tiles[j][0].object = static_cast<Objects>(j + 1);
+                    grid.tiles[j][0].object = static_cast<ObjectIDs>(j + 1);
+                    j++;
+                }
+
+            }
+            if (tTracker.placeCharacterMode) {
+                int j = 0; // next y pos
+                for (auto a: characterSprites) {
+                    grid.tiles[j][0].character = static_cast<CharacterIDs>(j + 1);
                     j++;
                 }
 
@@ -606,10 +757,19 @@ namespace JanSordid::SDL_Example
 
             //finish selecting modes
             if (tTracker.confirm) {
+                //SaveMap(grid.tiles);
+                SavePlayerShip(grid.tiles);
                 tTracker.confirm = false;
                 tTracker.manageDoorsMode = false;
                 tTracker.manageWallsMode = false;
                 tTracker.ResetWallDoorPlacer();
+            }
+
+            if(load) {
+               // loadTilemap(testingMap);
+                loadOffsetMap(testingMap,60,34);
+                loadOffsetMap(startingShip,60,34);
+                load = false;
             }
         }
     }
@@ -624,30 +784,93 @@ namespace JanSordid::SDL_Example
         SDL_RenderClear(renderer());
         if(mode == Mode::TilePlacer) {
 
-            if(tTracker.manageWallsMode           ){
-                SDL_SetRenderDrawColor(renderer(), 255, 0, 0, 255);
+            if(tTracker.placeTileMode){
+                SDL_SetRenderDrawColor(renderer(), 50, 50, 50, 255);
                 SDL_RenderClear(renderer());
-                Texture * t = textToTexture("WALL SELECT MODE\n Activate Wall placement with WASD \n Press U to Switch to DOOR Select \n CONFIRM to go back to tile only mode");
-                renderText(grid.tiles[0][4].rect,t );
+                Texture * t = textToTexture("TILE PLACER MODE\n"
+                                            "G: Show/Hide Grid \n"
+                                            "LEFTMOUSE: Select\n"
+                                            "RIGHTMOUSE: Place\n"
+                                            "U: Walls MODE\n"
+                                            "O: Object MODE\n"
+                                            "C: Characters MODE\n"
+                                            "H: Hide/Show this Info");
+                if(tTracker.infoToggle) {
+                    renderText(grid.tiles[0][4].rect, t);
+                }
                 SDL_DestroyTexture(t);
                 t = nullptr;
+            }
+
+
+            if(tTracker.manageWallsMode){
+                SDL_SetRenderDrawColor(renderer(), 100, 0, 0, 255);
+                SDL_RenderClear(renderer());
+                if(tTracker.infoToggle) {
+                    Texture *t = textToTexture(
+                            "WALL SELECT MODE\n"
+                            "G: Show/Hide Grid \n"
+                            "LEFTMOUSE: Select\n"
+                            "RIGHTMOUSE: Place\n"
+                            "Activate Wall placement with WASD\n"
+                            "Press U to Switch to DOOR Select\n"
+                            "CONFIRM or T: back to tile only mode\n"
+                            "H:hide Info ");
+                    renderText(grid.tiles[0][4].rect, t);
+                    SDL_DestroyTexture(t);
+                    t = nullptr;
+                }
+
 
             }
             if(tTracker.manageDoorsMode){
-                SDL_SetRenderDrawColor(renderer(), 0, 255, 0, 255);
+                SDL_SetRenderDrawColor(renderer(), 0, 100, 0, 255);
                 SDL_RenderClear(renderer());
-                Texture * t = textToTexture("DOOR SELECT MODE\n Activate DOOR placement with WASD \n Press U to Switch to WALL Select \n CONFIRM to go back to tile only mode");
-                renderText(grid.tiles[0][4].rect,t );
-                SDL_DestroyTexture(t);
-                t = nullptr;
+                if(tTracker.infoToggle) {
+                    Texture *t = textToTexture(
+                            "DOOR SELECT MODE\n"
+                            "G: Show/Hide Grid \n"
+                            "LEFTMOUSE: Select\n"
+                            "RIGHTMOUSE: Place\n"
+                            "Activate DOOR placement with WASD \n"
+                            "U: Switch to WALL Select \n"
+                            "CONFIRM or T: back to tile only mode\n H:hide Info");
+                    renderText(grid.tiles[0][4].rect, t);
+                    SDL_DestroyTexture(t);
+                    t = nullptr;
+                }
             }
             if(tTracker.placeObjectMode){
                 SDL_SetRenderDrawColor(renderer(), 100, 100, 150, 255);
                 SDL_RenderClear(renderer());
-                Texture * t = textToTexture("OBJECT SELECT MODE\n  Press O to Return to Tile Placer Mode \n Leftclick to Select Rightclickt to place \n");
-                renderText(grid.tiles[0][4].rect,t );
-                SDL_DestroyTexture(t);
-                t = nullptr;
+                if(tTracker.infoToggle) {
+                    Texture *t = textToTexture(
+                            "OBJECT SELECT MODE\n"
+                            "G: Show/Hide Grid \n"
+                            "LEFTMOUSE: Select\n"
+                            "RIGHTMOUSE: Place\n"
+                            "T:Return to Tile Placer Mode \n"
+                            "H:hide Info");
+                    renderText(grid.tiles[0][4].rect, t);
+                    SDL_DestroyTexture(t);
+                    t = nullptr;
+                }
+            }
+            if(tTracker.placeCharacterMode){
+                SDL_SetRenderDrawColor(renderer(), 50, 30, 150, 255);
+                SDL_RenderClear(renderer());
+                if(tTracker.infoToggle) {
+                    Texture *t = textToTexture(
+                            "CHARACTER SELECT MODE\n"
+                            "G:Show/Hide Grid \n"
+                            "LEFTMOUSE: Select\n"
+                            "RIGHTMOUSE: Place\n"
+                            "T:Return to Tile Placer Mode \n"
+                            "H:hide Info");
+                    renderText(grid.tiles[0][4].rect, t);
+                    SDL_DestroyTexture(t);
+                    t = nullptr;
+                }
             }
             if (showGrid) {
                 grid.render(renderer());
@@ -655,10 +878,8 @@ namespace JanSordid::SDL_Example
 
             if (tTracker.placeTileMode) {
                 int j = 0; // next y pos
-                for (auto a: floorTiles) {
-                    for (int i = 0; i < 1; i++) {
-                        renderFromSpritesheet(grid.tiles[j][i].rect, a, &clips32[i]);
-                    }
+                for (int i =0;i<static_cast<int>(FloorTileIDs::Floor2);i++) {
+                    RenderFloorTile(static_cast<FloorTileIDs>(i),grid.tiles[i][0].rect);
                     j++;
                 }
             }
@@ -671,19 +892,28 @@ namespace JanSordid::SDL_Example
                     j++;
                 }
             }
-                grid.hover(renderer());
-
+            if (tTracker.placeCharacterMode) {
+                int j = 0; // next y pos
+                for (auto a: characterSprites) {
+                    for (int i = 0; i < 1; i++) {
+                        renderFromSpritesheet(grid.tiles[j][i].rect, a, &clips32[0]);
+                    }
+                    j++;
+                }
+            }
 
             for (auto a: grid.tiles) {
                 for (auto b: a) {
-                    if (b.style != FloorTileStyles::NONE && b.onGrid) {
+                    if (b.style != FloorTileIDs::NONE && b.onGrid) {
                         RenderFloorTile(b.style, b.rect);
                         RenderWalls(b.rect,b.walls);
                         RenderDoors(b.rect,b.doors);
                         RenderObjectSprites(b.object,b.rect);
+                        RenderCharacterSprites(b.rect,b.character);
                     }
                 }
             }
+            grid.hover(renderer());
 
             SDL_Rect selectionVisualizer = {mousePosition.x, mousePosition.y, 64, 64};
 
@@ -691,10 +921,17 @@ namespace JanSordid::SDL_Example
             renderFromSpritesheet(selectionVisualizer, tilesWalls, &clips32[tTracker.selectedWalls]);
 
             selectionVisualizer.x = selectionVisualizer.x + 64;
-            if(!tTracker.placeObjectMode) {
-                RenderFloorTile(tTracker.currentFloorSprite, selectionVisualizer);
-            }else{
+            if(tTracker.placeObjectMode) {
                 RenderObjectSprites(tTracker.currentObject, selectionVisualizer);
+            }
+            if(tTracker.placeCharacterMode){
+                RenderCharacterSprites(selectionVisualizer,tTracker.currentCharacter);
+            }
+            if(tTracker.placeTileMode){
+                RenderFloorTile(tTracker.currentFloorSprite, selectionVisualizer);
+            }
+            if(tTracker.isPlayerShipTile){
+                RenderCharacterSprites( selectionVisualizer,CharacterIDs::PlayerCharacter);
             }
 
 
@@ -704,7 +941,7 @@ namespace JanSordid::SDL_Example
 
             for (auto a: grid.tiles) {
                 for (auto b: a) {
-                    if (b.style != FloorTileStyles::NONE) {
+                    if (b.style != FloorTileIDs::NONE) {
                         renderFromSpritesheet(b.rect, tileStandard, &clips32[tileswitch]);
                     }
                     if (b.isTop && b.walls == 1) {
@@ -886,19 +1123,25 @@ namespace JanSordid::SDL_Example
         }
     }
     SDL_Texture *STR_State::GetAnimation(AnimationTarget &a){
-        using enum EntityType;
-        using enum EntityAnimations;
+        using enum CharacterIDs;
+        using enum CharacterAnimations;
 
 
         ///TODO add more animations for types
         switch(a.type){
-            case EntityType::EnemyType1: switch(a.currentAnimation){
-                case EntityAnimations::Idle: a.loop = true; a.nextAnimation = EntityAnimations::Idle; return playerIdleSheet;break;
+            case CharacterIDs::PlayerCharacter: switch(a.currentAnimation){
+                case CharacterAnimations::Idle: a.loop = true; a.nextAnimation = CharacterAnimations::Idle; return playerIdleSheet;break;
                 case Aim: a.loop = false; a.nextAnimation = Fire; return playerDamageKnockdownSheet;break;
                 case Fire: a.loop = false; a.nextAnimation = Idle; return playerGetUpSheet;break;
                 default: return playerIdleSheet;break;
             }
-            default: return playerIdleSheet;
+                case CharacterIDs::Orc: switch(a.currentAnimation){
+                    case CharacterAnimations::Idle: a.loop = true; a.nextAnimation= Idle; return characterOrcIdleSheet;
+                    case Aim: break;
+                    case Fire: break;
+                    //TODO test Player Ship load/save; build enemy and load onto same map
+                }
+            default: return playerDamageKnockdownSheet;
         }
     }
 
@@ -993,8 +1236,8 @@ namespace JanSordid::SDL_Example
         }
     }
 
-    void STR_State::RenderFloorTile(FloorTileStyles s, SDL_Rect t){
-        using enum FloorTileStyles;
+    void STR_State::RenderFloorTile(FloorTileIDs s, SDL_Rect t){
+        using enum FloorTileIDs;
         switch(s){
             case NONE:
                 break;
@@ -1002,15 +1245,63 @@ namespace JanSordid::SDL_Example
                 renderFromSpritesheet(t,tileStandard,&clips32[0]);break;
             case Round:
                 renderFromSpritesheet(t,tileCircle,&clips32[0]);break;
+            case Grass0:
+                renderFromSpritesheet(t,tileGrassSheet,&clips32[0]);break;
+            case Grass1:
+                renderFromSpritesheet(t,tileGrassSheet,&clips32[1]);break;
+            case Grass2:
+                renderFromSpritesheet(t,tileGrassSheet,&clips32[2]);break;
+            case Grass3:
+                renderFromSpritesheet(t,tileGrassSheet,&clips32[3]);break;
+            case Grass4:
+                renderFromSpritesheet(t,tileGrassSheet,&clips32[4]);break;
+            case Grass5:
+                renderFromSpritesheet(t,tileGrassSheet,&clips32[5]);break;
+            case Grass6:
+                renderFromSpritesheet(t,tileGrassSheet,&clips32[6]);break;
+            case Grass7:
+                renderFromSpritesheet(t,tileGrassSheet,&clips32[7]);break;
+            case TopWalls0:
+                renderFromSpritesheet(t,tileTopWallsSheet,&clips32[0]);break;
+            case TopWalls1:
+                renderFromSpritesheet(t,tileTopWallsSheet,&clips32[1]);break;
+            case TopWalls2:
+                renderFromSpritesheet(t,tileTopWallsSheet,&clips32[2]);break;
+            case TopWalls3:
+                renderFromSpritesheet(t,tileTopWallsSheet,&clips32[3]);break;
+            case TopWalls4:
+                renderFromSpritesheet(t,tileTopWallsSheet,&clips32[4]);break;
+            case TopWalls5:
+                renderFromSpritesheet(t,tileTopWallsSheet,&clips32[5]);break;
+            case Floor0:
+                renderFromSpritesheet(t,tileFloor2Sheet,&clips32[0]);break;
+            case Floor1:
+                renderFromSpritesheet(t,tileFloor2Sheet,&clips32[1]);break;
+            case Floor2:
+                renderFromSpritesheet(t,tileFloor2Sheet,&clips32[2]);break;
+            default: break;
         }
 
     }
-    void STR_State::RenderObjectSprites(Objects o, SDL_Rect t){
-        using enum Objects;
+    void STR_State::RenderObjectSprites(ObjectIDs o, SDL_Rect t){
+        using enum ObjectIDs;
         switch(o) {
             case Shot:
                 renderFromSpritesheet(t, objectShot, &clips32[1]);
                 break;
+
+            default:
+                break;
+        }
+    }
+    void STR_State::RenderCharacterSprites(SDL_Rect t, CharacterIDs c){
+        using enum CharacterIDs;
+        switch(c) {
+            case CharacterIDs::PlayerCharacter:
+                renderFromSpritesheet(t, playerIdleSheet, &clips32[0]);
+                break;
+            case Orc: renderFromSpritesheet(t, characterOrcIdleSheet, &clips32[0]);
+            break;
 
             default:
                 break;
@@ -1021,6 +1312,313 @@ namespace JanSordid::SDL_Example
     }
     void STR_State::RenderDoors(SDL_Rect t,int doors) {
         renderFromSpritesheet(t, tilesDoors, &clips32[doors]);
+    }
+
+    Grid STR_State::loadOffsetMap(const std::string& filename, int offsetX, int offsetY) {
+
+        std::ifstream file(filename);
+        if (!file) {
+            std::cerr << "Error opening file for reading!\n";
+            return grid;
+        }
+        String output = "";
+        std::string line;
+
+        int i = 0;
+
+        for (auto &a: grid.tiles) {
+            std::getline(file, line);
+            if(i != 0) {
+                output.append("\n");
+            }
+            for (auto &b: a) {
+                if(b.x >59){
+                    break;
+                }
+                if(b.y >32){
+                    break;
+                }
+
+                size_t closingPos = line.find(']'); // Find the first closing
+                // Extract string before closing
+                std::string tileString = (closingPos != std::string::npos) ? line.substr(0, closingPos+1) : line;
+                line.erase(0, closingPos + 1);//erase the processed tile from big string
+
+                //get the values from the file
+                Vector<int> values = processTileString(tileString);
+                output.append(std::to_string(i));
+                i++;
+                output.append("[");
+                for(auto v : values){
+                    output.append( std::to_string(v));
+                    output.append(",");
+                }
+                // Remove the last comma if output is not empty
+                if (!output.empty()) {
+                    output.pop_back();
+                }
+
+                output.append( "]");
+                int y = b.y + offsetY;
+                int x = b.x + offsetX;
+
+                if(values[0] != 0) {
+                    grid.tiles[y][x].onGrid = values[0];
+                    grid.tiles[y][x].style = static_cast<FloorTileIDs>(values[1]);
+                    grid.tiles[y][x].walls = values[2];
+                    grid.tiles[y][x].doors = values[3];
+                    grid.tiles[y][x].object = static_cast<ObjectIDs>(values[4]);
+                    grid.tiles[y][x].character = static_cast<CharacterIDs>(values[5]);
+                    if (grid.tiles[y][x].character != CharacterIDs::NONE ||
+                        grid.tiles[y][x].object != ObjectIDs::NONE) {
+                        grid.tiles[y][x].occupied = true;
+                    }
+                }
+
+            }
+        }
+        std::cout << output;
+        NFD::Window     nw = nativeWindow();
+        NFD::UniquePath path;
+        const NFD::Result result = NFD::SaveDialog( path, NFD::EmptyFilter, 0, "/home/max/CLionProjects/SpaceTimeRogue/src/example/game/Tilemaps/", "newFile.txt", nw ); // Freezes execution of the Game
+        if (result == NFD::Result::NFD_OKAY) {
+            std::ofstream outFile(path.get());  // Create and open the file
+            if (outFile) {
+                outFile << output;  // Write the string to the file
+                outFile.close();
+                std::cout << "File saved successfully: " << path.get() << std::endl;
+            } else {
+                std::cerr << "Error creating file at: " << path.get() << std::endl;
+            }
+        } else if (result == NFD::Result::NFD_CANCEL) {
+            std::cout << "User canceled the save dialog.\n";
+        } else {
+            std::cerr << "Error opening save dialog.\n";
+        }
+
+        return grid;
+    }
+
+    Grid STR_State::loadTilemap(const std::string& filename) {
+
+        std::ifstream file(filename);
+        if (!file) {
+            std::cerr << "Error opening file for reading!\n";
+            return grid;
+        }
+        String output = "";
+        std::string line;
+
+        int i = 0;
+
+        for (auto &a: grid.tiles) {
+            std::getline(file, line);
+            if(i != 0) {
+                output.append("\n");
+            }
+            for (auto &b: a) {
+                if(b.x >59){
+                    break;
+                }
+                if(b.y >32){
+                    break;
+                }
+
+                size_t closingPos = line.find(']'); // Find the first closing
+                // Extract string before closing
+                std::string tileString = (closingPos != std::string::npos) ? line.substr(0, closingPos+1) : line;
+                line.erase(0, closingPos + 1);//erase the processed tile from big string
+
+                //get the values from the file
+               Vector<int> values = processTileString(tileString);
+                output.append(std::to_string(i));
+                i++;
+                output.append("[");
+               for(auto v : values){
+                   output.append( std::to_string(v));
+                   output.append(",");
+               }
+                // Remove the last comma if output is not empty
+                if (!output.empty()) {
+                    output.pop_back();
+                }
+
+                output.append( "]");
+
+               b.onGrid = values[0];
+               b.style = static_cast<FloorTileIDs>(values[1]);
+               b.walls = values[2];
+               b.doors = values[3];
+               b.object = static_cast<ObjectIDs>(values[4]);
+               b.character = static_cast<CharacterIDs>(values[5]);
+               if(b.character != CharacterIDs::NONE || b.object != ObjectIDs::NONE){
+                   b.occupied = true;
+               }
+
+            }
+        }
+        std::cout << output;
+        NFD::Window     nw = nativeWindow();
+        NFD::UniquePath path;
+        const NFD::Result result = NFD::SaveDialog( path, NFD::EmptyFilter, 0, "/home/max/CLionProjects/SpaceTimeRogue/src/example/game/Tilemaps/", "newFile.txt", nw ); // Freezes execution of the Game
+        if (result == NFD::Result::NFD_OKAY) {
+            std::ofstream outFile(path.get());  // Create and open the file
+            if (outFile) {
+                outFile << output;  // Write the string to the file
+                outFile.close();
+                std::cout << "File saved successfully: " << path.get() << std::endl;
+            } else {
+                std::cerr << "Error creating file at: " << path.get() << std::endl;
+            }
+        } else if (result == NFD::Result::NFD_CANCEL) {
+            std::cout << "User canceled the save dialog.\n";
+        } else {
+            std::cerr << "Error opening save dialog.\n";
+        }
+
+        return grid;
+    }
+
+
+    String STR_State::SavePlayerShip(std::vector<std::vector<Tile>>&t){
+        String output;
+        String temp;
+        int i = 0;
+        for (auto a : t){
+            output.append("\n");
+            for(auto b : a){
+
+                if(b.x >59){
+                    break;
+                }
+                if(b.y >32){
+                    break;
+                }
+                output.append(std::to_string(i));
+                i++;
+                //open tile
+                output.append("[");
+                //if has tile
+                if(!b.onGrid) {
+                    output.append("0,0,0,0,0,0]");
+                }else {
+                    if(b.isPlayerShipTile) {
+                        output.append("1,");
+                        //save tile style
+                        temp = std::to_string(static_cast<int>(b.style));
+                        output.append(temp);
+                        output.append(",");
+                        //save walls
+                        temp = std::to_string(b.walls);
+                        output.append(temp);
+                        output.append(",");
+                        //save doors
+                        temp = std::to_string(b.doors);
+                        output.append(temp);
+                        output.append(",");
+                        //save object
+                        temp = std::to_string(static_cast<int>(b.object));
+                        output.append(temp);
+                        output.append(",");
+                        //save character
+                        temp = std::to_string(static_cast<int>(b.character));
+                        output.append(temp);
+                        output.append("]");
+                    }else{output.append("0,0,0,0,0,0]");}
+
+                }
+
+            }
+        }
+        std::cout << output;
+        return output;
+    }
+    String STR_State::SaveMap(std::vector<std::vector<Tile>>&t){
+        String output;
+        String temp;
+        int i = 0;
+        for (auto a : t){
+            output.append("\n");
+            for(auto b : a){
+
+                if(b.x >59){
+                    break;
+                }
+                if(b.y >32){
+                    break;
+                }
+                output.append(std::to_string(i));
+                i++;
+                //open tile
+                output.append("[");
+                //if has tile
+                if(!b.onGrid) {
+                    output.append("0,0,0,0,0,0]");
+                }else {
+                    output.append("1,");
+                    //save tile style
+                    temp = std::to_string(static_cast<int>(b.style));
+                    output.append(temp);
+                    output.append(",");
+                    //save walls
+                    temp = std::to_string(b.walls);
+                    output.append(temp);
+                    output.append(",");
+                    //save doors
+                    temp = std::to_string(b.doors);
+                    output.append(temp);
+                    output.append(",");
+                    //save object
+                    temp = std::to_string(static_cast<int>(b.object));
+                    output.append(temp);
+                    output.append(",");
+                    //save character
+                    temp = std::to_string(static_cast<int>(b.character));
+                    output.append(temp);
+                    output.append("]");
+
+                }
+
+            }
+        }
+        std::cout << output;
+        return output;
+    }
+
+    std::vector<int> STR_State::processTileString(std::string str) {
+        std::vector<int> values;
+
+        // Remove the first bracket '['
+        /*
+        if (!str.empty() && str[0] == '[') {
+            str.erase(0, 1);
+            line.erase(0, closingPos + 1);
+        }
+         */
+        if(!str.empty()){
+            size_t openPos = str.find('['); // Find the first comma
+            str.erase(0,openPos+1);
+        }
+
+        while (!str.empty()) {
+            size_t commaPos = str.find(','); // Find the first comma
+
+            // Extract number before the comma (or entire string if no comma)
+            std::string numberStr = (commaPos != std::string::npos) ? str.substr(0, commaPos) : str;
+
+            // Convert to integer and store it
+            values.push_back(std::stoi(numberStr));
+
+            // Remove the processed number and comma
+            if (commaPos != std::string::npos) {
+                str.erase(0, commaPos + 1);  // Also removes the comma
+            } else {
+                //quick fix
+                break; // Stop if no more commas
+            }
+        }
+
+        return values;
     }
 
 
