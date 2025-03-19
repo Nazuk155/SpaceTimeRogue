@@ -32,6 +32,11 @@ void MusicManager::init()
     currentBGM= bgm::GameOver;
     Mix_VolumeMusic(10);
     Mix_VolumeChunk(effectPlayerBark,MIX_MAX_VOLUME);
+    Mix_VolumeChunk(effectTurtleJump,MIX_MAX_VOLUME);
+    Mix_VolumeChunk(effectGravity,MIX_MAX_VOLUME);
+    Mix_VolumeChunk(effectGlassRinging,MIX_MAX_VOLUME);
+    Mix_VolumeChunk(effectPackageOpen,MIX_MAX_VOLUME);
+    Mix_VolumeChunk(effectPlayerWalk,MIX_MAX_VOLUME);
 
     Mix_PlayMusic(musicGameOver, -1 );
 
