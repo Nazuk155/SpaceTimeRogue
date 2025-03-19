@@ -15,6 +15,7 @@
 #include "grid.h"
 #include "AnimationManager.h"
 #include "playerCharacter.h"
+#include "music.h"
 
 namespace JanSordid::SDL_Example {
     using namespace JanSordid;
@@ -322,7 +323,13 @@ namespace JanSordid::SDL_Example {
         int brightness = 160;
         static constexpr const int Scale = 8;
 
+        //showcase
+        int advance = 0;
+
         ///own stuff
+        //sound
+        //music
+        MusicManager musicManager;
         //textures
         //player
         Texture * playerIdleSheet;
@@ -335,6 +342,9 @@ namespace JanSordid::SDL_Example {
         Texture * playerDamageKnockdownSheetFlip;
         Texture * playerGetUpSheet;
         Texture * playerGetUpSheetFlip;
+        Texture * playerStabSheet;
+        Texture * playerStabSheetFlip;
+
         //characters
         Texture * characterOrcIdleSheet;
         Texture * characterOrcIdleSheetFlip;
@@ -342,8 +352,13 @@ namespace JanSordid::SDL_Example {
         Texture * characterOrcShootSheetFlip;
         Texture * characterOrkWalkSheet;
         Texture * characterOrkWalkSheetFlip;
+        Texture * characterTurtleIdleSheet;
+        Texture * characterTurtleFloatSheet;
+        Texture * characterTurtlePowerSheet;
+        Texture * characterTurtleJumpSheet;
 
 
+        //tiles
         Texture * tileTest;
         Texture * tileStandard;
         Texture * tileCircle;
@@ -353,12 +368,18 @@ namespace JanSordid::SDL_Example {
         Texture * tileTopWallsSheet;
         Texture * tileFloor2Sheet;
 
+        //backgrounds
         Texture * backgroundSpace;
+        Texture * backgroundsGrass;
+        Texture * backgroundsSpaceship;
 
+        //ui
         Texture * uiHealthbarsSheet;
         Texture * uiSkillsBackground;
+        Texture * uiSpeechbubbleSheet;
 
         Texture * objectShot;
+        Texture * objectPackageOpenSheet;
 
 
 
@@ -444,10 +465,13 @@ namespace JanSordid::SDL_Example {
         int tileswitch = 0;
 
 
+        //remove these
+        u64 phase2 = 0;
+        u64 startAnim2 = 0;
 
 
         //text size for all text for now
-        int fontsize = 30;
+        int fontsize = 20;
        // PlayerState state = PlayerState::Idle;
         bool knockdown = false;
 
@@ -546,6 +570,8 @@ namespace JanSordid::SDL_Example {
         Grid loadOffsetMap(const std::string &filename, int offsetX, int offsetY);
 
         String SavePlayerShip(std::vector<std::vector<Tile>> &t);
+
+        void RenderPlayerBubbleText(const String& text, playerCharacter &pChar);
     };
 
 }

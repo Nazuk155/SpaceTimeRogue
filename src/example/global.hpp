@@ -16,7 +16,8 @@ static int WINDOWSIZE_Y = 270 *4;
 
 enum class Mode{
     Game,
-    TilePlacer
+    TilePlacer,
+    Showcase
 };
 enum class ObjectIDs{
     NONE,

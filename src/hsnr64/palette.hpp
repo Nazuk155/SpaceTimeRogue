@@ -47,7 +47,8 @@ namespace JanSordid::HSNR64
 		Color{  255,  0,    255, SDL_ALPHA_OPAQUE /*SDL_ALPHA_TRANSPARENT*/ },   // this is the don't-draw-pink
 	//	Color{  0,    255,  255, SDL_ALPHA_TRANSPARENT },   // this is the don't-draw-cyan
 		Color{  1,    7,    10,  SDL_ALPHA_OPAQUE },    // Black
-		Color{  19,   16,   20,  SDL_ALPHA_OPAQUE },
+		//Color{  19,   16,   20,  SDL_ALPHA_OPAQUE }, for player bubble
+        Color{  255,   0,   155,  SDL_ALPHA_OPAQUE },
 		Color{  33,   34,   57,  SDL_ALPHA_OPAQUE },
 		Color{  49,   57,   68,  SDL_ALPHA_OPAQUE },
 		Color{  73,   84,   101, SDL_ALPHA_OPAQUE },

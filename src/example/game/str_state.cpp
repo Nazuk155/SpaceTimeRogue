@@ -39,6 +39,10 @@ namespace JanSordid::SDL_Example
         string playerDamageKnockdownFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Damage_Knockout_flip-Sheet.png";
         string playerKnockdownGetupPath = BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Knockout_JumpUp-Sheet.png";
         string playerKnockdownGetupFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Knockout_JumpUp_Flip-Sheet.png";
+        string playerStabPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Tripple_Attack-Sheet.png";
+        string playerStabFlipPath =  BasePath "/src/example/game/Ressources/Image_assets/entities/playerCharacter/Player_Tripple_Attack_Flip-Sheet.png";
+
+
         //other characters
         string characterOrcIdlePath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Idle-Sheet.png";
         string charactersOrcIdleFlipPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Idle_flip-Sheet.png";
@@ -46,6 +50,12 @@ namespace JanSordid::SDL_Example
         string characterOrcShootFlipPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Shoot_Flip-Sheet.png";
         string characterOrcWalkPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Walk_Cycle-Sheet.png";
         string characterOrcWalkFlipPath = BasePath "/src/example/game/Ressources/Image_assets/entities/enemy/Ork_Walk_Cycle_Flip-Sheet.png";
+
+        string characterTurtleIdlePath = BasePath "/src/example/game/Ressources/Image_assets/entities/turtle/Turtle_Idol-Sheet.png";
+        string characterTurtleFloatPath = BasePath "/src/example/game/Ressources/Image_assets/entities/turtle/Turtle_Float-Sheet.png";
+        string characterTurtleJumpPath = BasePath "/src/example/game/Ressources/Image_assets/entities/turtle/Turtle_Jump-Sheet.png";
+        string characterTurtlePowerPath = BasePath "/src/example/game/Ressources/Image_assets/entities/turtle/Turtle_Power-Sheet.png";
+
         //tiles
         string tileTestingPath = BasePath "/src/example/game/Ressources/Image_assets/tiles/Tiles/Tiles.png";
         string tileStandardPath = BasePath"/src/example/game/Ressources/Image_assets/tiles/Standard_Floor_Tile-Sheet.png";
@@ -58,13 +68,17 @@ namespace JanSordid::SDL_Example
 
         //objects
         string objectShotPath = BasePath "/src/example/game/Ressources/Image_assets/items/Shoot-Sheet.png";
+        string objectPackagePath = BasePath "/src/example/game/Ressources/Image_assets/items/Package_Open.png";
 
         //backgrounds
         string backgroundSpacePath = BasePath"/src/example/game/Ressources/Image_assets/backgrounds/Space.png";
+        string backgroundsGrassPath = BasePath"/src/example/game/Ressources/Image_assets/backgrounds/Grass_Background.png";
+        string backgroundsSpaceshipPath = BasePath"/src/example/game/Ressources/Image_assets/backgrounds/Spaceship.png";
 
         //ui
         string uiHealthbarSheetPath = BasePath"/src/example/game/Ressources/Image_assets/ui/UI-export.png";
         string uiSkillsBackgroundPath = BasePath"/src/example/game/Ressources/Image_assets/ui/Skills_Background_ui.png";
+        string uiSpeechBubblePath = BasePath"/src/example/game/Ressources/Image_assets/ui/Speechbubble-Sheet.png";
 
 
 
@@ -81,6 +95,9 @@ namespace JanSordid::SDL_Example
     playerDamageKnockdownSheetFlip = loadFromFile(playerDamageKnockdownFlipPath);
     playerGetUpSheet = loadFromFile(playerKnockdownGetupPath);
     playerGetUpSheetFlip = loadFromFile(playerKnockdownGetupFlipPath);
+    playerStabSheet = loadFromFile(playerStabPath);
+    playerStabSheetFlip = loadFromFile(playerStabFlipPath);
+
     //other characters
     characterOrcIdleSheet = loadFromFile(characterOrcIdlePath);
     characterOrcIdleSheetFlip = loadFromFile(charactersOrcIdleFlipPath);
@@ -88,6 +105,12 @@ namespace JanSordid::SDL_Example
     characterOrcShootSheetFlip = loadFromFile(characterOrcShootFlipPath);
     characterOrkWalkSheet = loadFromFile(characterOrcWalkPath);
     characterOrkWalkSheetFlip = loadFromFile(characterOrcWalkFlipPath);
+
+    ///turtle
+    characterTurtleIdleSheet = loadFromFile(characterTurtleIdlePath);
+    characterTurtleFloatSheet = loadFromFile(characterTurtleFloatPath);
+    characterTurtlePowerSheet = loadFromFile(characterTurtlePowerPath);
+    characterTurtleJumpSheet = loadFromFile(characterTurtleJumpPath);
 
     //tiles
     tileTest = loadFromFile(tileTestingPath);
@@ -100,11 +123,15 @@ namespace JanSordid::SDL_Example
     tileTopWallsSheet = loadFromFile(tileTopWallsPath);
     //items
     objectShot = loadFromFile(objectShotPath);
+    objectPackageOpenSheet = loadFromFile(objectPackagePath);
     //backgrounds
     backgroundSpace = loadFromFile(backgroundSpacePath);
+    backgroundsGrass = loadFromFile(backgroundsGrassPath);
+    backgroundsSpaceship = loadFromFile(backgroundsSpaceshipPath);
     //ui
     uiHealthbarsSheet = loadFromFile(uiHealthbarSheetPath);
     uiSkillsBackground = loadFromFile(uiSkillsBackgroundPath);
+    uiSpeechbubbleSheet = loadFromFile(uiSpeechBubblePath);
 
     floorTileSprites.push_back(tileStandard);
     floorTileSprites.push_back(tileCircle);
@@ -117,7 +144,9 @@ namespace JanSordid::SDL_Example
     playerAnimation = playerIdleSheet;
     grid.updateTileSize(scale);
 
-        mode = Mode::TilePlacer;
+    musicManager.init();
+
+        mode = Mode::Showcase;
 
 /*
         for(int i = 0; i<17;i++){
@@ -174,17 +203,29 @@ namespace JanSordid::SDL_Example
             pChar.updatePosition({60+59, 34+31}, grid.getTile(60+59, 34+31).rect);
         }
         if(mode == Mode::TilePlacer){
-/*
+
             gridStartingPoint.x = 0;
             gridStartingPoint.y = 0;
             grid.setOrigin(gridStartingPoint.x, gridStartingPoint.y);
             startingScale = scale;
-*/
+/*
 
             gridStartingPoint.x = -(scale * grid.getGridTilesXY().x / 2);
             gridStartingPoint.y = -(scale * grid.getGridTilesXY().y / 2);
             grid.setOrigin(gridStartingPoint.x, gridStartingPoint.y);
             startingScale = scale;
+*/
+        }
+        if(mode == Mode::Showcase){
+            scale = scale*8;
+            gridStartingPoint.x = 0;
+            gridStartingPoint.y = 0;
+            grid.updateTileSize(scale);
+            grid.setOrigin(gridStartingPoint.x, gridStartingPoint.y);
+            startingScale = scale;
+
+            pChar.updatePosition({4,2},grid.getTile(4,2).rect);
+            pChar.state = PlayerState::Idle;
 
         }
     }
@@ -227,6 +268,15 @@ namespace JanSordid::SDL_Example
         SDL_DestroyTexture(characterOrcShootSheetFlip);
         SDL_DestroyTexture(characterOrkWalkSheet);
         SDL_DestroyTexture(characterOrkWalkSheetFlip);
+        SDL_DestroyTexture(playerStabSheet);
+        SDL_DestroyTexture(playerStabSheetFlip);
+
+        SDL_DestroyTexture(characterTurtleIdleSheet);
+        SDL_DestroyTexture(characterTurtlePowerSheet);
+        SDL_DestroyTexture(characterTurtleJumpSheet);
+        SDL_DestroyTexture(characterTurtleFloatSheet);
+
+
         //tiles
         SDL_DestroyTexture(tileTest);
         SDL_DestroyTexture(tileStandard);
@@ -238,10 +288,17 @@ namespace JanSordid::SDL_Example
         SDL_DestroyTexture(tileTopWallsSheet);
         //objects
         SDL_DestroyTexture(objectShot);
+        SDL_DestroyTexture(objectPackageOpenSheet);
 
+        //backgrounds
         SDL_DestroyTexture(backgroundSpace);
+        SDL_DestroyTexture(backgroundsGrass);
+        SDL_DestroyTexture(backgroundsSpaceship);
+
+        //ui
         SDL_DestroyTexture(uiHealthbarsSheet);
         SDL_DestroyTexture(uiSkillsBackground);
+        SDL_DestroyTexture(uiSpeechbubbleSheet);
 
 
         playerIdleSheet = nullptr;
@@ -254,6 +311,9 @@ namespace JanSordid::SDL_Example
         playerDamageKnockdownSheetFlip = nullptr;
         playerGetUpSheet = nullptr;
         playerGetUpSheetFlip= nullptr;
+        playerStabSheet = nullptr;
+        playerStabSheetFlip = nullptr;
+
         tileTest = nullptr;
         tileStandard = nullptr;
         tileCircle = nullptr;
@@ -264,6 +324,7 @@ namespace JanSordid::SDL_Example
         tileTopWallsSheet = nullptr;
 
         objectShot = nullptr;
+        objectPackageOpenSheet = nullptr;
 
         characterOrcIdleSheet = nullptr;
         characterOrcIdleSheetFlip = nullptr;
@@ -272,10 +333,18 @@ namespace JanSordid::SDL_Example
         characterOrkWalkSheet = nullptr;
         characterOrkWalkSheetFlip = nullptr;
 
+        characterTurtleIdleSheet = nullptr;
+        characterTurtleJumpSheet= nullptr;
+        characterTurtlePowerSheet= nullptr;
+        characterTurtleFloatSheet= nullptr;
+
         backgroundSpace = nullptr;
+        backgroundsGrass = nullptr;
+        backgroundsSpaceship = nullptr;
 
         uiHealthbarsSheet = nullptr;
         uiSkillsBackground = nullptr;
+        uiSpeechbubbleSheet = nullptr;
 
 
         Base::Destroy();
@@ -284,6 +353,63 @@ namespace JanSordid::SDL_Example
     bool STR_State::HandleEvent( const Event & event ) {
 
         mouseState = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
+
+        if(mode == Mode::Showcase){
+            switch (event.type) {
+                case SDL_KEYDOWN: {
+                    const Keysym &what_key = event.key.keysym;
+
+                    if (what_key.scancode == SDL_SCANCODE_G && event.key.repeat == 0) {
+                        if (showGrid) { showGrid = false; } else { showGrid = true; }
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_SPACE && event.key.repeat == 0) {
+
+                        advance++;
+                        pChar.playedBark = false;
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_R && event.key.repeat == 0) {
+
+                        advance = 0;
+                        pChar.playedBark = false;
+                        pChar.updatePosition({4,2},grid.getTile(4,2).rect);
+                        pChar.state = PlayerState::Idle;
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_KP_PLUS && event.key.repeat == 0) {
+
+                        musicManager.volume += 10;
+
+                        Mix_VolumeMusic(musicManager.volume);
+
+                    }
+                    else if (what_key.scancode == SDL_SCANCODE_KP_MINUS && event.key.repeat == 0) {
+
+                        musicManager.volume = 0;
+                        Mix_VolumeMusic(0);
+
+                    }
+                    else {
+                        return false; // Not handled
+                    }
+
+                    return true; // Confusing control flow: Handled by all but the else case
+
+                    break;
+                }
+
+                case SDL_MOUSEBUTTONDOWN:
+                    //game.SetNextState( 1 );
+                    break;
+
+                default:
+                    break;
+            }
+
+            return false;
+        }
+
 
         if (mode == Mode::Game) {
             switch (event.type) {
@@ -696,6 +822,39 @@ namespace JanSordid::SDL_Example
 
     void STR_State::Update( const u64 frame, const u64 totalMSec, const f32 deltaT ) {
 
+        if(mode == Mode::Showcase){
+            if (pChar.state == PlayerState::Walk_Flip) {
+                if(pChar.rect.x> grid.getTile(pChar.gridPosition.x-1,pChar.gridPosition.y).rect.x -(pChar.rect.w/2)){
+                    pChar.rect.x = pChar.rect.x - 4;
+                    Mix_PlayChannel(-1,effectPlayerWalk,0);
+
+                }else{
+                    Mix_HaltChannel(-1);
+                    SwitchPlayerAnimation(PlayerState::Idle_Flip);
+                    advance++;}
+
+
+
+            }
+            if(advance == 9){
+                phase = 0;
+                startAnim = 0;
+                animationFrame = 0;
+            }
+            if(advance == 17) {
+                if (pChar.state != PlayerState::Grounded_Flip) {
+                    SwitchPlayerAnimation(PlayerState::KnockdownDamage_Flip);
+                }
+            }
+                if(advance == 18){
+                    if(pChar.state != PlayerState::Idle_Flip) {
+                        SwitchPlayerAnimation(PlayerState::GetUp_Flip);
+
+                    }else{advance++;}
+
+            }
+
+        }
         if (mode == Mode::Game) {
 
 
@@ -732,7 +891,7 @@ namespace JanSordid::SDL_Example
         if (mode == Mode::TilePlacer) {
             if (tTracker.placeTileMode) {
                 int j = 0; // next y pos
-                for (int i =0;i<static_cast<int>(FloorTileIDs::Floor2);i++) {
+                for (int i =0;i<=static_cast<int>(FloorTileIDs::Floor2);i++) {
                     grid.tiles[j][0].style = static_cast<FloorTileIDs>(j);
                     j++;
                 }
@@ -757,8 +916,8 @@ namespace JanSordid::SDL_Example
 
             //finish selecting modes
             if (tTracker.confirm) {
-                //SaveMap(grid.tiles);
-                SavePlayerShip(grid.tiles);
+                SaveMap(grid.tiles);
+                //SavePlayerShip(grid.tiles);
                 tTracker.confirm = false;
                 tTracker.manageDoorsMode = false;
                 tTracker.manageWallsMode = false;
@@ -767,7 +926,7 @@ namespace JanSordid::SDL_Example
 
             if(load) {
                // loadTilemap(testingMap);
-                loadOffsetMap(testingMap,60,34);
+                loadOffsetMap(enemyShipOrc,60,34);
                 loadOffsetMap(startingShip,60,34);
                 load = false;
             }
@@ -782,6 +941,353 @@ namespace JanSordid::SDL_Example
         SDL_SetRenderDrawColor(renderer(), 50, 50, 50, 255);
 
         SDL_RenderClear(renderer());
+        if(mode == Mode::Showcase){
+            Texture * emote = nullptr;
+           //turtle and package target
+            SDL_Rect turtle = grid.getTile(2,2).rect;
+            turtle.y = turtle.y - turtle.h/4;
+            if(musicManager.volume != 0) {
+                Mix_MasterVolume(MIX_MAX_VOLUME);
+                Mix_VolumeMusic(1);
+            }
+            //render emote on this
+            SDL_Rect turtleOffset;
+            turtleOffset = turtle;
+            turtleOffset.x = turtleOffset.x +turtle.w/2;
+            turtleOffset.y = turtleOffset.y +turtle.h/4;
+
+            renderFromSpritesheet({0,0,480*4,270*4},backgroundsGrass);
+            if(advance <=10){
+                renderFromSpritesheet(turtle,objectPackageOpenSheet,&clips32[0]);
+            }
+            switch(advance){
+                case 0:
+
+                    musicManager.changeMusic(bgm::GameOver);
+                    SwitchPlayerAnimation(PlayerState::Grounded);
+                    break;
+                case 1:
+                   if(pChar.state == PlayerState::Grounded){
+                       SwitchPlayerAnimation(PlayerState::GetUp);
+                   }
+                    if(pChar.state == PlayerState::Idle){
+                        musicManager.changeMusic(bgm::SlowStart);
+                        RenderPlayerBubbleText("Good crash!\nOnly lost half the ship!\n  ...",pChar);
+                    }
+
+                    break;
+                case 2:
+                    SwitchPlayerAnimation(PlayerState::Idle);
+                    RenderPlayerBubbleText("... which means no cargo container.\n"
+                                           "And no fusion reactor.\n"
+                                           "Plus, all the packages are gone...",pChar);
+                    break;
+
+                case 3:
+                    SwitchPlayerAnimation(PlayerState::Idle);
+                    RenderPlayerBubbleText("I could mark them lost in transit!\n"
+                                           "End my shift early...\n"
+                                           "... aaand be stuck here forever! Great!",pChar);
+                    break;
+                case 4:
+                    SwitchPlayerAnimation(PlayerState::Idle_Flip);
+                    RenderPlayerBubbleText("Oh, hello there!\n"
+                                           "You look big!\n"
+                                           "Please be a power source!",pChar);
+                    break;
+                case 5:
+                    SwitchPlayerAnimation(PlayerState::Walk_Flip);
+
+                 //   RenderPlayerBubbleText("Oh, hello there!\n""You look big!\n""Please be a power source!",pChar);
+                 break;
+                case 6:
+                    RenderPlayerBubbleText("Delivery instruction says:\n"
+                                           "DELIVERY MANDATORY;\n"
+                                           "OR UNIVERSE ENDS",pChar);
+                    break;
+                case 7:
+                    RenderPlayerBubbleText("Yeah right, very funny.\n"
+                                           "Threatening the delivery guy.\n"
+                                           "Eh, I've read worse ones.",pChar);
+                    break;
+                case 8:
+                    RenderPlayerBubbleText("Marked for *deliver today* as well!\n"
+                                           "Might as well mark me fired!\n"
+                                           "You better be something good!",pChar);
+                    break;
+                case 9:
+                    RenderPlayerBubbleText("Welp, im out of options.\n"
+                                           "Postal secrecy be damned!\n"
+                                           "Boxcutter go!!!",pChar);
+                    break;
+                case 10:
+                    musicManager.changeMusic(bgm::NONE);
+                    break;
+                case 11:
+                    //Mix_PlayChannel(-1,effectPackageOpen,0);
+
+                    phase2 = startAnim2/4;
+
+                    renderFromSpritesheet(turtle, objectPackageOpenSheet, &clips32[phase2%12]);
+                    if(phase2 == 12){
+                        phase2 = 0;
+                        startAnim2 = 0;
+                        advance++;
+                    }
+                    startAnim2++;
+                    break;
+                case 12:
+                    musicManager.changeMusic(bgm::NONE);
+                    RenderPlayerBubbleText("AAAaaand its a turtle!\n"
+                                           "Great! Not helping!\n"
+                                           "One package and thats what i get!",pChar);
+                    phase2 = startAnim2/4;
+
+
+                    emote = textToTexture(" :(");
+
+                    turtleOffset = turtle;
+                    turtleOffset.x = turtleOffset.x +turtle.w/2;
+                    turtleOffset.y = turtleOffset.y +turtle.h/4;
+                    renderText(turtleOffset,emote);
+                    SDL_DestroyTexture(emote);
+                    emote = nullptr;
+                    renderFromSpritesheet(turtle, characterTurtleIdleSheet, &clips32[0]);
+                    if(phase2 == 8){
+                        phase2 = 0;
+                        startAnim2 = 0;
+
+                    }
+                    startAnim2++; break;
+
+                case 13:
+                    musicManager.changeMusic(bgm::NONE);
+                    RenderPlayerBubbleText("...\n"
+                                           "Im sorry buddy.\n"
+                                           "You wanna go home too?",pChar);
+                    phase2 = startAnim2/4;
+
+
+                    emote = textToTexture(" :(");
+
+                    turtleOffset = turtle;
+                    turtleOffset.x = turtleOffset.x +turtle.w/2;
+                    turtleOffset.y = turtleOffset.y +turtle.h/4;
+                    renderText(turtleOffset,emote);
+                    SDL_DestroyTexture(emote);
+                    emote = nullptr;
+                    renderFromSpritesheet(turtle, characterTurtleIdleSheet, &clips32[0]);
+                    if(phase2 == 8){
+                        phase2 = 0;
+                        startAnim2 = 0;
+
+                    }
+                    startAnim2++;
+                    break;
+
+                    case 14:
+
+                    musicManager.changeMusic(bgm::LongShift);
+                    RenderPlayerBubbleText("Yeah thats the spirit! :D\n"
+                                           "We can figure this out together!\n"
+                                           "Show me what you got, turtle!",pChar);
+                    phase2 = startAnim2/4;
+
+                    emote = textToTexture(":D");
+
+                    renderText(turtleOffset,emote);
+                    SDL_DestroyTexture(emote);
+                    emote = nullptr;
+                    renderFromSpritesheet(turtle, characterTurtleIdleSheet, &clips32[phase2%8]);
+                    if(phase2 == 8){
+                        phase2 = 0;
+                        startAnim2 = 0;
+
+                    }
+                    startAnim2++;
+                    break;
+                case 15:
+                    musicManager.changeMusic(bgm::LongShift);
+                    RenderPlayerBubbleText("WOAH! SPACE TURTLE!\n"
+                                           "Nice flip!\n"
+                                           "Maybe break the glass next?",pChar);
+                    phase2 = startAnim2/4;
+
+                    if(startAnim2== 0){
+                        Mix_PlayChannel(-1,effectTurtleJump,0);
+                    }
+                    emote = textToTexture(":D");
+
+                    renderText(turtleOffset,emote);
+                    SDL_DestroyTexture(emote);
+                    emote = nullptr;
+                    renderFromSpritesheet(turtle, characterTurtleJumpSheet, &clips32[phase2%12]);
+                    startAnim2++;
+                    if(phase2 == 12){
+                        phase2 = 0;
+                        startAnim2 = 0;
+                        Mix_PlayChannel(-1,effectGlassRinging,0);
+                    }
+
+                    break;
+                case 16:
+                    musicManager.changeMusic(bgm::LongShift);
+                    SwitchPlayerAnimation(PlayerState::Damage);
+                    RenderPlayerBubbleText("OUCH! OUCH! OUCH!\n"
+                                           "STOP SMASHING ME INTO THE GLASS\n"
+                                           "ITS NOT BREAKING!!!",pChar);
+                    phase2 = startAnim2/4;
+
+                    if(startAnim2== 0){
+                        Mix_PlayChannel(-1,effectGravity,0);
+                    }
+                    emote = textToTexture(">:0");
+
+                    renderText(turtleOffset,emote);
+                    SDL_DestroyTexture(emote);
+                    emote = nullptr;
+                    renderFromSpritesheet(turtle, characterTurtleFloatSheet, &clips32[phase2%16]);
+                    startAnim2++;
+                    if(phase2 >= 16){
+                        phase2 = 0;
+                        startAnim2 = 0;
+                        Mix_PlayChannel(-1,effectGlassRinging,3);
+                    }
+
+                    break;
+                case 17:
+                    musicManager.changeMusic(bgm::GameOver);
+
+                    Mix_HaltChannel(-1);
+                    //knockdown in update
+                    RenderPlayerBubbleText(" ...\n"
+                                           " ... \n"
+                                           " ...",pChar);
+                    phase2 = startAnim2/4;
+
+                    if(startAnim2== 0){
+                       // Mix_PlayChannel(-1,effectGravity,0);
+                    }
+                    emote = textToTexture(":O");
+
+                    renderText(turtleOffset,emote);
+                    SDL_DestroyTexture(emote);
+                    emote = nullptr;
+                    renderFromSpritesheet(turtle, characterTurtleIdleSheet, &clips32[0]);
+                    startAnim2++;
+                    if(phase2 == 12){
+                        phase2 = 0;
+                        startAnim2 = 0;
+                    }
+
+                    break;
+                case 18:
+                    renderFromSpritesheet(turtle, characterTurtleIdleSheet, &clips32[0]);
+                    break;
+
+                case 19:
+                    musicManager.changeMusic(bgm::LongShift);
+
+                    RenderPlayerBubbleText("Just kidding! Im fine!\n"
+                                           "Just don't do that again! \n"
+                                           "So, can you power our ship?",pChar);
+                    phase2 = startAnim2/4;
+
+                    if(startAnim2== 0){
+                        //Mix_PlayChannel(-1,effectGravity,0);
+                    }
+                    emote = textToTexture(":D");
+
+                    renderText(turtleOffset,emote);
+                    SDL_DestroyTexture(emote);
+                    emote = nullptr;
+                    renderFromSpritesheet(turtle, characterTurtleIdleSheet, &clips32[phase2%8]);
+                    startAnim2++;
+                    if(phase2 >= 8){
+                        phase2 = 0;
+                        startAnim2 = 0;
+                    }
+
+                    break;
+                case 20:
+                    musicManager.changeMusic(bgm::SlowStart);
+
+                    RenderPlayerBubbleText("Looking good!\n"
+                                           "Just keep doing that!\n"
+                                           "I'll get you on board! :D",pChar);
+                    phase2 = startAnim2/4;
+
+                    if(startAnim2 == 0){
+                        Mix_PlayChannel(-1,effectGravity,0);
+                    }
+                    emote = textToTexture(":D");
+
+                    renderText(turtleOffset,emote);
+                    SDL_DestroyTexture(emote);
+                    emote = nullptr;
+                    renderFromSpritesheet(turtle, characterTurtlePowerSheet, &clips32[phase2%12]);
+                    startAnim2++;
+                    if(phase2 >= 12){
+                        phase2 = 0;
+                        startAnim2 = 0;
+                    }
+
+                    break;
+                case 21:
+                    Mix_HaltChannel(-1);
+                    renderFromSpritesheet({0,0,480*4,270*4},backgroundsSpaceship);
+                    break;
+                case 22:
+                    scale = scale/8;
+                    gridStartingPoint.x = 0;
+                    gridStartingPoint.y = 0;
+                    grid.setOrigin(gridStartingPoint.x, gridStartingPoint.y);
+                    startingScale = scale;
+                    mode = Mode::TilePlacer;
+                    break;
+
+            }
+
+
+
+           // Mix_PlayChannel(-1,effectGlassRinging,0);
+
+
+
+
+           if(advance != 10) {
+               if (advance == 12) {
+                   phase = 0;
+               }
+               if (advance <= 20){
+                   RenderPlayer();
+           }
+
+
+           }else{
+               phase = startAnim/4;
+
+               if(phase == 16){
+                   SwitchPlayerAnimation(PlayerState::Idle_Flip);
+                   phase = 0;
+                   startAnim = 0;
+                   advance++;
+               }else {
+                   renderFromSpritesheet(pChar.rect, playerStabSheetFlip, &clips32[phase % 16]);
+                   if(phase == 3 || phase == 6 || phase == 12) {
+                       renderFromSpritesheet(turtle, objectPackageOpenSheet, &clips32[1]);
+                       Mix_PlayChannel(-1,effectPackageOpen,0);
+                   }
+               }
+               startAnim++;
+
+           }
+
+           // AnimateTargets();
+           if(showGrid){
+               grid.render(renderer());
+           }
+        }
         if(mode == Mode::TilePlacer) {
 
             if(tTracker.placeTileMode){
@@ -878,7 +1384,7 @@ namespace JanSordid::SDL_Example
 
             if (tTracker.placeTileMode) {
                 int j = 0; // next y pos
-                for (int i =0;i<static_cast<int>(FloorTileIDs::Floor2);i++) {
+                for (int i =0;i<=static_cast<int>(FloorTileIDs::Floor2);i++) {
                     RenderFloorTile(static_cast<FloorTileIDs>(i),grid.tiles[i][0].rect);
                     j++;
                 }
@@ -1156,8 +1662,8 @@ namespace JanSordid::SDL_Example
             case Idle: playerAnimation = playerIdleSheet; loopAnimation = true;nextState = Idle;break;
             case Idle_Flip: playerAnimation = playerIdleSheetFlip;loopAnimation = true;nextState = Idle_Flip;break;
             case Walk: playerAnimation = playerWalkSheet;loopAnimation = false;nextState = Idle;break;
-            case Walk_Flip: playerAnimation = playerWalkSheetFlip;loopAnimation = false;nextState = Idle_Flip;break;
-            case Damage: playerAnimation = playerDamageSheet;loopAnimation = false; nextState = Idle;break;
+            case Walk_Flip: playerAnimation = playerWalkSheetFlip;loopAnimation = true;nextState = Idle_Flip;break;
+            case Damage: playerAnimation = playerDamageSheet;loopAnimation = true; nextState = Idle;break;
             case Damage_Flip: playerAnimation = playerDamageSheetFlip;loopAnimation = false;nextState = Idle_Flip;break;
             case KnockdownDamage: playerAnimation = playerDamageKnockdownSheet;loopAnimation = false;knockdown = true; nextState = Grounded;break;
             case KnockdownDamage_Flip: playerAnimation = playerDamageKnockdownSheetFlip;loopAnimation = false; knockdown = true;nextState = Grounded_Flip;break;
@@ -1619,6 +2125,25 @@ namespace JanSordid::SDL_Example
         }
 
         return values;
+    }
+    void STR_State::RenderPlayerBubbleText(const String& text,playerCharacter &pChar){
+        SDL_Rect playerBubble1 = {(pChar.rect.x+pChar.rect.w/2),pChar.rect.y-pChar.rect.h,pChar.rect.w,pChar.rect.h};
+        SDL_Rect playerBubble2 = playerBubble1;
+        playerBubble2.x = playerBubble2.x + pChar.rect.w;
+        renderFromSpritesheet(playerBubble1,uiSpeechbubbleSheet,&clips32[12]);
+        renderFromSpritesheet(playerBubble2,uiSpeechbubbleSheet,&clips32[13]);
+        Texture * texture = textToTexture(text.c_str());
+        playerBubble1.y = playerBubble1.y;
+        playerBubble1.x = playerBubble1.x+40;
+        renderText(playerBubble1,
+                   texture,20);
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+        //do bark audio if not played already; reset playedBark when appropriate in player
+        if(!pChar.playedBark){
+            Mix_PlayChannel(-1,effectPlayerBark,0);
+            pChar.playedBark = true;
+        }
     }
 
 
